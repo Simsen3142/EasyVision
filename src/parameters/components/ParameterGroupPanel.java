@@ -1,0 +1,41 @@
+package parameters.components;
+
+import javax.swing.JPanel;
+
+import components.EditableLabel;
+import parameters.ParameterObject;
+import parameters.group.ParameterGroup;
+
+import javax.swing.BoxLayout;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.border.EmptyBorder;
+
+public class ParameterGroupPanel extends JPanel implements IParameterGroupPanel {
+	private EditableLabel editableLabel;
+	private ParameterGroup parameterGroup;
+
+	/**
+	 * Create the panel.
+	 */
+	public ParameterGroupPanel(ParameterGroup parameterGroup) {
+		this.parameterGroup=parameterGroup;
+		
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 3), new EmptyBorder(5, 3, 3, 3)));
+
+		editableLabel = new EditableLabel(parameterGroup.getFullName());
+		add(editableLabel);
+		
+		addChildren();
+	}
+	
+	@Override
+	public void addChildren() {
+		for(ParameterObject paramObject:parameterGroup.getParameters()) {
+			this.add(paramObject.getComponent());
+		}
+	}
+
+}
