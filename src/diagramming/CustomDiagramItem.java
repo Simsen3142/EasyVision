@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.BorderLayout;
 
 public class CustomDiagramItem extends JPanel {
@@ -250,7 +251,8 @@ public class CustomDiagramItem extends JPanel {
 		
 		this.selectedOutput.getConnections().add(connection);
 		diagram.add(connection);
-		connection.setBounds(0, 0, 10, 10);
+		Rectangle visibleRect=diagram.getVisibleRect();
+		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
 		
 		item.selectedInput.getConnections().add(connection);
 		
