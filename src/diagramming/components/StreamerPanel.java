@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import cvfunctions.MatEditFunction;
-import main.VideoStreamer;
+import recording.VideoStreamer;
 
 public class StreamerPanel extends MatReceiverNSenderPanel {
 

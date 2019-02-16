@@ -99,7 +99,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 			(txts)->{
 				double x=Double.parseDouble(txts[0]);
 				if(x>parameter.getMinValue().doubleValue()&&x<parameter.getMaxValue().doubleValue()) {
-					slider.setValue((int)x);
+					setValue((int)x);
 					return txts[0];
 				} else
 					return txts[1];

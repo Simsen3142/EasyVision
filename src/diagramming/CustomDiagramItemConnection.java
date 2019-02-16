@@ -58,8 +58,6 @@ public class CustomDiagramItemConnection extends JPanel {
 		super.paintComponent(g);
 		
 		Rectangle visiblePart=((JComponent)getParent()).getVisibleRect();
-		System.out.println();
-		System.out.println(visiblePart);
 		
 		int x1=from.getPosition().x;
 		int x2=to.getPosition().x;
@@ -68,9 +66,7 @@ public class CustomDiagramItemConnection extends JPanel {
 		int y2=to.getPosition().y;
 
 		int lowestX = x1 < x2 ? x1 : x2;
-		System.out.println(lowestX);
 		lowestX=lowestX>visiblePart.x?lowestX:visiblePart.x;
-		System.out.println(lowestX);
 		int lowestY = y1 < y2 ? y1 : y2;
 		lowestY=lowestY>visiblePart.y?lowestY:visiblePart.y;
 
@@ -133,9 +129,8 @@ public class CustomDiagramItemConnection extends JPanel {
 	public void deleteConnection() {
 		from.getDiagramItem().removeConnection(this);
 		to.getDiagramItem().removeConnection(this);
-		JComponent parent = (JComponent) getParent();
-		parent.remove(instance);
-		parent.repaint();
+		CustomDiagram diagram = (CustomDiagram) getParent();
+		diagram.removeDiagramConnection(this);
 	}
 
 	@Override

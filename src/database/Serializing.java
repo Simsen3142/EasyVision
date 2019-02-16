@@ -7,7 +7,42 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import javax.swing.JFileChooser;
+
 public class Serializing {
+	private static JFileChooser fileChooser;
+	
+	/**
+	 * @return the fileChooser
+	 */
+	public static JFileChooser getFileChooser() {
+		if(fileChooser==null)
+			fileChooser=new JFileChooser();
+		return fileChooser;
+	}
+	
+	public static File showSaveDialog() {
+		File f=null;
+		
+		int i=getFileChooser().showSaveDialog(null);
+		if(i==JFileChooser.APPROVE_OPTION) {
+			f=getFileChooser().getSelectedFile();
+		}
+		
+		return f;
+	}
+	
+	public static File showOpenDialog() {
+		File f=null;
+		
+		int i=getFileChooser().showOpenDialog(null);
+		if(i==JFileChooser.APPROVE_OPTION) {
+			f=getFileChooser().getSelectedFile();
+		}
+		
+		return f;
+	}
+
 	public static boolean serialize(Serializable s, File f) {
 		boolean success=false;
 	    // save the object to file

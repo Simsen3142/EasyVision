@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 
 import cvfunctions.MatEditFunction;
 import main.MatSender;
+import parameters.ParameterizedObject;
 import view.MatReceiverPanel;
 import view.PanelFrame;
 
@@ -29,10 +30,10 @@ import javax.swing.JComponent;
 
 public abstract class MatReceiverNSenderPanel extends JButton {
 	private JLabel lblName;
-	private MatSender matSender;
+	private MatSender matHandler;
 	private static JPopupMenu popupMenu;
 	private static JMenuItem mntmParameter;
-	private static JCheckBoxMenuItem chckbxmntmBild;
+	private static JCheckBoxMenuItem chckbxmntmPic;
 	private boolean showPicture=false;
 	private MatReceiverPanel matReceiverPanel;
 	private static JMenuItem mntmInFensterAnzeigen;
@@ -41,7 +42,7 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 	 * @return the matSender
 	 */
 	public MatSender getMatSender() {
-		return matSender;
+		return matHandler;
 	}
 
 	public MatReceiverNSenderPanel() {
@@ -59,7 +60,7 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 	}
 
 	protected void initialize(MatSender matSender, String name) {
-		this.matSender = matSender;
+		this.matHandler = matSender;
 		lblName = new JLabel(name);
 
 		initPopup();
@@ -80,8 +81,9 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 			mntmParameter = new JMenuItem("Parameter");
 			popupMenu.add(mntmParameter);
 	
-			chckbxmntmBild = new JCheckBoxMenuItem("Bild");
-			popupMenu.add(chckbxmntmBild);
+
+			chckbxmntmPic = new JCheckBoxMenuItem("Bild");
+			popupMenu.add(chckbxmntmPic);
 	
 			mntmInFensterAnzeigen = new JMenuItem("In Fenster anzeigen");
 			popupMenu.add(mntmInFensterAnzeigen);
@@ -106,12 +108,19 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 				removeAllActionListeners(mntmParameter);
 				mntmParameter.addActionListener(new MntmParameterActionListener());
 
-				removeAllActionListeners(chckbxmntmBild);
-				chckbxmntmBild.addActionListener(new ChckbxmntmBildActionListener());
-				chckbxmntmBild.setSelected(showPicture);
-				
-				removeAllActionListeners(mntmInFensterAnzeigen);
-				mntmInFensterAnzeigen.addActionListener(new MntmInFensterAnzeigenActionListener());
+				if(matHandler instanceof MatSender) {
+					chckbxmntmPic.setVisible(true);
+					removeAllActionListeners(chckbxmntmPic);
+					chckbxmntmPic.addActionListener(new ChckbxmntmPicActionListener());
+					chckbxmntmPic.setSelected(showPicture);
+					
+					mntmInFensterAnzeigen.setVisible(true);
+					removeAllActionListeners(mntmInFensterAnzeigen);
+					mntmInFensterAnzeigen.addActionListener(new MntmInFensterAnzeigenActionListener());
+				}else {
+					chckbxmntmPic.setVisible(false);
+					mntmInFensterAnzeigen.setVisible(false);
+				}
 
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -128,19 +137,19 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 
 	private class MntmParameterActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			matSender.showParameterChangeDialog();
+			matHandler.showParameterChangeDialog();
 		}
 	}
 
-	private class ChckbxmntmBildActionListener implements ActionListener {
+	private class ChckbxmntmPicActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			showPicture=chckbxmntmBild.isSelected();
+			showPicture=chckbxmntmPic.isSelected();
 			if (showPicture) {
-				matReceiverPanel = new MatReceiverPanel(matSender);
+				matReceiverPanel = new MatReceiverPanel((MatSender)matHandler);
 				remove(lblName);
 				add(matReceiverPanel, BorderLayout.CENTER);
 			} else {
-				matSender.removeMatReceiver(matReceiverPanel);
+				((MatSender)matHandler).removeMatReceiver(matReceiverPanel);
 
 				remove(matReceiverPanel);
 				add(lblName, BorderLayout.CENTER);
@@ -152,10 +161,10 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 
 	private class MntmInFensterAnzeigenActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			MatReceiverPanel panel = new MatReceiverPanel(matSender);
+			MatReceiverPanel panel = new MatReceiverPanel((MatSender)matHandler);
 			PanelFrame frame = new PanelFrame(panel);
 			frame.setOnWindowClosing((nix) -> {
-				matSender.removeMatReceiver(panel);
+				((MatSender)matHandler).removeMatReceiver(panel);
 				return null;
 			});
 			frame.setVisible(true);

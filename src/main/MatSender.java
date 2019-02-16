@@ -14,8 +14,36 @@ import parameters.ParameterizedObject;
 public class MatSender extends ParameterizedObject {
 	private List<MatReceiver> receivers=new ArrayList<>();
 	private List<MatMapReceiver> receivers_map=new ArrayList<>();
-	private long fps=0;
-	private long timeLastFrame=0;
+	private transient long fps=0;
+	private transient long timeLastFrame=0;
+	
+	/**
+	 * @return the receivers
+	 */
+	public List<MatReceiver> getReceivers() {
+		return receivers;
+	}
+
+	/**
+	 * @param receivers the receivers to set
+	 */
+	public void setReceivers(List<MatReceiver> receivers) {
+		this.receivers = receivers;
+	}
+
+	/**
+	 * @return the receivers_map
+	 */
+	public List<MatMapReceiver> getReceivers_map() {
+		return receivers_map;
+	}
+
+	/**
+	 * @param receivers_map the receivers_map to set
+	 */
+	public void setReceivers_map(List<MatMapReceiver> receivers_map) {
+		this.receivers_map = receivers_map;
+	}
 
 	public void addMatReceiver(MatReceiver rcvr) {
 		if(!receivers.contains(rcvr))
@@ -67,7 +95,15 @@ public class MatSender extends ParameterizedObject {
 	
 	protected void registerFrameForFPSCalculation() {
 		long now = System.currentTimeMillis();
-		fps = 1000 / (now - timeLastFrame);
+		try {
+			fps = 1000 / (now - timeLastFrame);
+		}catch (ArithmeticException e) {
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e1) {
+			}
+			return;
+		}
 		timeLastFrame = now;
 	}
 	
@@ -77,5 +113,9 @@ public class MatSender extends ParameterizedObject {
 	
 	public void resetFps() {
 		fps=0;
+	}
+	
+	public void stop() {
+		
 	}
 }

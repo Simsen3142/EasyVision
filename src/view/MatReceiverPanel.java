@@ -7,7 +7,7 @@ import main.MatSender;
 
 public class MatReceiverPanel extends MatPanel implements MatReceiver {
 
-	private MatSender sender;
+	private transient MatSender sender;
 	
 	/**
 	 * @wbp.parser.constructor

@@ -1,5 +1,7 @@
 package parameters;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.Set;
 import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
 
-public class ParameterizedObject {
+public class ParameterizedObject implements Serializable{
 	protected Set<ParameterGroup> paramGroups=new LinkedHashSet<ParameterGroup>();
 	protected Map<String,Parameter<?>> parameters=new HashMap<String,Parameter<?>>();
 	protected Map<String,ParameterObject> allParameters=new LinkedHashMap<String,ParameterObject>();
@@ -44,6 +46,10 @@ public class ParameterizedObject {
 	
 	public double getDoubleVal(String paramName) {
 		return ((DoubleParameter)(getParameter(paramName))).getValue();
+	}
+	
+	public File getFileVal(String paramName) {
+		return ((FileParameter)(getParameter(paramName))).getValue();
 	}
 	
 	public int getIntVal(String paramName) {

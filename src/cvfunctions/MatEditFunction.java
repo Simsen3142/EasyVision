@@ -13,24 +13,24 @@ import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
 
 public abstract class MatEditFunction extends MatSender implements MatReceiver, Serializable {
-	protected transient Mat paintTo;
-	
+
 	private transient Map<String, Mat> mats=new HashMap<>();
+	private boolean send=true;
 	
 	/**
-	 * @return the paintTo
+	 * @return the send
 	 */
-	public Mat getPaintTo() {
-		return paintTo;
+	public boolean isSend() {
+		return send;
 	}
-	
+
 	/**
-	 * @param paintTo the paintTo to set
+	 * @param send the send to set
 	 */
-	public void setPaintTo(Mat paintTo) {
-		this.paintTo = paintTo;
+	public void setSend(boolean send) {
+		this.send = send;
 	}
-	
+
 	public Map<String, Mat> getMats(){
 		if(mats==null)
 			mats=new HashMap<>();
@@ -39,9 +39,6 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 	
 	public MatEditFunction() {}
 	
-	public MatEditFunction(Mat paintTo) {
-		this.paintTo=paintTo;
-	}
 	
 	public MatEditFunction(ParameterObject...parameters) {
 		super(parameters);
@@ -51,8 +48,10 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 	
 	public Mat performFunction(Mat matIn) {
 		Mat ret=apply(matIn);
-		sendMatMap(getMats());
-		sendMat(ret);
+		if(send) {
+			sendMatMap(getMats());
+			sendMat(ret);
+		}
 		registerFrameForFPSCalculation();
 		
 		return ret;

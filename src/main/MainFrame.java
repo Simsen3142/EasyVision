@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.io.Serializable;
 
 import javax.swing.JFrame;
@@ -8,16 +9,16 @@ import javax.swing.JPanel;
 import javax.swing.UIDefaults;
 
 import org.opencv.core.Core;
-import org.opencv.videoio.VideoCapture;
 import org.reflections.Reflections;
 
 import cvfunctions.LineDetection_x;
 import cvfunctions.MatEditFunction;
 import database.OftenUsedObjects;
 import database.Serializing;
-import diagramming.DiagramTestingFrame;
-import diagramming.old.FormEditorFrame;
+import diagramming.DiagramPanel;
 import main.menu.MainMenuBar;
+import recording.FileVideoStreamer;
+import recording.VideoStreamer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -77,12 +78,12 @@ public class MainFrame extends JFrame implements Serializable {
 		
 		
         VideoStreamer videoStreamer=new VideoStreamer(0);
-        System.out.println(videoStreamer.getCamera());
         streamers.add(videoStreamer);
-		videoStreamer.addMatReceiver(functions.get(0));
-		videoStreamer.start();
+//		videoStreamer.addMatReceiver(functions.get(0));
 		
-
+        FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
+        streamers.add(videoStreamer_video);
+        videoStreamer_video.addMatReceiver(functions.get(0));
 
 		instance.setContentPanel(new MatReceiverPanel(functions.get(0)));
 
@@ -104,8 +105,8 @@ public class MainFrame extends JFrame implements Serializable {
 					e.printStackTrace();
 				}
 
-				DiagramTestingFrame frame = new DiagramTestingFrame();
-				frame.setVisible(true);
+				DiagramPanel panel = new DiagramPanel();
+				new PanelFrame(panel).setVisible(true);
 			}
 		}).start();
 

@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import main.MainFrame;
-import main.VideoStreamer;
+import recording.VideoStreamer;
 import view.MatReceiverPanel;
 import view.MatPanel;
 import view.PanelFrame;

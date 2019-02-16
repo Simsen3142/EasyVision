@@ -21,8 +21,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-import com.mindfusion.diagramming.DiagramItem;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -250,14 +248,11 @@ public class CustomDiagramItem extends JPanel {
 				item.selectedInput);
 		
 		this.selectedOutput.getConnections().add(connection);
-		diagram.add(connection);
-		Rectangle visibleRect=diagram.getVisibleRect();
-		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
+		diagram.addDiagramConnection(connection);
 		
 		item.selectedInput.getConnections().add(connection);
 		
-		diagram.setVisible(false);
-		diagram.setVisible(true);
+		diagram.repaint();
 	}
 	
 	public boolean checkIfAlreadyConnectedTo(CustomDiagramItem item) {

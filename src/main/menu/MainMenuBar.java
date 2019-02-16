@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import external.JScrollMenu;
 import main.MainFrame;
-import main.VideoStreamer;
+import recording.VideoStreamer;
 
 public class MainMenuBar extends JFrame {
 	

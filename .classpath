@@ -8,6 +8,5 @@
 	<classpathentry kind="lib" path="lib/guava-27.0.1-jre.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.24.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/reflections-0.9.10.jar"/>
-	<classpathentry kind="lib" path="lib/JPack.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

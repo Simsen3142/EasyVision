@@ -4,8 +4,6 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import com.mindfusion.diagramming.DiagramItem;
-
 import view.PanelFrame;
 
 import java.awt.BorderLayout;
@@ -15,38 +13,38 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.GridLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 
 public class CustomDiagram extends JPanel {
 	private List<CustomDiagramItem> diagramItems = new ArrayList<>();
 	private DiagramDragListener dragListener;
 	private CustomDiagram instance = this;
+	private CustomDiagramListenerTrigger listenerTrigger;
+	
+	public void addDiagramListener(CustomDiagramListener listener) {
+		listenerTrigger.getCustomDiagramListeners().add(listener);
+	}
+	
+	public boolean removeDiagramListener(CustomDiagramListener listener) {
+		return listenerTrigger.getCustomDiagramListeners().remove(listener);
+	}
+	
+	public void clearDiagramListeners(CustomDiagramListener listener) {
+		listenerTrigger.getCustomDiagramListeners().clear();
+	}
 
 	/**
 	 * Create the panel.
 	 */
 	public CustomDiagram() {
 		super();
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 450, Short.MAX_VALUE)
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 300, Short.MAX_VALUE)
-		);
-		setLayout(groupLayout);
+		listenerTrigger=new CustomDiagramListenerTrigger();
+		setLayout(null);
 		dragListener = new DiagramDragListener();
 		addMouseListener(dragListener);
 		addMouseMotionListener(dragListener);
@@ -76,6 +74,19 @@ public class CustomDiagram extends JPanel {
 		this.remove(item);
 		if (item.getDiagram() == this)
 			item.setDiagram(null);
+		listenerTrigger.triggerOnDiagramItemDeleted(item);
+	}
+	
+	public void addDiagramConnection(CustomDiagramItemConnection connection) {
+		Rectangle visibleRect=getVisibleRect();
+		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
+		this.add(connection);
+	}
+	
+	public void removeDiagramConnection(CustomDiagramItemConnection connection) {
+		this.remove(connection);
+		this.repaint();
+		listenerTrigger.triggerOnConnectionDeleted(connection);
 	}
 
 	/**
