@@ -30,13 +30,7 @@ public class FaceDetection extends MatEditFunction {
 	}
 	
 	public Mat detectEyesHaar(Mat frame) {
-//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//		String xmlResource = loader.getResource("EasyVision/src/resources/haarcascade_eye.xml").getPath();
-		File file = new File("opencv/build/etc/haarcascades/haarcascade_eye.xml");
-		String xmlResource = file.getAbsolutePath();
-		faceCascade = new CascadeClassifier(xmlResource);
-		System.out.println(xmlResource);
-		return startDetection(xmlResource,frame);
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_eye.xml",frame);
 	}
 	
 	public Mat detectEyesWithGlassesHaar() {
@@ -131,7 +125,7 @@ public class FaceDetection extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout = detectEyesHaar(matIn);
+		Mat matout = detectEyesHaar(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}
