@@ -82,14 +82,18 @@ public class MainMenuBar extends JFrame {
 	}
 	
 	private void initCameras() {
-		for(int i:VideoStreamer.getAvailableCameras()) {
-			CameraMenuItem mnItem=new CameraMenuItem(i);
-			scrlmnCamera.add(mnItem);
-		}
-		
-		for(String s:MainFrame.getKnownCameraIps()) {
-			CameraMenuItem mnItem=new CameraMenuItem(s);
-			scrlmnCamera.add(mnItem);
+		try {
+			for(int i:VideoStreamer.getAvailableCameras()) {
+				CameraMenuItem mnItem=new CameraMenuItem(i);
+				scrlmnCamera.add(mnItem);
+			}
+			
+			for(Object o:MainFrame.getKnownCameraResources()) {
+				CameraMenuItem mnItem=new CameraMenuItem(o);
+				scrlmnCamera.add(mnItem);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

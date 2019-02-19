@@ -25,6 +25,20 @@ public class VideoStreamer extends MatSender {
 	private static Set<VideoStreamer> videoStreamers =Collections.synchronizedSet(new HashSet<VideoStreamer>());
 	
 	/**
+	 * @return the resource
+	 */
+	public Object getResource() {
+		return resource;
+	}
+
+	/**
+	 * @param resource the resource to set
+	 */
+	public void setResource(Object resource) {
+		this.resource = resource;
+	}
+
+	/**
 	 * @return the streamThread
 	 */
 	public Thread getStreamThread() {
@@ -104,7 +118,6 @@ public class VideoStreamer extends MatSender {
 		if(streamThread!=null&&streamThread.isAlive()) {
 			streamThread.interrupt();
 			camera.release();
-			resetFps();
 		}
 	}
 	
@@ -133,21 +146,24 @@ public class VideoStreamer extends MatSender {
 					System.out.println("Error");
 				} else {
 					while (!streamThread.isInterrupted()) {
-						if (camera.read(frame)) {
-							if(getBoolVal("size_change")) {
-								int width=getIntVal("size_width");
-								int height=getIntVal("size_height");
-								Imgproc.resize(frame, frame, new Size(width,height));
+						try {
+							if (camera.read(frame)) {
+								if(getBoolVal("size_change")) {
+									int width=getIntVal("size_width");
+									int height=getIntVal("size_height");
+									Imgproc.resize(frame, frame, new Size(width,height));
+								}
+								try {
+									sendMat(frame);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}else {
+								System.out.println("Camera not available");
+								break;
 							}
-							try {
-								sendMat(frame);
-								registerFrameForFPSCalculation();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else {
-							System.out.println("Camera not available");
-							break;
+						}catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}

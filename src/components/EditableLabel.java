@@ -5,6 +5,7 @@ import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.*;
 import java.util.function.Function;
@@ -80,8 +81,10 @@ public class EditableLabel extends JPanel {
 				textField.setText(text);
 				textField.requestFocus();
 				textField.selectAll();
-				setVisible(false);
-				setVisible(true);
+				EventQueue.invokeLater(()->{
+					revalidate();
+					repaint();
+				});
 			}
 		}
 	}
@@ -119,8 +122,10 @@ public class EditableLabel extends JPanel {
 		remove(textField);
 		setText(text);
 		add(label, "cell 0 0,alignx center,growy");
-		setVisible(false);
-		setVisible(true);
+		EventQueue.invokeLater(()->{
+			revalidate();
+			repaint();
+		});
 	}
 	
 	

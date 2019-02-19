@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 
 import javax.swing.JScrollPane;
 
@@ -191,7 +193,31 @@ public class DiagramPanel extends JPanel {
 			public void onDeleteConnection(CustomDiagramItemConnection diagramItemConnection) {
 			}
 		});
-		
+	}
+	
+	public void reloadLists() {
+		reloadFunctionList();
+		reloadStreamerList();
+	}
+	
+	public void reloadFunctionList() {
+		EventQueue.invokeLater(()->{
+			DefaultListModel<Class<? extends MatEditFunction>> fct_model=((DefaultListModel<Class<? extends MatEditFunction>>)fct_controlList.getModel());
+			fct_model.removeAllElements();
+			for (Class<? extends MatEditFunction> fct : MainFrame.getMatEditFunctionClasses()) {
+				fct_model.addElement(fct);
+			}
+		});
+	}
+	
+	public void reloadStreamerList() {
+		EventQueue.invokeLater(()->{
+			DefaultListModel<VideoStreamer> strmer_model=((DefaultListModel<VideoStreamer>)strmer_controlList.getModel());
+			strmer_model.removeAllElements();
+			for (VideoStreamer streamer : MainFrame.getStreamers()) {
+				strmer_model.addElement(streamer);
+			}
+		});
 	}
 	
 	private MatEditFunction initFunction(Class<? extends MatEditFunction> functionClass) {
@@ -262,8 +288,10 @@ public class DiagramPanel extends JPanel {
 		CustomTransferHandler.cleanText();
 		CustomTransferHandler.setBoxCreate(false);
 		
-		customDiagram.setVisible(false);
-		customDiagram.setVisible(true);
+		EventQueue.invokeLater(()->{
+			customDiagram.revalidate();
+			customDiagram.repaint();
+		});
 		
 		return item;
 	}
@@ -290,9 +318,8 @@ public class DiagramPanel extends JPanel {
 				matSender.stop();
 			}
 			
-			MatSender sender=(MatSender)matSender;
-			sender.clearMatReceiverFunctions();
-			ret.add(sender);
+			matSender.clearMatReceiverFunctions();
+			ret.add(matSender);
 			
 			List<CustomDiagramItemConnection> links=item.getOutgoingConnections();
 			for (CustomDiagramItemConnection link : links) {
@@ -307,7 +334,7 @@ public class DiagramPanel extends JPanel {
 					receiver=destFunction;
 				}
 				
-				sender.addMatReceiver(receiver);
+				matSender.addMatReceiver(receiver);
 			}
 		}
 		
@@ -321,18 +348,36 @@ public class DiagramPanel extends JPanel {
 		}
 	}
 	
-	private class BtnSaveActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
+	public List<MatSender> getMatSenders(){
+		List<MatSender> ret=new ArrayList<>();
+		List<CustomDiagramItem> diagramItems=customDiagram.getDiagramItems();
+
+		for(CustomDiagramItem item:diagramItems) {
+			MatSender matSender=null;
+			Component component=item.getComponent();
+
+			if(component instanceof MatReceiverNSenderPanel) {
+				MatReceiverNSenderPanel panel=(MatReceiverNSenderPanel)component;
+				matSender=panel.getMatSender();
+				ret.add(matSender);
+			}
+		}
+		
+		return ret;
+	}
+	
+	public void save(File file) {
+		if(file!=null) {
 			createFunctions();
 			
 			ArrayList<MatSender> senders=new ArrayList<>();
 			List<CustomDiagramItem> diagramItems=customDiagram.getDiagramItems();
-
+	
 			for(CustomDiagramItem item:diagramItems) {
 				MatSender matSender=null;
 				Component component=item.getComponent();
 				
-				if(item.getSelectedInput().getMaxConnectionNumber()<1) {
+				if(item.getSelectedInput().getConnections().size()<1) {
 					if(component instanceof MatReceiverNSenderPanel) {
 						MatReceiverNSenderPanel panel=(MatReceiverNSenderPanel)component;
 						matSender=panel.getMatSender();
@@ -341,9 +386,32 @@ public class DiagramPanel extends JPanel {
 				}
 			}
 			
-			System.out.println("SAVING");
-			Serializing.serialize(senders, Serializing.showSaveDialog());
-			System.out.println("DONE SAVING");
+			Serializing.serialize(senders, file);
+		}
+	}
+	
+	public void load(File file) {
+		if(file!=null) {
+			customDiagram.clear();
+	
+			ArrayList<MatSender> senders;
+			
+			try {
+				senders=(ArrayList<MatSender>)Serializing.deSerialize(file);
+			}catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			
+			if(senders!=null) {
+				createDiagram(senders);
+			}
+		}
+	}
+	
+	private class BtnSaveActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			save(Serializing.showSaveDialog());
 		} 
 	}
 	
@@ -380,21 +448,13 @@ public class DiagramPanel extends JPanel {
 		}
 		sender.getReceivers().removeAll(receiversToRemove);
 		
-		System.out.println(highestY);
 		return highestY;
 	}
 	
+	
 	private class BtnLoadActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			ArrayList<MatSender> senders;
-			try {
-				senders=(ArrayList<MatSender>)Serializing.deSerialize(Serializing.showOpenDialog());
-			}catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-			
-			createDiagram(senders);
+			load(Serializing.showOpenDialog());
 		}
 	}
 }

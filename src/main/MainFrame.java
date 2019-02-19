@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.Serializable;
 
@@ -21,6 +22,7 @@ import recording.FileVideoStreamer;
 import recording.VideoStreamer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,16 +38,16 @@ import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame implements Serializable {
 
-	private JPanel contentPane;
-	private static List<MatEditFunction> functions;
+	private transient JPanel contentPane;
 	private JPanel mainPanel;
-	private static Set<String> knownCameraIps;
+	private static Set<Object> knownCameraResources;
 	private transient JMenuBar menuBar;
 	private ThisWindowListener windowListener;
 
 	private static MainFrame instance;
-	private static List<VideoStreamer> streamers = new ArrayList<>();
+	private static List<VideoStreamer> streamers = Collections.synchronizedList(new ArrayList<>());
 	private static Set<Class<? extends MatEditFunction>> matEditFunctionClasses;
+	private static DiagramPanel diagramPanel;
 
 	/**
 	 * Launch the application.
@@ -83,34 +85,13 @@ public class MainFrame extends JFrame implements Serializable {
 		
         FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
         streamers.add(videoStreamer_video);
-        videoStreamer_video.addMatReceiver(functions.get(0));
 
-		instance.setContentPanel(new MatReceiverPanel(functions.get(0)));
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(2000);
-//					functions.get(0).showParameterChangeDialog();
-//					videoStreamer.showParameterChangeDialog();
-//
-//					
-//					MatEditFunctionMatsPanel pnl=new MatEditFunctionMatsPanel(functions.get(0), "line");
-//					new PanelFrame(pnl,"line").setVisible(true);
-//					
-//					MatEditFunctionMatsPanel pnl1=new MatEditFunctionMatsPanel(functions.get(0), "squares");
-//					new PanelFrame(pnl1,"squares").setVisible(true);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				DiagramPanel panel = new DiagramPanel();
-				new PanelFrame(panel).setVisible(true);
-			}
-		}).start();
-
-		saveValues();
+		diagramPanel = new DiagramPanel();
+		instance.setContentPanel(diagramPanel);
+		
+		loadValues();
+		
+		diagramPanel.reloadStreamerList();
 	}
 
 	/**
@@ -168,72 +149,73 @@ public class MainFrame extends JFrame implements Serializable {
 		mainPanel = content;
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 
-		contentPane.setVisible(false);
-		contentPane.setVisible(true);
+		EventQueue.invokeLater(()->{
+			contentPane.revalidate();
+			contentPane.repaint();
+		});
 	}
 
 	/**
-	 * @return the functions
+	 * @return the knownCameraResources
 	 */
-	public static List<MatEditFunction> getFunctions() {
-		return functions;
-	}
-
-	/**
-	 * @return the knownCameraIps
-	 */
-	public static Set<String> getKnownCameraIps() {
-		return knownCameraIps;
+	public static Set<Object> getKnownCameraResources() {
+		return knownCameraResources;
 	}
 
 	public static void initPreSetValues() {
-		knownCameraIps = new HashSet<String>();
-		knownCameraIps.add("http://192.168.43.71:8080/video?x.mjpeg");
-		functions = new ArrayList<>();
-		functions.add(new LineDetection_x());
 		instance = new MainFrame();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void loadPreSetValues() {
+	public static void loadValues() {
 		try {
-			Set<String> output = (Set<String>) Serializing.deSerialize(OftenUsedObjects.LIST_IP_CAMERA.getFile());
+			Set<Object> output = (Set<Object>) Serializing.deSerialize(OftenUsedObjects.LIST_CAMERA_RESOURCES.getFile());
 			if (output == null)
 				throw new NullPointerException();
-			knownCameraIps = output;
+			knownCameraResources = output;
 		} catch (Exception e) {
 			e.printStackTrace();
-			knownCameraIps = new HashSet<String>();
-//			knownCameraIps.add("http://192.168.1.46:8080/video?x.mjpeg");
+			knownCameraResources = new HashSet<Object>();
 		}
-
-		try {
-			List<MatEditFunction> output = (List<MatEditFunction>) Serializing
-					.deSerialize(OftenUsedObjects.LIST_MATEDITFUNCTIONS.getFile());
-			if (output == null)
-				throw new NullPointerException();
-			functions = output;
-		} catch (Exception e) {
-			e.printStackTrace();
-			functions = new ArrayList<>();
-			functions.add(new LineDetection_x());
+		
+		for(Object res:knownCameraResources) {
+			boolean contain=false;
+			for(VideoStreamer streamer:streamers) {
+				if(streamer.getResource().equals(res)) {
+					contain=true;
+					break;
+				}
+			}
+			if(!contain) {
+				streamers.add(new VideoStreamer(res));
+			}
 		}
-
+		
 		try {
-			MainFrame output = (MainFrame) Serializing.deSerialize(OftenUsedObjects.MAIN_FUNCTION.getFile());
-			if (output == null)
-				throw new NullPointerException();
-			instance = output;
+			diagramPanel.load(OftenUsedObjects.SESSION.getFile());
 		} catch (Exception e) {
-			e.printStackTrace();
-			instance = new MainFrame();
 		}
 	}
 
 	public static void saveValues() {
-		Serializing.serialize((Serializable) knownCameraIps, OftenUsedObjects.LIST_IP_CAMERA.getFile());
-		Serializing.serialize((Serializable) functions, OftenUsedObjects.LIST_MATEDITFUNCTIONS.getFile());
-		Serializing.serialize((Serializable) instance, OftenUsedObjects.MAIN_FUNCTION.getFile());
+		try {
+			for(VideoStreamer streamer:streamers) {
+				boolean contain=false;
+				for(Object res:knownCameraResources) {
+					if(streamer.getResource().equals(res)) {
+						contain=true;
+						break;
+					}
+				}
+				if(!contain) {
+					knownCameraResources.add(streamer.getResource());
+				}
+			}
+			Serializing.serialize((Serializable) knownCameraResources, OftenUsedObjects.LIST_CAMERA_RESOURCES.getFile());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		diagramPanel.save(OftenUsedObjects.SESSION.getFile());
 	}
 
 	private static class ThisWindowListener extends WindowAdapter implements Serializable {
@@ -241,6 +223,7 @@ public class MainFrame extends JFrame implements Serializable {
 		public void windowClosing(WindowEvent e) {
 			System.out.println("SAVING...");
 			saveValues();
+			diagramPanel.getMatSenders().forEach((matSender)->matSender.stop());
 			System.exit(0);
 		}
 	}

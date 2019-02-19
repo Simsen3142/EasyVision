@@ -8,24 +8,47 @@ import view.PanelFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JComponent;
+
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+
 import java.awt.GridBagConstraints;
 
-public class CustomDiagram extends JPanel {
-	private List<CustomDiagramItem> diagramItems = new ArrayList<>();
-	private DiagramDragListener dragListener;
-	private CustomDiagram instance = this;
-	private CustomDiagramListenerTrigger listenerTrigger;
+public class CustomDiagram extends JLayeredPane {
+	private List<CustomDiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
+	private transient DiagramDragListener dragListener;
+	private transient CustomDiagram instance = this;
+	private transient CustomDiagramListenerTrigger listenerTrigger;
+	private JPanel pnlDiagramItems;
+	private JPanel pnlConnections;
 	
+	/**
+	 * @return the pnlDiagramItems
+	 */
+	public JPanel getPnlDiagramItems() {
+		return pnlDiagramItems;
+	}
+
+	/**
+	 * @return the pnlConnections
+	 */
+	public JPanel getPnlConnections() {
+		return pnlConnections;
+	}
+
 	public void addDiagramListener(CustomDiagramListener listener) {
 		listenerTrigger.getCustomDiagramListeners().add(listener);
 	}
@@ -49,6 +72,26 @@ public class CustomDiagram extends JPanel {
 		addMouseListener(dragListener);
 		addMouseMotionListener(dragListener);
 		addMouseListener(new ThisMouseListener());
+		addComponentListener(new ResizeListener());
+		
+		pnlDiagramItems=new JPanel();
+		pnlDiagramItems.setOpaque(false);
+		pnlDiagramItems.setLayout(null);
+		this.add(pnlDiagramItems);
+		
+		pnlConnections=new JPanel();
+		pnlConnections.setOpaque(false);
+		pnlConnections.setLayout(null);
+		this.add(pnlConnections);
+		
+		setLayer(pnlDiagramItems,2);
+		setLayer(pnlConnections,1);
+	}
+	
+	public void clear() {
+		while(diagramItems.size()>0) {
+			diagramItems.get(0).deleteThis();
+		}
 	}
 
 //	public static void main(String[] args) {
@@ -65,13 +108,13 @@ public class CustomDiagram extends JPanel {
 	public void addDiagramItem(CustomDiagramItem item, Point position) {
 		item.setDiagram(this);
 		diagramItems.add(item);
-		this.add(item);
+		pnlDiagramItems.add(item);
 		item.setBounds(position.x, position.y, 100, 50);
 	}
 
 	public void removeDiagramItem(CustomDiagramItem item) {
 		diagramItems.remove(item);
-		this.remove(item);
+		pnlDiagramItems.remove(item);
 		if (item.getDiagram() == this)
 			item.setDiagram(null);
 		listenerTrigger.triggerOnDiagramItemDeleted(item);
@@ -80,11 +123,11 @@ public class CustomDiagram extends JPanel {
 	public void addDiagramConnection(CustomDiagramItemConnection connection) {
 		Rectangle visibleRect=getVisibleRect();
 		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
-		this.add(connection);
+		pnlConnections.add(connection);
 	}
 	
 	public void removeDiagramConnection(CustomDiagramItemConnection connection) {
-		this.remove(connection);
+		pnlConnections.remove(connection);
 		this.repaint();
 		listenerTrigger.triggerOnConnectionDeleted(connection);
 	}
@@ -100,6 +143,25 @@ public class CustomDiagram extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
+		}
+	}
+	
+	private class ResizeListener extends ComponentAdapter {
+		@Override
+		public void componentResized(ComponentEvent arg0) {
+			resizeThings();
+		}
+		
+		private void resizeThings() {
+			int x=0;
+			int y=0;
+			pnlConnections.setBounds(x,y, getWidth(), getHeight());
+			pnlDiagramItems.setBounds(x,y, getWidth(), getHeight());
+			
+			EventQueue.invokeLater(()->{
+				revalidate();
+				repaint();
+			});
 		}
 	}
 

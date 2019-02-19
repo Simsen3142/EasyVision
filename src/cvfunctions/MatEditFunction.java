@@ -52,7 +52,6 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 			sendMatMap(getMats());
 			sendMat(ret);
 		}
-		registerFrameForFPSCalculation();
 		
 		return ret;
 	}

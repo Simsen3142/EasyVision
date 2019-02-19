@@ -23,8 +23,10 @@ public class MatReceiverPanel extends MatPanel implements MatReceiver {
 
 	@Override
 	public void onReceive(Mat matIn, MatSender sender) {
-		if(showFps)
-			fps=sender.getFps();
+		if(showFps) {
+			registerFrameForFPSCalculation();
+			fps=getFps();
+		}
 		this.updateMat(matIn);
 	}
 }

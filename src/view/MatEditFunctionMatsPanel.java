@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.EventQueue;
 import java.util.Map;
 
 import org.opencv.core.Mat;
@@ -18,14 +19,10 @@ public class MatEditFunctionMatsPanel extends MatPanel  implements MatMapReceive
 
 	@Override
 	public void onReceive(Map<String, Mat> mats, MatSender sender) {
-		if(showFps)
-			fps=sender.getFps();
+		if(showFps) {
+			registerFrameForFPSCalculation();
+			fps=getFps();
+		}
 		updateMat(mats.get(matName));
-	}
-	
-	public void setShowFps(boolean show) {
-		this.showFps=show;
-		setVisible(false);
-		setVisible(true);
 	}
 }

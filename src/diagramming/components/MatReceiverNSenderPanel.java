@@ -3,12 +3,14 @@ package diagramming.components;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import cvfunctions.MatEditFunction;
+import external.FileDrop.Event;
 import main.MatSender;
 import parameters.ParameterizedObject;
 import view.MatReceiverPanel;
@@ -148,14 +150,14 @@ public abstract class MatReceiverNSenderPanel extends JButton {
 				matReceiverPanel = new MatReceiverPanel((MatSender)matHandler);
 				remove(lblName);
 				add(matReceiverPanel, BorderLayout.CENTER);
+				matReceiverPanel.repaint();
 			} else {
 				((MatSender)matHandler).removeMatReceiver(matReceiverPanel);
-
 				remove(matReceiverPanel);
 				add(lblName, BorderLayout.CENTER);
-
 				matReceiverPanel = null;
 			}
+			repaint();
 		}
 	}
 

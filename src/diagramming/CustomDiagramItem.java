@@ -325,7 +325,7 @@ public class CustomDiagramItem extends JPanel {
 		public void mouseDragged(MouseEvent e) {
 			if (connecting) {
 				Point pnt = new Point(e.getX() + instance.getX(), e.getY() + instance.getY());
-				Component component = diagram.getComponentAt(pnt);
+				Component component = diagram.getPnlDiagramItems().getComponentAt(pnt);
 				if (component != instance 
 						&& component != null 
 						&& component instanceof CustomDiagramItem) {

@@ -41,26 +41,29 @@ public class FileVideoStreamer extends VideoStreamer {
 					System.out.println("Error");
 				} else {
 					while (!getStreamThread().isInterrupted()) {
-						if (getCamera().read(frame)) {
-							if(getBoolVal("size_change")) {
-								int width=getIntVal("size_width");
-								int height=getIntVal("size_height");
-								Imgproc.resize(frame, frame, new Size(width,height));
-							}
-							try {
-								sendMat(frame);
-								registerFrameForFPSCalculation();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else {
-							if(getBoolVal("endless")) {
-								stop();
-								start();
+						try {
+							if (getCamera().read(frame)) {
+								if(getBoolVal("size_change")) {
+									int width=getIntVal("size_width");
+									int height=getIntVal("size_height");
+									Imgproc.resize(frame, frame, new Size(width,height));
+								}
+								try {
+									sendMat(frame);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}else {
+								if(getBoolVal("endless")) {
+									stop();
+									start();
+									break;
+								}
+								System.out.println("Camera not available");
 								break;
 							}
-							System.out.println("Camera not available");
-							break;
+						}catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}

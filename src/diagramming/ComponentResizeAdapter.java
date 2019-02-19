@@ -39,6 +39,7 @@ public class ComponentResizeAdapter extends MouseAdapter implements SwingConstan
 	public void mousePressed(MouseEvent e) {
 		if (checkIfRightButton.apply(e)) {
 			resizing = true;
+			component.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
 		}
 		prevX = e.getXOnScreen();
 		prevY = e.getYOnScreen();
@@ -101,13 +102,16 @@ public class ComponentResizeAdapter extends MouseAdapter implements SwingConstan
 				prevX = e.getXOnScreen();
 				prevY = e.getYOnScreen();
 				
-				c.getParent().setVisible(false);
-				c.getParent().setVisible(true);
+				EventQueue.invokeLater(()->{
+					c.getParent().revalidate();
+					c.getParent().repaint();
+				});
 			}
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		resizing = false;
+		component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }

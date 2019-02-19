@@ -37,6 +37,7 @@ public class ComponentDragAdapter extends MouseAdapter implements SwingConstants
 	public void mousePressed(MouseEvent e) {
 		if (checkIfRightButton.apply(e)) {
 			dragging = true;
+			component.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 		}
 		prevX = e.getXOnScreen();
 		prevY = e.getYOnScreen();
@@ -62,13 +63,16 @@ public class ComponentDragAdapter extends MouseAdapter implements SwingConstants
 				prevX = e.getXOnScreen();
 				prevY = e.getYOnScreen();
 				
-				c.getParent().setVisible(false);
-				c.getParent().setVisible(true);
+				EventQueue.invokeLater(()->{
+					c.getParent().revalidate();
+					c.getParent().repaint();
+				});
 			}
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		dragging = false;
+		component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }

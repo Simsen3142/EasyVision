@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ItemEvent;
@@ -28,7 +29,9 @@ public class MatPanel extends JPanel {
 	protected transient BufferedImage image;
 	protected transient Mat mat;
 	protected boolean showFps=false;
-	protected long fps;
+	protected transient long fps;
+	private transient long timeLastFrame=0;
+
 	
 	/**
 	 * @return the mat
@@ -46,14 +49,10 @@ public class MatPanel extends JPanel {
 	
 	public void updateMat(Mat mat) {
 		setMat(mat);
-		setVisible(false);
-		setVisible(true);
-	}
-	
-	public void setShowFps(boolean show) {		
-		this.showFps=show;
-		setVisible(false);
-		setVisible(true);
+		EventQueue.invokeLater(()->{
+			revalidate();
+			repaint();
+		});
 	}
 	
 	/**
@@ -146,6 +145,36 @@ public class MatPanel extends JPanel {
 		frame.get(0, 0, data);
 
 		return image;
+	}
+	
+	protected void registerFrameForFPSCalculation() {
+		long now = System.currentTimeMillis();
+		try {
+			fps = 1000 / (now - timeLastFrame);
+		}catch (ArithmeticException e) {
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e1) {
+			}
+			return;
+		}
+		timeLastFrame = now;
+	}
+	
+	public long getFps() {
+		return fps;
+	}
+	
+	public void resetFps() {
+		fps=0;
+	}
+	
+	public void setShowFps(boolean show) {
+		this.showFps=show;
+		EventQueue.invokeLater(()->{
+			revalidate();
+			repaint();
+		});
 	}
 	
 	private static class ThisPopupMouseListener extends MouseAdapter {

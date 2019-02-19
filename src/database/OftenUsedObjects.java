@@ -4,8 +4,8 @@ import java.io.File;
 
 public enum OftenUsedObjects{
 		LIST_MATEDITFUNCTIONS("matEditFunctions",SerializedObjectsLocation.MATEDITFUNCTION), 
-		LIST_IP_CAMERA("ipCameraNames",SerializedObjectsLocation.CAMERA), 
-		MAIN_FUNCTION("mainFunction",SerializedObjectsLocation.SESSIONS);
+		LIST_CAMERA_RESOURCES("cameraResources",SerializedObjectsLocation.CAMERA), 
+		SESSION("session",SerializedObjectsLocation.SESSIONS);
 		
 		private File file;
 		
