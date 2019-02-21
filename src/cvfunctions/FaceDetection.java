@@ -19,6 +19,12 @@ public class FaceDetection extends MatEditFunction {
 	private int absoluteFaceSize=0;
 	private transient CascadeClassifier faceCascade;
 	
+	private CascadeClassifier getFaceCascade() {
+		if(faceCascade==null)
+			faceCascade=new CascadeClassifier();
+		return faceCascade;
+	}
+	
 	// public methods
 	// Haar
 	public Mat detectEyesHaar() {
@@ -33,37 +39,41 @@ public class FaceDetection extends MatEditFunction {
 		return startDetection("opencv/build/etc/haarcascades/haarcascade_eye.xml",frame);
 	}
 	
-	public Mat detectEyesWithGlassesHaar() {
-		return startDetection("EasyVision/EasyVision/opencv/build/etc/haarcascade/haarcascade_eye_tree_eyeglasses.xml");
+	public Mat detectEyesWithGlassesHaar(Mat frame) {
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_eye_tree_eyeglasses.xml",frame);
 	}
 	
-	public Mat detectFrontalFaceHaar() {
-		return startDetection("EasyVision/src/resources/haarcascade_frontalface_alt.xml");
+	public Mat detectFrontalFaceHaar(Mat frame) {
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_frontalface_alt.xml",frame);
+	}
+	
+	public Mat detectFrontalFaceLbp(Mat frame) {
+		return startDetection("opencv/build/etc/lbpcascades/lbpcascade_frontalface_improved.xml",frame);
 	}
 	
 	public Mat detectFullBodyHaar() {
-		return startDetection("EasyVision/src/resources/haarcascade_fullbody.xml");
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_fullbody.xml");
 	}
 	
 	public Mat detectUpperBodyHaar() {
-		return startDetection("EasyVision/src/resources/haarcascade_upperbody.xml");
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_upperbody.xml");
 	}
 	
-	public Mat detectSmilingFaceHaar() {
-		return startDetection("EasyVision/src/resources/haarcascade_smile.xml");
+	public Mat detectSmilingFaceHaar(Mat frame) {
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_smile.xml",frame);
 	}
 	
 	public Mat detectProfileFaceHaar() {
-		return startDetection("EasyVision/src/resources/haarcascade_profileface.xml");
+		return startDetection("opencv/build/etc/haarcascades/haarcascade_profileface.xml");
 	}
 	
 	// LBP
 	public Mat detectFrontalFaceLBP() {
-		return startDetection("EasyVision/src/resources/lbpcascade_frontalface_improved.xml");
+		return startDetection("opencv/build/etc/haarcascades/lbpcascade_frontalface_improved.xml");
 	}
 	 
 	public Mat detectProfileFaceLBP() {
-		return startDetection("EasyVision/src/resource/lbpcascade_profileface.xml");
+		return startDetection("src/resource/lbpcascade_profileface.xml");
 	}
 	
 	//private methods
@@ -84,10 +94,7 @@ public class FaceDetection extends MatEditFunction {
 	}
 	    
 	private void loadClassifier(String classifierPath) {
-		System.out.println(classifierPath);
-		System.out.println(new File(classifierPath).exists());
-        faceCascade.load(classifierPath);
-        System.out.println(faceCascade.empty());
+        getFaceCascade().load(classifierPath);
 	}
 	
 	private void detectAndDisplay(Mat frame)
@@ -125,7 +132,7 @@ public class FaceDetection extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout = detectEyesHaar(matIn.clone());
+		Mat matout = detectFrontalFaceLbp(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}
