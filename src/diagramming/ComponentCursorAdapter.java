@@ -38,7 +38,12 @@ public class ComponentCursorAdapter extends MouseAdapter {
 	}
 	
 	private Action actionSetHand = new AbstractAction() {
-	    @Override
+	    /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1753221L;
+
+		@Override
 	    public void actionPerformed(ActionEvent ae) {
 	    	if(!cursor){
 	    		cursor=true;
@@ -51,7 +56,12 @@ public class ComponentCursorAdapter extends MouseAdapter {
 	};
 	
 	private Action actionSetDefault = new AbstractAction() {
-	    @Override
+	    /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1632126L;
+
+		@Override
 	    public void actionPerformed(ActionEvent ae) {
 	    	if(cursor){
 		    	cursor=false;

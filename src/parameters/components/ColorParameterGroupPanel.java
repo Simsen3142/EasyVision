@@ -11,10 +11,13 @@ import components.EditableLabel;
 import net.miginfocom.swing.MigLayout;
 import parameters.NumberParameter;
 import parameters.group.ColorParameterGroup;
-import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
 public class ColorParameterGroupPanel extends JPanel implements IParameterGroupPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5918594102245381920L;
 	private List<ParameterNumberSliderPanel> parameterNumberSliderPanel_values=new ArrayList<>();
 	private ColorParameterGroup cParamGroup;
 	private EditableLabel label;

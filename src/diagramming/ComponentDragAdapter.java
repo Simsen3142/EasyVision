@@ -49,9 +49,6 @@ public class ComponentDragAdapter extends MouseAdapter implements SwingConstants
 			Component c = component;
 			Rectangle rect = c.getBounds();
 
-			Dimension dim;
-			dim = c.getPreferredSize();
-
 			// Checking for minimal width and height
 			int xInc = e.getXOnScreen() - prevX;
 			int yInc = e.getYOnScreen() - prevY;

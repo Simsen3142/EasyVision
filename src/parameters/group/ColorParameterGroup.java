@@ -4,13 +4,15 @@ import java.awt.Color;
 
 import javax.swing.JComponent;
 
-import parameters.DoubleParameter;
 import parameters.NumberParameter;
-import parameters.Parameter;
-import parameters.ParameterObject;
 import parameters.components.ColorParameterGroupPanel;
 
 public class ColorParameterGroup extends ParameterGroup {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -216641001692023432L;
+
 	public enum ColorType{
 		RGB, BGR, HSV
 	}

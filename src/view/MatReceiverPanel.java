@@ -7,6 +7,10 @@ import main.MatSender;
 
 public class MatReceiverPanel extends MatPanel implements MatReceiver {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -153725482784880394L;
 	private transient MatSender sender;
 	
 	/**

@@ -1,16 +1,16 @@
-package cvfunctions;
-
-import java.util.LinkedList;
-import java.util.List;
+package functions.matedit;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.imgproc.CLAHE;
 import org.opencv.imgproc.Imgproc;
 
 public class ContrastIncreasing extends MatEditFunction{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 704246551123112612L;
 	@Override
 	public Mat apply(Mat matIn) {
 		Mat ret=new Mat();

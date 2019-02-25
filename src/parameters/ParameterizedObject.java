@@ -2,21 +2,29 @@ package parameters;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import main.ParameterReceiver;
 import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
 
-public class ParameterizedObject implements Serializable{
+public class ParameterizedObject implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 681876050920298547L;
 	protected Set<ParameterGroup> paramGroups=new LinkedHashSet<ParameterGroup>();
 	protected Map<String,Parameter<?>> parameters=new HashMap<String,Parameter<?>>();
 	protected Map<String,ParameterObject> allParameters=new LinkedHashMap<String,ParameterObject>();
+	private List<ParameterReceiver> paramReceivers=new ArrayList<>();
 	
 	public ParameterizedObject(ParameterObject...parameters) {
 		addParameters(parameters);
@@ -37,6 +45,33 @@ public class ParameterizedObject implements Serializable{
 				paramGroups.add(pg);
 				addParameters(pg.getParameters());
 			}
+		}
+	}
+	
+	public void addParameterReceiver(ParameterReceiver rcvr) {
+		if(!paramReceivers.contains(rcvr))
+			paramReceivers.add(rcvr);
+	}
+	
+	/**
+	 * @return the paramReceivers
+	 */
+	public List<ParameterReceiver> getParamReceivers() {
+		return paramReceivers;
+	}
+
+	public void removeParamterReceiver(ParameterReceiver rcvr) {
+		paramReceivers.remove(rcvr);
+	}
+	
+	public void clearParameterReceivers() {
+		paramReceivers.clear();
+	}
+	
+	public void sendParameters() {
+		for(ParameterReceiver rcvr:paramReceivers) {
+			if(rcvr!=null)
+				rcvr.onParameterReceived(allParameters);
 		}
 	}
 	

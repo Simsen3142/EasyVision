@@ -1,25 +1,22 @@
-package cvfunctions;
+package functions.matedit;
 
 import java.io.File;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
-
-import main.MatReceiver;
-import main.MatSender;
 import parameters.BooleanParameter;
-import parameters.DoubleParameter;
 import parameters.FileParameter;
 import parameters.IntegerParameter;
-import parameters.ParameterizedObject;
 import parameters.StringParameter;
 import parameters.group.ParameterGroup;
 
 public class VideoCreater extends MatEditFunction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1146389294639251120L;
 	private transient VideoWriter writer;
 	private transient Size size;
 	

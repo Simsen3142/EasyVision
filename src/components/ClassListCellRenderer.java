@@ -4,9 +4,7 @@ import java.awt.Component;
 
 import javax.swing.*;
 
-import cvfunctions.MatEditFunction;
-
-public class MatEditFunctionClassListCellRenderer extends DefaultListCellRenderer {
+public class ClassListCellRenderer extends DefaultListCellRenderer {
 	/**
 	 * 
 	 */
@@ -22,10 +20,9 @@ public class MatEditFunctionClassListCellRenderer extends DefaultListCellRendere
 		// want here
 
 		// I'm going to prefix the label text to demonstrate the point
-		Class c=(Class<? extends MatEditFunction>)value;
+		Class<?> c=(Class<?>)value;
 		label.setText(c.getSimpleName());
 
 		return label;
-
 	}
 }

@@ -1,14 +1,8 @@
 package parameters.components;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import components.EditableDoubleLabel;
 import components.EditableLabel;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import parameters.*;
@@ -17,10 +11,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.function.Function;
 
-import javax.swing.border.MatteBorder;
-import javax.swing.BoxLayout;
-
 public class ParameterBooleanCheckboxPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1113056612697281442L;
 	private BooleanParameter parameter;
 	private JCheckBox checkBox;
 	private ParameterBooleanCheckboxPanel pnl=this;

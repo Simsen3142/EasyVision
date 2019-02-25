@@ -1,32 +1,20 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.util.Collection;
-import java.util.Map;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import org.opencv.core.Mat;
-
-import cvfunctions.MatEditFunction;
-import parameters.NumberParameter;
-import parameters.Parameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
-import parameters.group.ColorParameterGroup;
-import parameters.group.ParameterGroup;
-
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 
 public class ParameterChangeDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -310369601254850054L;
 	private JPanel contentPane;
 	private JScrollPane scrollPane;
 	private JPanel pnl_paramChange;

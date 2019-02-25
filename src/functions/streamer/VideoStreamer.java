@@ -1,13 +1,10 @@
-package recording;
+package functions.streamer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
-
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -19,6 +16,10 @@ import parameters.IntegerParameter;
 import parameters.group.ParameterGroup;
 
 public class VideoStreamer extends MatSender {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -691043732851439207L;
 	private transient Thread streamThread;
 	private transient VideoCapture camera;
 	private Object resource;
@@ -155,6 +156,7 @@ public class VideoStreamer extends MatSender {
 								}
 								try {
 									sendMat(frame);
+									sendParameters();
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

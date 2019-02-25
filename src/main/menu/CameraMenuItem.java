@@ -3,14 +3,16 @@ package main.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import main.MainFrame;
-import recording.VideoStreamer;
+import functions.streamer.VideoStreamer;
 import view.MatReceiverPanel;
-import view.MatPanel;
 import view.PanelFrame;
 
 public class CameraMenuItem extends MenuItemItemClickable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3276123389234593879L;
 	private static CameraMenuItemActionListener cmnitmal=new CameraMenuItemActionListener();
 
 

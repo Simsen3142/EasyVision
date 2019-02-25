@@ -13,6 +13,10 @@ import java.awt.Color;
 import javax.swing.border.EmptyBorder;
 
 public class ParameterGroupPanel extends JPanel implements IParameterGroupPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 263740774905185369L;
 	private EditableLabel editableLabel;
 	private ParameterGroup parameterGroup;
 

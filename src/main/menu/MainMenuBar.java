@@ -1,23 +1,19 @@
 package main.menu;
 
-import java.awt.Component;
-import java.awt.MenuBar;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-
 import external.JScrollMenu;
+import functions.streamer.VideoStreamer;
 import main.MainFrame;
-import recording.VideoStreamer;
 
 public class MainMenuBar extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -375968247365462419L;
 	private JMenuBar mnBar;
 	private JMenu mnView;
 	private JMenu mnSettings;

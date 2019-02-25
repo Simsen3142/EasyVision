@@ -4,11 +4,13 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
 
-import java.awt.Dimension;
-
 import javax.swing.JButton;
 
 public class SettingsPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1762834118793905761L;
 	private JLabel lblSettings;
 	private JButton btnCamera;
 	private JButton btnMateditfunctions;

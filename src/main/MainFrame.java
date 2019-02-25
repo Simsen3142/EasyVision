@@ -12,24 +12,19 @@ import javax.swing.UIDefaults;
 import org.opencv.core.Core;
 import org.reflections.Reflections;
 
-import cvfunctions.LineDetection_x;
-import cvfunctions.MatEditFunction;
 import database.OftenUsedObjects;
 import database.Serializing;
 import diagramming.DiagramPanel;
+import functions.matedit.MatEditFunction;
+import functions.streamer.FileVideoStreamer;
+import functions.streamer.VideoStreamer;
 import main.menu.MainMenuBar;
-import recording.FileVideoStreamer;
-import recording.VideoStreamer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import view.MatReceiverPanel;
-import view.MatEditFunctionMatsPanel;
-import view.PanelFrame;
 
 import javax.swing.UIManager;
 import javax.swing.JMenuBar;
@@ -38,6 +33,10 @@ import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private transient JPanel contentPane;
 	private JPanel mainPanel;
 	private static Set<Object> knownCameraResources;
@@ -47,6 +46,7 @@ public class MainFrame extends JFrame implements Serializable {
 	private static MainFrame instance;
 	private static List<VideoStreamer> streamers = Collections.synchronizedList(new ArrayList<>());
 	private static Set<Class<? extends MatEditFunction>> matEditFunctionClasses;
+	private static Set<Class<? extends ParameterReceiver>> parameterReceiverClasses;
 	private static DiagramPanel diagramPanel;
 
 	/**
@@ -64,7 +64,7 @@ public class MainFrame extends JFrame implements Serializable {
 		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
 		System.load(System.getProperty("user.dir") + "/opencv/build/x64/vc15/bin/opencv_ffmpeg341_64.dll");
 
-		initMatEditFunctionClasses();
+		initReflectionClasses();
 		initPreSetValues();
 
 //		for (int i = 0; true; i++) {
@@ -86,12 +86,12 @@ public class MainFrame extends JFrame implements Serializable {
         FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
         streamers.add(videoStreamer_video);
 
+		
 		diagramPanel = new DiagramPanel();
 		instance.setContentPanel(diagramPanel);
 		
 		loadValues();
-		
-		diagramPanel.reloadStreamerList();
+
 	}
 
 	/**
@@ -99,8 +99,17 @@ public class MainFrame extends JFrame implements Serializable {
 	 */
 	public static Set<Class<? extends MatEditFunction>> getMatEditFunctionClasses() {
 		if (matEditFunctionClasses == null)
-			initMatEditFunctionClasses();
+			initReflectionClasses();
 		return matEditFunctionClasses;
+	}
+	
+	/**
+	 * @return the matEditFunctionClasses
+	 */
+	public static Set<Class<? extends ParameterReceiver>> getParameterReceiverClasses() {
+		if (parameterReceiverClasses == null)
+			initReflectionClasses();
+		return parameterReceiverClasses;
 	}
 
 	/**
@@ -110,9 +119,10 @@ public class MainFrame extends JFrame implements Serializable {
 		return streamers;
 	}
 
-	private static void initMatEditFunctionClasses() {
+	private static void initReflectionClasses() {
 		Reflections reflections = new Reflections();
 		matEditFunctionClasses = reflections.getSubTypesOf(MatEditFunction.class);
+		parameterReceiverClasses = reflections.getSubTypesOf(ParameterReceiver.class);
 	}
 
 	/**
@@ -194,6 +204,7 @@ public class MainFrame extends JFrame implements Serializable {
 		try {
 			diagramPanel.load(OftenUsedObjects.SESSION.getFile());
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -219,6 +230,11 @@ public class MainFrame extends JFrame implements Serializable {
 	}
 
 	private static class ThisWindowListener extends WindowAdapter implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void windowClosing(WindowEvent e) {
 			System.out.println("SAVING...");

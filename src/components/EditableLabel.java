@@ -12,6 +12,10 @@ import java.util.function.Function;
 
 public class EditableLabel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1425623L;
 	private boolean editable=false;
 	protected JLabel label;
 	protected JTextField textField;

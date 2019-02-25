@@ -5,6 +5,10 @@ import javax.swing.JComponent;
 import parameters.components.ParameterStringPanel;
 
 public class StringParameter extends Parameter<String> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4317877776096000993L;
 	private int maxLength=-1;
 	private int minLength=-1;
 	
@@ -40,6 +44,10 @@ public class StringParameter extends Parameter<String> {
 		super(name, value);
 	}
 	
+	public StringParameter(String name, String value, boolean editable) {
+		super(name, value, editable);
+	}
+	
 	public StringParameter(String name, String value, int minLength, int maxLength) {
 		super(name, value.substring(0, maxLength));
 		this.maxLength=maxLength;
@@ -47,7 +55,7 @@ public class StringParameter extends Parameter<String> {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JComponent getEditComponent() {
 		return new ParameterStringPanel(this);
 	}
 }

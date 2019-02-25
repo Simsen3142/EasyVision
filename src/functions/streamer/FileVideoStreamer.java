@@ -1,22 +1,17 @@
-package recording;
+package functions.streamer;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;
-
 import parameters.BooleanParameter;
-import parameters.IntegerParameter;
-import parameters.group.ParameterGroup;
 
 public class FileVideoStreamer extends VideoStreamer {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4240705333246586616L;
 
 	public FileVideoStreamer(File file) {
 		super(file.getAbsolutePath());
@@ -50,6 +45,7 @@ public class FileVideoStreamer extends VideoStreamer {
 								}
 								try {
 									sendMat(frame);
+									sendParameters();
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

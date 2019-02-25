@@ -7,6 +7,10 @@ import javax.swing.JComponent;
 import parameters.group.ParameterGroup;
 
 public abstract class ParameterObject implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1001197668755353585L;
 	protected String name;
 	protected ParameterGroup paramGroup=null;
 

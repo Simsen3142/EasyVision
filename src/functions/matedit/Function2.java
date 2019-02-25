@@ -1,8 +1,13 @@
-package cvfunctions;
+package functions.matedit;
 
 import org.opencv.core.Mat;
 
 public class Function2 extends MatEditFunction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6097760758289850019L;
 
 	@Override
 	protected Mat apply(Mat matIn) {

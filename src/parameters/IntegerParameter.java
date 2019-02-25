@@ -6,8 +6,17 @@ import parameters.components.ParameterNumberSliderPanel;
 
 public class IntegerParameter extends NumberParameter<Integer> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3015981151052692898L;
+
 	public IntegerParameter(String name, int value) {
 		super(name, value);
+	}
+	
+	public IntegerParameter(String name, int value, boolean editable) {
+		super(name, value, editable);
 	}
 	
 	public IntegerParameter(String name, int value, int min, int max) {
@@ -15,7 +24,7 @@ public class IntegerParameter extends NumberParameter<Integer> {
 	}
 	
 	@Override
-	public JComponent getComponent() {
+	public JComponent getEditComponent() {
 		return new ParameterNumberSliderPanel(this);
 	}	
 }
