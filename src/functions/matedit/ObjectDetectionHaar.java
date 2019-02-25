@@ -101,7 +101,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout = detectEyesHaar(matIn.clone());
+		Mat matout = detectProfileFaceHaar(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}
