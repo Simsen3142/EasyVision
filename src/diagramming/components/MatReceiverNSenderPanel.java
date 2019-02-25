@@ -94,10 +94,12 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 				matReceiverPanel = new MatReceiverPanel(function);
 				add(matReceiverPanel, BorderLayout.CENTER);
 				matReceiverPanel.repaint();
+				hideLabel(true);
 			} else {
 				function.removeMatReceiver(matReceiverPanel);
 				remove(matReceiverPanel);
 				matReceiverPanel = null;
+				hideLabel(false);
 			}
 			repaint();
 		}
