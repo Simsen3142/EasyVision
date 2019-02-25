@@ -1,18 +1,22 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.opencv.core.Mat;
 
-import cvfunctions.MatEditFunction;
+import functions.matedit.MatEditFunction;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
 public class MatSender extends ParameterizedObject {
-	private List<MatReceiver> receivers=new ArrayList<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2517783983705667237L;
+	private List<MatReceiver> receivers=Collections.synchronizedList(new ArrayList<>());
 	private List<MatMapReceiver> receivers_map=new ArrayList<>();
 	
 	/**
@@ -42,7 +46,7 @@ public class MatSender extends ParameterizedObject {
 	public void setReceivers_map(List<MatMapReceiver> receivers_map) {
 		this.receivers_map = receivers_map;
 	}
-
+	
 	public void addMatReceiver(MatReceiver rcvr) {
 		if(!receivers.contains(rcvr))
 			receivers.add(rcvr);
@@ -77,10 +81,16 @@ public class MatSender extends ParameterizedObject {
 			receivers_map.add(rcvr);
 	}
 	
+	public void removeMatMapReceiver(MatMapReceiver rcvr) {
+		receivers_map.remove(rcvr);
+	}
+	
+	
 	protected void sendMat(Mat mat) {
 		List<MatReceiver> list=new ArrayList<MatReceiver>(receivers);
 		for(MatReceiver receiver:list) {
-			receiver.onReceive(mat, this);
+			if(receiver!=null)
+				receiver.onReceive(mat, this);
 		}
 	}
 	

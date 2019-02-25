@@ -2,11 +2,18 @@ package parameters;
 
 import java.util.function.Function;
 
-import parameters.group.ParameterGroup;
+import javax.swing.JComponent;
+
+import parameters.components.ParameterNoneditablePanel;
 
 public abstract class Parameter<type> extends ParameterObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6348280596086762694L;
 	protected type value;
 	protected Function<type, Void> onChange;
+	protected boolean editable=true;
 	
 	public Parameter<type> setOnChange(Function<type, Void> onChange) {
 		this.onChange=onChange;
@@ -17,6 +24,20 @@ public abstract class Parameter<type> extends ParameterObject{
 		onChange=null;
 	}
 	
+	/**
+	 * @return the editable
+	 */
+	public boolean isEditable() {
+		return editable;
+	}
+
+	/**
+	 * @param editable the editable to set
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+
 	/**
 	 * @return the value
 	 */
@@ -32,6 +53,18 @@ public abstract class Parameter<type> extends ParameterObject{
 		if(onChange!=null)
 			onChange.apply(value);
 	}
+	
+	/**
+	 * @param name
+	 * @param value
+	 * @param type
+	 * @param editable
+	 */
+	public Parameter(String name, type value, boolean editable) {
+		this.name = name;
+		this.value = value;
+		this.editable=editable;
+	}
 
 	/**
 	 * @param name
@@ -42,6 +75,19 @@ public abstract class Parameter<type> extends ParameterObject{
 		this.name = name;
 		this.value = value;
 	}
+	
+	@Override
+	public final JComponent getComponent() {
+		if(editable) {
+			return getEditComponent();
+		}else {
+			return new ParameterNoneditablePanel(this);
+		}
+	}
+	
+	protected abstract JComponent getEditComponent();
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -59,7 +105,7 @@ public abstract class Parameter<type> extends ParameterObject{
 			return false;
 		if (!(obj instanceof Parameter))
 			return false;
-		Parameter other = (Parameter) obj;
+		Parameter<?> other = (Parameter<?>) obj;
 		if (getFullName() == null) {
 			if (other.getFullName() != null)
 				return false;

@@ -1,9 +1,7 @@
-package cvfunctions;
+package functions.matedit;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.opencv.core.Mat;
@@ -83,8 +81,6 @@ public class ImageAnalysis {
 	public static Point[] getPixelCoordsInsidePolygon(Point... points) {
 		Rect rect = getRectangle(points);
 		List<Point> ret=new ArrayList<Point>();
-		int i=0;
-
         for (int x = rect.x; x <= rect.x + rect.width; x++) {
             for (int y = rect.y; y <= rect.y + rect.height; y++) {
                 if (inPoly(x, y, points))

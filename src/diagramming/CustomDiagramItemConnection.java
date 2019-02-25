@@ -23,9 +23,13 @@ import java.awt.event.KeyEvent;
 
 public class CustomDiagramItemConnection extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2444362256939007590L;
 	private boolean selected = false;
-	private DiagramConnector from;
-	private DiagramConnector to;
+	private DiagramOutput from;
+	private DiagramInput to;
 	private Point pnt1;
 	private Point pnt2;
 	private AffineTransform tx = new AffineTransform();
@@ -37,15 +41,29 @@ public class CustomDiagramItemConnection extends JPanel {
 	/**
 	 * @return the from
 	 */
-	public DiagramConnector getFrom() {
+	public DiagramOutput getFrom() {
 		return from;
 	}
 
 	/**
 	 * @return the to
 	 */
-	public DiagramConnector getTo() {
+	public DiagramInput getTo() {
 		return to;
+	}
+	
+	/**
+	 * @param from the from to set
+	 */
+	public void setFrom(DiagramOutput from) {
+		this.from = from;
+	}
+
+	/**
+	 * @param to the to to set
+	 */
+	public void setTo(DiagramInput to) {
+		this.to = to;
 	}
 
 	/**
@@ -96,7 +114,7 @@ public class CustomDiagramItemConnection extends JPanel {
 		int dx = pnt2.x - pnt1.x;
 		int dy = pnt2.y - pnt1.y;
 
-		g2.setColor(selected ? Color.GREEN : Color.BLACK);
+		g2.setColor(selected ? Color.GREEN : getForeground());
 
 		lines.clear();
 		if (dx > 0) {

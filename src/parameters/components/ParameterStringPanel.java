@@ -1,26 +1,18 @@
 package parameters.components;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import components.EditableDoubleLabel;
 import components.EditableLabel;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import parameters.*;
 import java.awt.Color;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.function.Function;
 
-import javax.swing.border.MatteBorder;
-import javax.swing.BoxLayout;
-
 public class ParameterStringPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2441609677004898265L;
 	private StringParameter parameter;
 	private ParameterStringPanel pnl=this;
 	private EditableLabel lblTitle;

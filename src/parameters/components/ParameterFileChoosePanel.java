@@ -1,14 +1,8 @@
 package parameters.components;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import components.EditableDoubleLabel;
 import components.EditableLabel;
 import external.FileDrop;
 
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,17 +11,17 @@ import parameters.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
-import javax.swing.border.MatteBorder;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 public class ParameterFileChoosePanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4985687151113362113L;
 	private FileParameter parameter;
 	private ParameterFileChoosePanel pnl=this;
 	private EditableLabel lblTitle;

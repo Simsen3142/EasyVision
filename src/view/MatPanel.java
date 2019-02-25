@@ -13,8 +13,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBufferByte;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
-import java.util.Map;
-
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -22,17 +20,18 @@ import javax.swing.JPopupMenu;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
-import cvfunctions.MatEditFunction;
-
 public class MatPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6760954242564269736L;
 	protected transient BufferedImage image;
 	protected transient Mat mat;
 	protected boolean showFps=false;
 	protected transient long fps;
 	private transient long timeLastFrame=0;
 
-	
 	/**
 	 * @return the mat
 	 */

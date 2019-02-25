@@ -1,4 +1,4 @@
-package cvfunctions;
+package functions.matedit;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -7,6 +7,10 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class DoCanny extends MatEditFunction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3937043096717142438L;
 	public boolean withColor = true;
 
 	public DoCanny() {

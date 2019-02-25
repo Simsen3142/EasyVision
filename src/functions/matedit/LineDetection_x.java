@@ -1,20 +1,21 @@
-package cvfunctions;
+package functions.matedit;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.*;
 import org.opencv.imgproc.*;
 
-import main.MainFrame;
 import parameters.*;
 import parameters.group.*;
 import parameters.group.ColorParameterGroup.ColorType;
 
 public class LineDetection_x extends MatEditFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3484600867520927562L;
 	private int width;
 	private int height;
 
@@ -77,18 +78,20 @@ public class LineDetection_x extends MatEditFunction {
 			sqrDetected = false;
 		}
 
+		String turnOutput="";
 		if (sqrDetected) {
 			boolean bs[] = processSquare(bestSqr, line);
 
-			String output = "TURN ";
+			turnOutput = "TURN ";
 			if (bs[2]) {
-				output += "RIGHT";
+				turnOutput += "RIGHT";
 			}
 			if (bs[3]) {
-				output += "LEFT";
+				turnOutput += "LEFT";
 			}
-			Imgproc.putText(matOut, output, new Point(15, 15), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
+			Imgproc.putText(matOut, turnOutput, new Point(15, 15), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
 		}
+		((StringParameter)getParameter("output_turn")).setValue(turnOutput);
 
 		if (!sqrDetected) {
 			crossingDetected = checkIfCrossing(line, matOut);
@@ -137,6 +140,9 @@ public class LineDetection_x extends MatEditFunction {
 			Imgproc.putText(matOut, angle + "deg", new Point(biggestRect.center.x, biggestRect.center.y + 15),
 					Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
 		}
+		
+		((IntegerParameter)getParameter("output_error")).setValue(error);;
+		((IntegerParameter)getParameter("output_angle")).setValue(angle);;
 
 		return matOut;
 	}
@@ -152,8 +158,14 @@ public class LineDetection_x extends MatEditFunction {
 								new DoubleParameter("s", 39, 0, 255), new DoubleParameter("v", 43, 0, 255)),
 						new ColorParameterGroup("max", ColorType.HSV, new DoubleParameter("h", 95, 0, 255),
 								new DoubleParameter("s", 255, 0, 255), new DoubleParameter("v", 204, 0, 255))),
-				new ParameterGroup("noise", new IntegerParameter("erosion", 2, 0, 100),
-						new IntegerParameter("dilation", 3, 0, 100)));
+				new ParameterGroup("noise", 
+						new IntegerParameter("erosion", 2, 0, 100),
+						new IntegerParameter("dilation", 3, 0, 100)),
+				new ParameterGroup("output", 
+						new IntegerParameter("error",0,false),
+						new IntegerParameter("angle",0,false),
+						new StringParameter("turn","",false))
+		);
 	}
 
 	private void removeNoiseLine(Mat line) {

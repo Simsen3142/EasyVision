@@ -1,6 +1,10 @@
 package components;
 
 public class EditableIntLabel extends EditableLabel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 131337L;
 
 	public EditableIntLabel(String text) {
 		super(text);

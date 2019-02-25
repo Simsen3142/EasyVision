@@ -1,15 +1,16 @@
 package parameters.group;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.swing.JComponent;
 
-import parameters.Parameter;
 import parameters.ParameterObject;
 import parameters.components.ParameterGroupPanel;
 
 public class ParameterGroup extends ParameterObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6564124792720190242L;
 	protected ArrayList<ParameterObject> parameters=new ArrayList<>();
 
 	/**

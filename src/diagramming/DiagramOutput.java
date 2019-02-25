@@ -1,7 +1,6 @@
 package diagramming;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.function.Function;
 
 public class DiagramOutput extends DiagramConnector {

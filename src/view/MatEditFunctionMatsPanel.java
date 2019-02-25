@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.EventQueue;
 import java.util.Map;
 
 import org.opencv.core.Mat;
@@ -10,6 +9,10 @@ import main.MatSender;
 
 public class MatEditFunctionMatsPanel extends MatPanel  implements MatMapReceiver{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3012054025458248580L;
 	private String matName;
 
 	public MatEditFunctionMatsPanel(MatSender sender, String matName) {

@@ -1,22 +1,20 @@
 package parameters.components;
 
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import components.EditableDoubleLabel;
 import components.EditableLabel;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import parameters.*;
 import java.awt.Color;
 import java.util.function.Function;
 
-import javax.swing.border.MatteBorder;
-
 public class ParameterNumberSliderPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private NumberParameter<?> parameter;
 	private LabeledSlider slider;
 	private ParameterNumberSliderPanel pnl=this;
@@ -27,6 +25,11 @@ public class ParameterNumberSliderPanel extends JPanel {
 	private Function<Void,Void> onSetValue;
 	
 	public class LabeledSlider extends JSlider{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public LabeledSlider() {
 			super();
 		}

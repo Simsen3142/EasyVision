@@ -1,21 +1,19 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.function.Function;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import org.opencv.core.Mat;
 
 public class PanelFrame extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private Function<Void, Void> onWindowClosing;
 
@@ -41,6 +39,11 @@ public class PanelFrame extends JFrame {
 	}
 	
 	private class ThisWindowListener extends WindowAdapter implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void windowClosing(WindowEvent e) {
 			if(onWindowClosing!=null) {

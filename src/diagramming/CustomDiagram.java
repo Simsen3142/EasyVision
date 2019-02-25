@@ -4,9 +4,6 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import view.PanelFrame;
-
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Point;
@@ -21,13 +18,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 
-import java.awt.GridBagConstraints;
-
 public class CustomDiagram extends JLayeredPane {
+	private static final long serialVersionUID = 1819079186185325112L;
 	private List<CustomDiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
 	private transient DiagramDragListener dragListener;
 	private transient CustomDiagram instance = this;
@@ -35,6 +29,13 @@ public class CustomDiagram extends JLayeredPane {
 	private JPanel pnlDiagramItems;
 	private JPanel pnlConnections;
 	
+	/**
+	 * @return the listenerTrigger
+	 */
+	public CustomDiagramListenerTrigger getListenerTrigger() {
+		return listenerTrigger;
+	}
+
 	/**
 	 * @return the pnlDiagramItems
 	 */
@@ -102,7 +103,9 @@ public class CustomDiagram extends JLayeredPane {
 //	}
 
 	public void addDiagramItem(JComponent component, Point position) {
-		this.addDiagramItem(new CustomDiagramItem(component, this), position);
+		CustomDiagramItem diagramItem=new CustomDiagramItem(component, this);
+		this.addDiagramItem(diagramItem, position);
+		listenerTrigger.triggerOnDiagramItemCreated(diagramItem);
 	}
 
 	public void addDiagramItem(CustomDiagramItem item, Point position) {
@@ -124,6 +127,7 @@ public class CustomDiagram extends JLayeredPane {
 		Rectangle visibleRect=getVisibleRect();
 		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
 		pnlConnections.add(connection);
+		listenerTrigger.triggerOnConnectionCreated(connection);
 	}
 	
 	public void removeDiagramConnection(CustomDiagramItemConnection connection) {

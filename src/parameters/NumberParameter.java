@@ -1,11 +1,19 @@
 package parameters;
 
 public abstract class NumberParameter<type extends Number> extends Parameter<type> {
-	protected type minValue=(type)new Integer(0);
-	protected type maxValue=(type)new Integer(255);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3018954819751698666L;
+	protected type minValue=(type)new Integer(Short.MIN_VALUE);
+	protected type maxValue=(type)new Integer(Short.MAX_VALUE);
 	
 	public NumberParameter(String name, type value) {
 		super(name, value);
+	}
+	
+	public NumberParameter(String name, type value, boolean editable) {
+		super(name, value, editable);
 	}
 	
 	public NumberParameter(String name, type value, type min, type max) {
@@ -24,7 +32,7 @@ public abstract class NumberParameter<type extends Number> extends Parameter<typ
 	 * @param maxValue the maxValue to set
 	 */
 	public void setMaxValue(type maxValue) {
-		if(maxValue.doubleValue()>value.doubleValue())
+		if(maxValue.doubleValue()>=value.doubleValue())
 			this.maxValue = maxValue;
 	}
 
@@ -39,7 +47,7 @@ public abstract class NumberParameter<type extends Number> extends Parameter<typ
 	 * @param minValue the minValue to set
 	 */
 	public void setMinValue(type minValue) {
-		if(minValue.doubleValue()<value.doubleValue())
+		if(minValue.doubleValue()<=value.doubleValue())
 			this.minValue = minValue;
 	}
 	
@@ -51,9 +59,9 @@ public abstract class NumberParameter<type extends Number> extends Parameter<typ
 	@Override
 	public void setValue(Number value) {
 		if(minValue!=null && maxValue!=null) {
-			if(value.doubleValue()>maxValue.doubleValue()) {
+			if(value.doubleValue()>=maxValue.doubleValue()) {
 				value=maxValue;
-			}else if(value.doubleValue()<minValue.doubleValue()) {
+			}else if(value.doubleValue()<=minValue.doubleValue()) {
 				value=minValue;
 			}
 		}

@@ -1,19 +1,18 @@
-package cvfunctions;
+package functions.matedit;
 
-import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
-
 import org.opencv.core.Mat;
 
 import main.MatReceiver;
 import main.MatSender;
 import parameters.*;
-import parameters.group.ParameterGroup;
-import view.ParameterChangeDialog;
 
-public abstract class MatEditFunction extends MatSender implements MatReceiver, Serializable {
+public abstract class MatEditFunction extends MatSender implements MatReceiver {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7684474058713956295L;
 	private transient Map<String, Mat> mats=new HashMap<>();
 	private boolean send=true;
 	
@@ -51,6 +50,7 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 		if(send) {
 			sendMatMap(getMats());
 			sendMat(ret);
+			sendParameters();
 		}
 		
 		return ret;

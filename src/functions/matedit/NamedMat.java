@@ -1,4 +1,4 @@
-package cvfunctions;
+package functions.matedit;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Range;

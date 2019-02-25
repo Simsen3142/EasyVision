@@ -4,9 +4,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
-import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,17 +15,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.BorderLayout;
 
 public class CustomDiagramItem extends JPanel {
+	private static final long serialVersionUID = 5435912444464919228L;
 	private JComponent component;
 	private CustomDiagram diagram;
 	private ConnectingMouseMotionListener connectingListener;
@@ -42,7 +38,7 @@ public class CustomDiagramItem extends JPanel {
 	public JComponent getComponent() {
 		return component;
 	}
-
+	
 	public void setComponent(JComponent component) {
 		if (this.component != null) {
 			connectingListener.uninstall(this.component);
@@ -59,10 +55,18 @@ public class CustomDiagramItem extends JPanel {
 		}
 	}
 	
+	public DiagramConnector getConnector(String connectorName) {
+		return connectors.get(connectorName);
+	}
+	
+	public void addDiagramConnector(DiagramConnector connector) {
+		connectors.put(connector.getName(), connector);
+	}
+	
 	/**
 	 * @return the connectors
 	 */
-	public HashMap<String, DiagramConnector> getConnectors() {
+	private HashMap<String, DiagramConnector> getConnectors() {
 		return connectors;
 	}
 	
@@ -71,6 +75,28 @@ public class CustomDiagramItem extends JPanel {
 	 */
 	public DiagramOutput getSelectedOutput() {
 		return selectedOutput;
+	}
+	
+	public boolean setSelectedInput(String name) {
+		DiagramConnector con=connectors.get(name);
+		
+		if(con!=null && con instanceof DiagramInput) {
+			selectedInput=(DiagramInput)con;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean setSelectedOutput(String name) {
+		DiagramConnector con=connectors.get(name);
+		
+		if(con!=null && con instanceof DiagramOutput) {
+			selectedOutput=(DiagramOutput)con;
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -210,8 +236,8 @@ public class CustomDiagramItem extends JPanel {
 		selectedInput=input;
 		selectedOutput=output;
 		
-		connectors.put(input.getName(), input);
-		connectors.put(output.getName(), output);
+		addDiagramConnector(input);
+		addDiagramConnector(output);
 		
 		setBorder(Color.BLACK, 5);
 		setLayout(new BorderLayout(0, 0));
@@ -229,7 +255,6 @@ public class CustomDiagramItem extends JPanel {
 		ComponentCursorAdapter.install(component, KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK,
 				new Cursor(Cursor.HAND_CURSOR), new Cursor(Cursor.SE_RESIZE_CURSOR));
 
-		LineBorder b;
 		this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		this.setSize(100, 50);
@@ -335,7 +360,8 @@ public class CustomDiagramItem extends JPanel {
 						}
 						
 						CustomDiagramItem itemFound = (CustomDiagramItem) component;
-						if(!checkIfAlreadyConnectedTo(itemFound) && itemFound.selectedInput.isConnectionAllowed()) {
+						if(!checkIfAlreadyConnectedTo(itemFound) && itemFound.selectedInput.isConnectionAllowed() 
+								&& diagram.getListenerTrigger().triggerOnConnectionAvailable(instance, itemFound)) {
 							diagramItemFound=itemFound;
 							diagramItemFound.setBorder(Color.GREEN, 5);
 						}
