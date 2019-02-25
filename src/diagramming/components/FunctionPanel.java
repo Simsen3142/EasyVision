@@ -25,6 +25,10 @@ public class FunctionPanel<type> extends JButton {
 		
 	}
 	
+	public void hideLabel(boolean hide) {
+		lblName.setVisible(!hide);
+	}
+	
 	/**
 	 * @return the function
 	 */
