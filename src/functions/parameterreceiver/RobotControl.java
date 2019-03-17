@@ -17,5 +17,9 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		System.out.println(param1.getName()+"\t"+param1.getValue());
 		System.out.println(param2.getName()+"\t"+param2.getValue());
 		System.out.println(param3.getName()+"\t"+param3.getValue());
+		
+		// kreis! mittelpunkt
+		
+		// rechteck! 
 	}
 }

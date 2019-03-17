@@ -2,6 +2,8 @@ package functions.matedit;
 
 import java.io.File;
 
+import parameters.EnumParameter;
+import parameters.components.*;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -11,13 +13,33 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 
+import enums.LBPclassifiers;
+
 public class ObjectDetectionLBP extends MatEditFunction {
+
+	private static final long serialVersionUID = 136775703156348096L;
 	private int absoluteobjectsize=0;
 	private transient CascadeClassifier faceCascade;
 	
 	// Constructor
 	public ObjectDetectionLBP() {
+		super(
+			new EnumParameter("LBP-Classifier", LBPclassifiers.frontal_face)
+		);	
 		faceCascade=new CascadeClassifier();
+	}
+	
+	private Mat chooseClassifier(Mat clone) {
+		LBPclassifiers lbp = (LBPclassifiers) ParameterEnumPanel.getValue();
+		switch(lbp) {
+			case  frontal_face:
+				return detectFrontalFaceLBP(clone);
+			case profil_face:
+				return detectProfileFaceLBP(clone);
+			default:
+				System.out.println("There is no such param!");
+				return null;
+		}		
 	}
 	
 	// Public methods
@@ -81,7 +103,7 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout =  new Mat();//detectEyesHaar(matIn.clone());
+		Mat matout =  chooseClassifier(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}
