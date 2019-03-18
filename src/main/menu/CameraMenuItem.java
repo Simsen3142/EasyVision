@@ -29,11 +29,11 @@ public class CameraMenuItem extends MenuItemItemClickable{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			MenuItemItemClickable mnitm=(MenuItemItemClickable)arg0.getSource();
-			VideoStreamer vstreamer=new VideoStreamer(mnitm.getObject());
-			vstreamer=vstreamer.start();
-			MatReceiverPanel pnl=new MatReceiverPanel(vstreamer);
-			pnl.setShowFps(true);
-			new PanelFrame(pnl).setVisible(true);
+//			VideoStreamer vstreamer=new VideoStreamer(mnitm.getObject());
+//			vstreamer=vstreamer.start();
+//			MatReceiverPanel pnl=new MatReceiverPanel(vstreamer);
+//			pnl.setShowFps(true);
+//			new PanelFrame(pnl).setVisible(true);
 			
 		}
 	} 

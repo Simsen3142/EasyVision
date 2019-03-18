@@ -1,6 +1,6 @@
 package diagramming.components;
 
-import functions.streamer.VideoStreamer;
+import functions.streamer.MatStreamer;
 
 public class StreamerPanel extends MatReceiverNSenderPanel {
 
@@ -12,7 +12,7 @@ public class StreamerPanel extends MatReceiverNSenderPanel {
 	/**
 	 * Create the panel.
 	 */
-	public StreamerPanel(VideoStreamer streamer) {
-		super(streamer,streamer.toString());
+	public StreamerPanel(MatStreamer streamer) {
+		super(streamer,streamer.getClass().getSimpleName());
 	}
 }

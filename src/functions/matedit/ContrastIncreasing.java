@@ -1,16 +1,27 @@
 package functions.matedit;
 
+import java.awt.Image;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.CLAHE;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
+
 public class ContrastIncreasing extends MatEditFunction{
 
+	public ContrastIncreasing(Boolean empty) {}
+
+	public ContrastIncreasing() {
+		super();
+	}
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 704246551123112612L;
+	private static volatile Image img;
+
 	@Override
 	public Mat apply(Mat matIn) {
 		Mat ret=new Mat();
@@ -39,5 +50,12 @@ public class ContrastIncreasing extends MatEditFunction{
         Imgproc.cvtColor(ret, ret, Imgproc.COLOR_Lab2BGR);
 
         return ret;
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		if (img == null)
+			img = ImageHandler.getImage("res/icons/contrast.png");
+		return img;
 	}
 }

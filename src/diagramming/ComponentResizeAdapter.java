@@ -39,6 +39,7 @@ public class ComponentResizeAdapter extends MouseAdapter implements SwingConstan
 	public void mousePressed(MouseEvent e) {
 		if (checkIfRightButton.apply(e)) {
 			resizing = true;
+			System.out.println("TEST");
 			component.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
 		}
 		prevX = e.getXOnScreen();

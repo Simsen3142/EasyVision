@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,6 +18,7 @@ import database.Serializing;
 import diagramming.DiagramPanel;
 import functions.matedit.MatEditFunction;
 import functions.streamer.FileVideoStreamer;
+import functions.streamer.MatStreamer;
 import functions.streamer.VideoStreamer;
 import main.menu.MainMenuBar;
 
@@ -44,7 +46,7 @@ public class MainFrame extends JFrame implements Serializable {
 	private ThisWindowListener windowListener;
 
 	private static MainFrame instance;
-	private static List<VideoStreamer> streamers = Collections.synchronizedList(new ArrayList<>());
+	private static Set<Class<? extends MatStreamer>> matStreamerClasses;
 	private static Set<Class<? extends MatEditFunction>> matEditFunctionClasses;
 	private static Set<Class<? extends ParameterReceiver>> parameterReceiverClasses;
 	private static DiagramPanel diagramPanel;
@@ -79,12 +81,12 @@ public class MainFrame extends JFrame implements Serializable {
 //		}
 		
 		
-        VideoStreamer videoStreamer=new VideoStreamer(0);
-        streamers.add(videoStreamer);
+//        VideoStreamer videoStreamer=new VideoStreamer(0);
+//        streamers.add(videoStreamer);
 //		videoStreamer.addMatReceiver(functions.get(0));
 		
-        FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
-        streamers.add(videoStreamer_video);
+//        FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
+//        streamers.add(videoStreamer_video);
 
 		
 		diagramPanel = new DiagramPanel();
@@ -93,6 +95,31 @@ public class MainFrame extends JFrame implements Serializable {
 		loadValues();
 
 	}
+	
+//	boolean setupCameras() {
+//		System.out.println("Getting number of cameras");
+//// Checks available cameras
+//		int numCams = CLCamera.cameraCount();
+//		println("Found " + numCams + " cameras");
+//		if (numCams == 0)
+//			return false;
+//// create cameras and start capture
+//		for (int i = 0; i < numCams; i++) {
+//// Prints Unique Identifier per camera
+//			println("Camera " + (i + 1) + " UUID " + CLCamera.cameraUUID(i));
+//// New camera instance per camera
+//			myCameras[i] = new CLCamera(this);
+//// ----------------------(i, CLEYE_GRAYSCALE/COLOR, CLEYE_QVGA/VGA, Framerate)
+//			myCameras[i].createCamera(i, CLCamera.CLEYE_COLOR, CLCamera.CLEYE_VGA, cameraRate);
+//// Starts camera captures
+//			myCameras[i].startCamera();
+//			myImages[i] = createImage(cameraWidth, cameraHeight, RGB);
+//		}
+//// resize the output window
+//		size(cameraWidth * numCams, cameraHeight);
+//		println("Complete Initializing Cameras");
+//		return true;
+//	}
 
 	/**
 	 * @return the matEditFunctionClasses
@@ -115,14 +142,37 @@ public class MainFrame extends JFrame implements Serializable {
 	/**
 	 * @return the streamers
 	 */
-	public static List<VideoStreamer> getStreamers() {
-		return streamers;
+	public static Set<Class<? extends MatStreamer>> getMatStreamerClasses() {
+		if (matStreamerClasses == null)
+			initReflectionClasses();
+		return matStreamerClasses;
 	}
 
 	private static void initReflectionClasses() {
-		Reflections reflections = new Reflections();
-		matEditFunctionClasses = reflections.getSubTypesOf(MatEditFunction.class);
-		parameterReceiverClasses = reflections.getSubTypesOf(ParameterReceiver.class);
+		matEditFunctionClasses=new HashSet<>();
+		parameterReceiverClasses=new HashSet<>();
+		matStreamerClasses=new HashSet<>();
+		
+		Reflections reflections = new Reflections("functions.matedit");
+		reflections.getSubTypesOf(MatEditFunction.class).forEach((clss)->{
+			if(!Modifier.isAbstract(clss.getModifiers())) {
+				matEditFunctionClasses.add(clss);
+			}
+		});
+		
+		reflections = new Reflections("functions.parameterreceiver");
+		reflections.getSubTypesOf(ParameterReceiver.class).forEach((clss)->{
+			if(!Modifier.isAbstract(clss.getModifiers())) {
+				parameterReceiverClasses.add(clss);
+			}
+		});
+		
+		reflections = new Reflections("functions.streamer");
+		reflections.getSubTypesOf(MatStreamer.class).forEach((clss)->{
+			if(!Modifier.isAbstract(clss.getModifiers())) {
+				matStreamerClasses.add(clss);
+			}
+		});
 	}
 
 	/**
@@ -188,19 +238,6 @@ public class MainFrame extends JFrame implements Serializable {
 			knownCameraResources = new HashSet<Object>();
 		}
 		
-		for(Object res:knownCameraResources) {
-			boolean contain=false;
-			for(VideoStreamer streamer:streamers) {
-				if(streamer.getResource().equals(res)) {
-					contain=true;
-					break;
-				}
-			}
-			if(!contain) {
-				streamers.add(new VideoStreamer(res));
-			}
-		}
-		
 		try {
 			diagramPanel.load(OftenUsedObjects.SESSION.getFile());
 		} catch (Exception e) {
@@ -210,18 +247,18 @@ public class MainFrame extends JFrame implements Serializable {
 
 	public static void saveValues() {
 		try {
-			for(VideoStreamer streamer:streamers) {
-				boolean contain=false;
-				for(Object res:knownCameraResources) {
-					if(streamer.getResource().equals(res)) {
-						contain=true;
-						break;
-					}
-				}
-				if(!contain) {
-					knownCameraResources.add(streamer.getResource());
-				}
-			}
+//			for(VideoStreamer streamer:streamers) {
+//				boolean contain=false;
+//				for(Object res:knownCameraResources) {
+//					if(streamer.getResource().equals(res)) {
+//						contain=true;
+//						break;
+//					}
+//				}
+//				if(!contain) {
+//					knownCameraResources.add(streamer.getResource());
+//				}
+//			}
 			Serializing.serialize((Serializable) knownCameraResources, OftenUsedObjects.LIST_CAMERA_RESOURCES.getFile());
 		}catch (Exception e) {
 			e.printStackTrace();

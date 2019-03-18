@@ -2,15 +2,17 @@ package diagramming;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
+
 import javax.swing.*;
 
-public class ComponentCursorAdapter extends MouseAdapter {
-	private boolean cursor=false;
-    private KeyStroke keyStrokeP;
-    private KeyStroke keyStrokeR;
-    private JComponent jc;
-    private Cursor cursorNormal;
-    private Cursor cursorClicked;
+public class ComponentCursorAdapter extends MouseAdapter implements Serializable {
+	private transient boolean cursor=false;
+    private transient KeyStroke keyStrokeP;
+    private transient KeyStroke keyStrokeR;
+    private transient JComponent jc;
+    private transient Cursor cursorNormal;
+    private transient Cursor cursorClicked;
     
     public ComponentCursorAdapter(int keyTyped, int inputMask, Cursor cursorNormal, Cursor cursorClicked) {
     	this.cursorNormal=cursorNormal;

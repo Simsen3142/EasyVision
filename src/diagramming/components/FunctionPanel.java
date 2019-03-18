@@ -3,15 +3,34 @@ package diagramming.components;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.ImageObserver;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-public class FunctionPanel<type> extends JButton {
+import database.ImageHandler;
+import functions.RepresentationIcon;
+
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.LayoutManager;
+
+import net.miginfocom.swing.MigLayout;
+import view.PicturePanel;
+
+public class FunctionPanel<type> extends JPanel {
 	
 	/**
 	 * 
@@ -20,13 +39,15 @@ public class FunctionPanel<type> extends JButton {
 	protected type function;
 	private JLabel lblName;
 	private static JPopupMenu popupMenu;
+	private PicturePanel picturePanel;
+	private LayoutManager layoutHide;
+	private static LayoutManager layoutVisible;
 
-	public FunctionPanel(type function) {
-		
-	}
-	
 	public void hideLabel(boolean hide) {
 		lblName.setVisible(!hide);
+		picturePanel.setVisible(!hide);
+		
+		setLayout(hide?layoutHide:layoutVisible);
 	}
 	
 	/**
@@ -44,7 +65,7 @@ public class FunctionPanel<type> extends JButton {
 	}
 
 	/**
-	 * Create the panel.
+	 * @wbp.parser.constructor
 	 */
 	public FunctionPanel(type function, String name) {
 		super();
@@ -53,17 +74,28 @@ public class FunctionPanel<type> extends JButton {
 
 	protected void initialize(type function, String name) {
 		this.function = function;
-		lblName = new JLabel(name);
-
 		addPopup(this);
+		
+		if(layoutVisible==null)
+			layoutVisible=new MigLayout("insets 0 3 10 3, gap 0", "[grow]", "[50%][35.00,grow]");
+		if(layoutHide==null)
+			layoutHide=new BorderLayout(4,4);
+		setLayout(layoutVisible);
+		this.removeAll();
 
-		setLayout(new BorderLayout(0, 0));
-
+		lblName = new JLabel(name);
+		lblName.setFont(new Font("Arial", Font.BOLD, 20));
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
-		add(lblName, BorderLayout.CENTER);
+		add(lblName, "cell 0 0,grow");
 
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		
+		if(function instanceof RepresentationIcon) {
+			picturePanel = new PicturePanel(((RepresentationIcon) function).getRepresentationImage());
+			add(picturePanel, "cell 0 1,grow");
+		}
 	}
+	
 	
 	protected JPopupMenu createPopup() {
 		popupMenu = new JPopupMenu();
@@ -71,7 +103,7 @@ public class FunctionPanel<type> extends JButton {
 		return popupMenu;
 	}
 
-	private void addPopup(Component component) {
+	protected void addPopup(Component component) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {

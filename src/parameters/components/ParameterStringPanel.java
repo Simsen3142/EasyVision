@@ -63,10 +63,13 @@ public class ParameterStringPanel extends JPanel {
 
 	}
 	
-	
 	public void setValue(String val) {
 		parameter.setValue(val);
 		lblValue.setText(val);
+		
+		if(onSetValue!=null) {
+			onSetValue.apply(null);
+		}
 	}
 	
 	public String getValue() {

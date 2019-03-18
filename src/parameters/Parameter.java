@@ -12,11 +12,12 @@ public abstract class Parameter<type> extends ParameterObject{
 	 */
 	private static final long serialVersionUID = -6348280596086762694L;
 	protected type value;
-	protected Function<type, Void> onChange;
+	protected transient Function<type, Void> onChange;
 	protected boolean editable=true;
 	
 	public Parameter<type> setOnChange(Function<type, Void> onChange) {
-		this.onChange=onChange;
+		if(this.onChange!=onChange)
+			this.onChange=onChange;
 		return this;
 	}
 	
@@ -50,8 +51,10 @@ public abstract class Parameter<type> extends ParameterObject{
 	 */
 	public void setValue(type value) {
 		this.value=value;
-		if(onChange!=null)
+		if(onChange!=null) {
 			onChange.apply(value);
+			System.out.println("ONCHANGE");
+		}
 	}
 	
 	/**

@@ -1,13 +1,16 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.util.*;
 import org.opencv.core.Mat;
 
+import database.ImageHandler;
+import functions.RepresentationIcon;
 import main.MatReceiver;
 import main.MatSender;
 import parameters.*;
 
-public abstract class MatEditFunction extends MatSender implements MatReceiver {
+public abstract class MatEditFunction extends MatSender implements MatReceiver, RepresentationIcon {
 
 	/**
 	 * 
@@ -15,6 +18,7 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver {
 	private static final long serialVersionUID = -7684474058713956295L;
 	private transient Map<String, Mat> mats=new HashMap<>();
 	private boolean send=true;
+	private transient Mat mat;
 	
 	/**
 	 * @return the send
@@ -38,7 +42,6 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver {
 	
 	public MatEditFunction() {}
 	
-	
 	public MatEditFunction(ParameterObject...parameters) {
 		super(parameters);
 	}
@@ -46,18 +49,28 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver {
 	protected abstract Mat apply(Mat matIn);
 	
 	public Mat performFunction(Mat matIn) {
-		Mat ret=apply(matIn);
+		mat=apply(matIn);
 		if(send) {
 			sendMatMap(getMats());
-			sendMat(ret);
+			sendMat(mat);
 			sendParameters();
 		}
 		
-		return ret;
+		return mat;
+	}
+	
+	@Override
+	public void stop() {
+		mat=null;
 	}
 	
 	@Override
 	public void onReceive(Mat matIn, MatSender sender) {
 		performFunction(matIn);
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return null;
 	}
 }

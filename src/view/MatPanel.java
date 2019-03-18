@@ -130,20 +130,24 @@ public class MatPanel extends JPanel {
 	}
 
 	public static BufferedImage matToBufferedImage(Mat frame) {
-		// Mat() to BufferedImage
-		int type = 0;
-		if (frame.channels() == 1) {
-			type = BufferedImage.TYPE_BYTE_GRAY;
-		} else if (frame.channels() == 3) {
-			type = BufferedImage.TYPE_3BYTE_BGR;
+		try {
+			// Mat() to BufferedImage
+			int type = 0;
+			if (frame.channels() == 1) {
+				type = BufferedImage.TYPE_BYTE_GRAY;
+			} else if (frame.channels() == 3) {
+				type = BufferedImage.TYPE_3BYTE_BGR;
+			}
+			BufferedImage image = new BufferedImage(frame.width(), frame.height(), type);
+			WritableRaster raster = image.getRaster();
+			DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
+			byte[] data = dataBuffer.getData();
+			frame.get(0, 0, data);
+	
+			return image;
+		}catch (Exception e) {
+			return null;
 		}
-		BufferedImage image = new BufferedImage(frame.width(), frame.height(), type);
-		WritableRaster raster = image.getRaster();
-		DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
-		byte[] data = dataBuffer.getData();
-		frame.get(0, 0, data);
-
-		return image;
 	}
 	
 	protected void registerFrameForFPSCalculation() {

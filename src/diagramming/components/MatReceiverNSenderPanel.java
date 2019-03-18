@@ -6,14 +6,12 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import listener.ListenerHandler;
 import main.MatSender;
 import view.MatReceiverPanel;
 import view.PanelFrame;
 
 import javax.swing.JPopupMenu;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,7 @@ import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBoxMenuItem;
+import java.awt.Font;
 
 public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 	/**
@@ -32,6 +31,7 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 	private boolean showPicture=false;
 	private MatReceiverPanel matReceiverPanel;
 	private static JMenuItem mntmInFensterAnzeigen;
+	private MatReceiverNSenderPanel instance=this;
 
 	/**
 	 * Create the panel.
@@ -50,7 +50,6 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 
 		mntmParameter = new JMenuItem("Parameter");
 		popupMenu.add(mntmParameter);
-
 
 		chckbxmntmPic = new JCheckBoxMenuItem("Bild");
 		popupMenu.add(chckbxmntmPic);
@@ -91,13 +90,15 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 		public void actionPerformed(ActionEvent e) {
 			showPicture=chckbxmntmPic.isSelected();
 			if (showPicture) {
+				hideLabel(true);
 				matReceiverPanel = new MatReceiverPanel(function);
+				ListenerHandler.copyListeners(instance, matReceiverPanel);
 				add(matReceiverPanel, BorderLayout.CENTER);
 				matReceiverPanel.repaint();
-				hideLabel(true);
 			} else {
 				function.removeMatReceiver(matReceiverPanel);
 				remove(matReceiverPanel);
+				ListenerHandler.clearListeners(matReceiverPanel);
 				matReceiverPanel = null;
 				hideLabel(false);
 			}

@@ -17,7 +17,7 @@ public class MatSender extends ParameterizedObject {
 	 */
 	private static final long serialVersionUID = -2517783983705667237L;
 	private List<MatReceiver> receivers=Collections.synchronizedList(new ArrayList<>());
-	private List<MatMapReceiver> receivers_map=new ArrayList<>();
+	private List<MatMapReceiver> receivers_map=Collections.synchronizedList(new ArrayList<>());
 	
 	/**
 	 * @return the receivers
@@ -48,8 +48,9 @@ public class MatSender extends ParameterizedObject {
 	}
 	
 	public void addMatReceiver(MatReceiver rcvr) {
-		if(!receivers.contains(rcvr))
+		if(!receivers.contains(rcvr)) {
 			receivers.add(rcvr);
+		}
 	}
 	
 	public MatSender(ParameterObject...parameters) {

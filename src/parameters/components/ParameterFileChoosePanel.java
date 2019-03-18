@@ -71,11 +71,11 @@ public class ParameterFileChoosePanel extends JPanel {
 					if(!file.exists()) {
 						try {
 							file.createNewFile();
-							setValue(file);
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
+					setValue(file);
 					if(onSetValue!=null)
 						onSetValue.apply(null);
 				}else if(getValue()==null) {

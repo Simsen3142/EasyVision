@@ -1,5 +1,6 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.io.File;
 
 import org.opencv.core.Mat;
@@ -16,12 +17,19 @@ import parameters.IntegerParameter;
 import parameters.components.ParameterEnumPanel;
 import parameters.group.ParameterGroup;
 
+import database.ImageHandler;
+
 public class ObjectDetectionHaar extends MatEditFunction {
+	private static volatile Image img;
 
 	private static final long serialVersionUID = 1L;
 	private int absoluteFaceSize=0;
 	private transient CascadeClassifier faceCascade;
+	private transient boolean loaded=false;
 	
+	
+	public ObjectDetectionHaar(Boolean empty) {}
+
 	public ObjectDetectionHaar() {
 		super(
 			new EnumParameter("Haar-Classifier", HaarClassifiers.frontal_face)
@@ -92,11 +100,21 @@ public class ObjectDetectionHaar extends MatEditFunction {
 		
 		return frame;
 	}
+	
+	private CascadeClassifier getFaceCascade() {
+		if(faceCascade==null) {
+			faceCascade=new CascadeClassifier();
+		}
+		
+		return faceCascade;
+	}
 	    
 	private void loadClassifier(String classifierPath) {
-		System.out.println(classifierPath);
 		System.out.println(new File(classifierPath).exists());
-        faceCascade.load(classifierPath);
+		if(!loaded) {
+			getFaceCascade().load(classifierPath);
+	        loaded=true;
+		}
         System.out.println(faceCascade.empty());
 	}
 	
@@ -141,4 +159,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 		return matout;
 	}
 	
+	@Override
+	public Image getRepresentationImage() {
+		if (img == null)
+			img = ImageHandler.getImage("res/icons/haar.png");
+		return img;
+	}
 }

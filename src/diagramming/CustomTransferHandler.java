@@ -41,10 +41,8 @@ public class CustomTransferHandler extends TransferHandler {
 					_text = (String) t.getTransferData(DataFlavor.stringFlavor);
 					_boxCreated = true;
 				} catch (UnsupportedFlavorException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
