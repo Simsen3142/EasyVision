@@ -27,12 +27,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	private transient CascadeClassifier faceCascade;
 	private transient boolean loaded=false;
 	
-	public ObjectDetectionHaar() {
-	}
 	
 	public ObjectDetectionHaar(Boolean empty) {}
 
-	
+	public ObjectDetectionHaar() {
 		super(
 			new EnumParameter("Haar-Classifier", HaarClassifiers.frontal_face)
 		);	

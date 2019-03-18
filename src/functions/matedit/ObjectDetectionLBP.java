@@ -22,18 +22,15 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	private int absoluteobjectsize = 0;
 
 	private static final long serialVersionUID = 136775703156348096L;
-	private int absoluteobjectsize=0;
 	private transient CascadeClassifier faceCascade;
 	private transient boolean loaded = false;
 
-	// Constructor
-	public ObjectDetectionLBP() {
-		faceCascade = new CascadeClassifier();
-	}
 
 	public ObjectDetectionLBP(Boolean empty) {
 	}
-
+	
+	
+	public ObjectDetectionLBP() {
 		super(
 			new EnumParameter("LBP-Classifier", LBPclassifiers.frontal_face)
 		);	
@@ -124,8 +121,6 @@ public class ObjectDetectionLBP extends MatEditFunction {
 
 	@Override
 	protected Mat apply(Mat matIn) {
-
-		Mat matout = detectFrontalFaceLBP(matIn.clone());
 		Mat matout =  chooseClassifier(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
