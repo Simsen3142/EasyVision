@@ -22,30 +22,30 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import database.ImageHandler;
-import enums.Forms;
+import enums.Shape;
 import enums.HaarClassifiers;
 import parameters.EnumParameter;
 import parameters.components.ParameterEnumPanel;
 
-public class FormDetection extends MatEditFunction {
+public class ShapeDetection extends MatEditFunction {
 
-	public FormDetection(Boolean empty) {
+	public ShapeDetection(Boolean empty) {
 	}
 	
-	public FormDetection() {
+	public ShapeDetection() {
 		super(
-			new EnumParameter("Form", Forms.circle)
+			new EnumParameter("shape", Shape.CIRCLE)
 		);	
 	}
 	
 	
-	public static Mat findChoosenForm(Mat frame) {
-		Forms f = (Forms) ParameterEnumPanel.getSelected();
-		switch(f) {
-			case circle: 
+	public Mat findChosenShape(Mat frame) {
+		Shape s = (Shape) getEnumVal("shape");;
+		switch(s) {
+			case CIRCLE: 
 				findCircles(frame);
 				return frame;				
-			case rectangle:
+			case RECTANGLE:
 				findRectangles(frame);
 				return frame;
 			default: 
@@ -55,7 +55,7 @@ public class FormDetection extends MatEditFunction {
 	}
 	
 	
-	private static void findCircles(Mat frame){
+	private void findCircles(Mat frame){
 		Mat grayFrame = new Mat();
 		MatOfRect found = new MatOfRect();
 		double x = 0.0;
@@ -68,27 +68,30 @@ public class FormDetection extends MatEditFunction {
 		Imgproc.GaussianBlur(grayFrame, grayFrame, new Size(), 2,2);
 		// detected circles
 		Vector<Mat> circlesList = new Vector<Mat>();
-		for(int i = 0; i < circlesList.size(); i++) {
+		for (int i = 0; i < circlesList.size(); i++) {
 			System.out.println(i);
 		}
 
-		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
+		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0);
 
-		for( int i = 0; i < found.rows(); i++ )
-		    {
-		      double[] data = grayFrame.get(i, 0);
-		      for(int j = 0 ; j < data.length ; j++){
-		           x = data[0];
-		           y = data[1];
-		           r = (int) data[2];
-		      }
-		      
-		      Point center = new Point(x,y);
-		      // circle center
-		      Imgproc.circle(grayFrame, center, 3, new Scalar(0,255,0), -1);
-		      // circle outline
-		      Imgproc.circle(grayFrame, center, r, new Scalar(0,0,255), 1);
-		    }
+		getMats().put("gray",grayFrame);
+		getMats().put("found",found);
+		
+		for (int i = 0; i < found.rows(); i++) {
+			double[] data = found.get(i, 0);
+			
+			for (int j = 0; j < data.length; j++) {
+				x = data[0];
+				y = data[1];
+				r = (int) data[2];
+			}
+
+			Point center = new Point(x, y);
+			// circle center
+			Imgproc.circle(frame, center, 5, new Scalar(0, 255, 0), -1);
+			// circle outline
+			Imgproc.circle(frame, center, r, new Scalar(0, 0, 255), 3);
+		}
 	}
 	
 	private static void findRectangles(Mat frame) {
@@ -97,7 +100,7 @@ public class FormDetection extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout = findChoosenForm(matIn.clone());
+		Mat matout = findChosenShape(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}

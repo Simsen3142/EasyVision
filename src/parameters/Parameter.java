@@ -25,6 +25,10 @@ public abstract class Parameter<type> extends ParameterObject{
 		onChange=null;
 	}
 	
+	public boolean hasOnChange() {
+		return onChange!=null;
+	}
+	
 	/**
 	 * @return the editable
 	 */

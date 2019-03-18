@@ -32,7 +32,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 
 	public ObjectDetectionHaar() {
 		super(
-			new EnumParameter("Haar-Classifier", HaarClassifiers.frontal_face)
+			new EnumParameter("haarclassifier", HaarClassifiers.FRONTAL_FACE)
 		);	
 		faceCascade=new CascadeClassifier();
 	}
@@ -40,21 +40,29 @@ public class ObjectDetectionHaar extends MatEditFunction {
 
 	
 	private Mat chooseClassifier(Mat clone) {
-		HaarClassifiers haar = (HaarClassifiers) ParameterEnumPanel.getSelected();
+		EnumParameter param=(EnumParameter)getParameter("haarclassifier");
+		if(!param.hasOnChange()) {
+			param.setOnChange((newVal)->{
+				loaded=false;
+				return null;
+			});
+		}
+		
+		HaarClassifiers haar = (HaarClassifiers) param.getValue();
 		switch(haar) {
-			case  frontal_face:
+			case  FRONTAL_FACE:
 				return detectFrontalFaceHaar(clone);
-			case profil_face:
+			case PROFIL_FACE:
 				return detectProfileFaceHaar(clone);
-			case eyes:
+			case EYES:
 				return detectEyesHaar(clone);
-			case eyes_glasses:
+			case EYES_GLASSES:
 				return detectEyesWithGlassesHaar(clone);
-			case smiling_face:
+			case SMILING_FACE:
 				return detectSmilingFaceHaar(clone);
-			case upperbody:
+			case UPPER_BODY:
 				return detectUpperBodyHaar(clone);
-			case full_body:
+			case FULL_BODY:
 				return detectFullBodyHaar(clone);
 			default:
 				System.out.println("There is no such param!");
@@ -110,12 +118,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	}
 	    
 	private void loadClassifier(String classifierPath) {
-		System.out.println(new File(classifierPath).exists());
 		if(!loaded) {
 			getFaceCascade().load(classifierPath);
 	        loaded=true;
 		}
-        System.out.println(faceCascade.empty());
 	}
 	
 	private void detectAndDisplay(Mat frame)
@@ -153,8 +159,8 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout =  new Mat();
-		chooseClassifier(matIn.clone());
+		Mat matout =  matIn.clone();
+		chooseClassifier(matout);
 		getMats().put("matout", matout);
 		return matout;
 	}

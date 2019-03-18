@@ -70,7 +70,6 @@ public class JListHeader extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
-		System.out.println("TEST");
 		g.setColor(getBackground());
 		int width = getWidth();
 		int height = getHeight();
