@@ -30,7 +30,7 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	}
 	
 	private Mat chooseClassifier(Mat clone) {
-		LBPclassifiers lbp = (LBPclassifiers) ParameterEnumPanel.getValue();
+		LBPclassifiers lbp = (LBPclassifiers) ParameterEnumPanel.getSelected();
 		switch(lbp) {
 			case  frontal_face:
 				return detectFrontalFaceLBP(clone);
