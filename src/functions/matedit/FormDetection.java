@@ -40,7 +40,7 @@ public class FormDetection extends MatEditFunction {
 	
 	
 	public static Mat findChoosenForm(Mat frame) {
-		Forms f = (Forms) ParameterEnumPanel.getValue();
+		Forms f = (Forms) ParameterEnumPanel.getSelected();
 		switch(f) {
 			case circle: 
 				findCircles(frame);

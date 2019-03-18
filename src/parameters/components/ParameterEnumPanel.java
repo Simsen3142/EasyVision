@@ -9,8 +9,8 @@ import javax.swing.JComboBox;
 public class ParameterEnumPanel extends JPanel {
 
 	private static final long serialVersionUID = 7539825920627280536L;
-	private static EnumParameter parameter;
-	private JComboBox<?> comboBox;
+	private EnumParameter parameter;
+	private static JComboBox<?> comboBox;
 	
 	@Override
 	public void setForeground(Color c) {
@@ -28,6 +28,10 @@ public class ParameterEnumPanel extends JPanel {
 		
 	}
 	
+	public static Enum<?> getSelected() {
+		return (Enum<?>)comboBox.getSelectedItem();
+	}
+	
 	private void initialize() {
 		setOpaque(false);
 		this.setValue(parameter.getValue());
@@ -37,7 +41,7 @@ public class ParameterEnumPanel extends JPanel {
 		parameter.setValue(val);
 	}
 	
-	public static Enum<?> getValue() {
+	public Enum<?> getValue() {
 		return parameter.getValue();
 	}
 }

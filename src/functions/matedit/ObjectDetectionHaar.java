@@ -40,7 +40,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 
 	
 	private Mat chooseClassifier(Mat clone) {
-		HaarClassifiers haar = (HaarClassifiers) ParameterEnumPanel.getValue();
+		HaarClassifiers haar = (HaarClassifiers) ParameterEnumPanel.getSelected();
 		switch(haar) {
 			case  frontal_face:
 				return detectFrontalFaceHaar(clone);
