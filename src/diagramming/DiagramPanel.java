@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -100,7 +101,7 @@ public class DiagramPanel extends JPanel {
 		setBackground(new Color(250,250,255));
 		transferHandler = new CustomTransferHandler();
 
-		this.setLayout(new MigLayout("insets 0", "[grow][]", "[grow][grow]"));
+		this.setLayout(new MigLayout("insets 0", "[80%][grow]", "[grow][grow]"));
 
 		customDiagram = new CustomDiagram();
 		customDiagram.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -174,7 +175,7 @@ public class DiagramPanel extends JPanel {
 					sender.stop();
 					sender.clearMatReceiverFunctions();
 				} else if (component instanceof ParameterReceiverPanel) {
-					rec = ((ParameterReceiverPanel) component).getParamReceiver();
+					rec = (ParameterReceiver) ((ParameterReceiverPanel) component).getFunction();
 				}
 
 				for (DiagramInput input : diagramItem.getInputs()) {
@@ -561,7 +562,7 @@ public class DiagramPanel extends JPanel {
 						ParameterReceiver paramReceiver = null;
 
 						ParameterReceiverPanel destPanel = (ParameterReceiverPanel) destComponent;
-						paramReceiver = destPanel.getParamReceiver();
+						paramReceiver = (ParameterReceiver) destPanel.getFunction();
 
 						matSender.addParameterReceiver(paramReceiver);
 					}
@@ -604,24 +605,25 @@ public class DiagramPanel extends JPanel {
 		if (file != null) {
 			createFunctions();
 
-			ArrayList<MatSender> senders = new ArrayList<>();
+			ArrayList<Serializable> functions = new ArrayList<>();
 			List<CustomDiagramItem> diagramItems = customDiagram.getDiagramItems();
 
 			for (CustomDiagramItem item : diagramItems) {
-				MatSender matSender = null;
+				Serializable function;
 				Component component = item.getComponent();
 
 				if (item.getSelectedInput().getConnections().size() < 1) {
-					if (component instanceof MatReceiverNSenderPanel) {
-						MatReceiverNSenderPanel panel = (MatReceiverNSenderPanel) component;
-						matSender = panel.getFunction();
-						
-						senders.add(matSender);
+					if (component instanceof FunctionPanel<?>) {
+						FunctionPanel<?> panel = (FunctionPanel<?>) component;
+						if(panel.getFunction() instanceof Serializable) {
+							function = (Serializable) panel.getFunction();
+							functions.add(function);
+						}
 					}
 				}
 			}
 
-			Serializing.serialize(senders, file);
+			Serializing.serialize(functions, file);
 		}
 	}
 
@@ -631,10 +633,10 @@ public class DiagramPanel extends JPanel {
 		if (file != null) {
 			customDiagram.clear();
 
-			ArrayList<MatSender> senders;
+			ArrayList<Serializable> senders;
 
 			try {
-				senders = (ArrayList<MatSender>) Serializing.deSerialize(file);
+				senders = (ArrayList<Serializable>) Serializing.deSerialize(file);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -653,11 +655,11 @@ public class DiagramPanel extends JPanel {
 		}
 	}
 
-	private void createDiagram(ArrayList<MatSender> senders) {
+	private void createDiagram(ArrayList<Serializable> senders) {
 		int posX = 5;
 		int posY = 5;
 
-		for (MatSender sender : senders) {
+		for (Serializable sender : senders) {
 			posY = handleDiagramCreationTree(posX, posY, sender, posY, null) + 10;
 		}
 	}
@@ -681,7 +683,10 @@ public class DiagramPanel extends JPanel {
 		} else if (paramReceiver != null) {
 			item = addParamReceiverDiagramItem(p, paramReceiver);
 		}
-
+		
+		if(item==null)
+			return highestY;
+		
 		int ownY = posY + item.getHeight();
 		highestY = ownY > highestY ? ownY : highestY;
 

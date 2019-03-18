@@ -29,6 +29,7 @@ import java.awt.LayoutManager;
 
 import net.miginfocom.swing.MigLayout;
 import view.PicturePanel;
+import java.awt.Color;
 
 public class FunctionPanel<type> extends JPanel {
 	
@@ -69,6 +70,7 @@ public class FunctionPanel<type> extends JPanel {
 	 */
 	public FunctionPanel(type function, String name) {
 		super();
+		setBackground(Color.WHITE);
 		initialize(function, name);
 	}
 

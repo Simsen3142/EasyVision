@@ -29,22 +29,7 @@ public class ParameterReceiverPanel extends FunctionPanel<ParameterizedObject> {
 	private JLabel lblName;
 	private static JPopupMenu popupMenu;
 	private static JMenuItem mntmParameter;
-	private ParameterReceiver paramReceiver;
 	
-	/**
-	 * @return the paramReceiver
-	 */
-	public ParameterReceiver getParamReceiver() {
-		return paramReceiver;
-	}
-
-	/**
-	 * @param paramReceiver the paramReceiver to set
-	 */
-	public void setParamReceiver(ParameterReceiver paramReceiver) {
-		this.paramReceiver = paramReceiver;
-	}
-
 	/**
 	 * Create the panel.
 	 * 
@@ -71,7 +56,9 @@ public class ParameterReceiverPanel extends FunctionPanel<ParameterizedObject> {
 
 	private class MntmParameterActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-//			paramReceiver.showParameterChangeDialog();
+			if(function instanceof ParameterizedObject) {
+				((ParameterizedObject) function).showParameterChangeDialog();
+			}
 		}
 	}
 }
