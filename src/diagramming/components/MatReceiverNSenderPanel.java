@@ -51,7 +51,6 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 		mntmParameter = new JMenuItem("Parameter");
 		popupMenu.add(mntmParameter);
 
-
 		chckbxmntmPic = new JCheckBoxMenuItem("Bild");
 		popupMenu.add(chckbxmntmPic);
 

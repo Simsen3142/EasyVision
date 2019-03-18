@@ -40,7 +40,7 @@ public class FunctionPanel<type> extends JPanel {
 	private JLabel lblName;
 	private static JPopupMenu popupMenu;
 	private PicturePanel picturePanel;
-	private static LayoutManager layoutHide;
+	private LayoutManager layoutHide;
 	private static LayoutManager layoutVisible;
 
 	public void hideLabel(boolean hide) {
