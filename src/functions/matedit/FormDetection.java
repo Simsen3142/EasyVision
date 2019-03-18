@@ -1,33 +1,21 @@
 package functions.matedit;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-
 import database.ImageHandler;
 import enums.Forms;
-import enums.HaarClassifiers;
 import parameters.EnumParameter;
 import parameters.components.ParameterEnumPanel;
 
 public class FormDetection extends MatEditFunction {
+
+	private static final long serialVersionUID = 7427096678751354797L;
 
 	public FormDetection(Boolean empty) {
 	}
@@ -67,11 +55,6 @@ public class FormDetection extends MatEditFunction {
 		// noise reduction
 		Imgproc.GaussianBlur(grayFrame, grayFrame, new Size(), 2,2);
 		// detected circles
-		Vector<Mat> circlesList = new Vector<Mat>();
-		for(int i = 0; i < circlesList.size(); i++) {
-			System.out.println(i);
-		}
-
 		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
 
 		for( int i = 0; i < found.rows(); i++ )
