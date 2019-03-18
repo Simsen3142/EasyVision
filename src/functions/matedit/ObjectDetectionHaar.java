@@ -11,12 +11,18 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
-import org.opencv.videoio.VideoCapture;
+import enums.HaarClassifiers;
+import parameters.EnumParameter;
+import parameters.IntegerParameter;
+import parameters.components.ParameterEnumPanel;
+import parameters.group.ParameterGroup;
 
 import database.ImageHandler;
 
 public class ObjectDetectionHaar extends MatEditFunction {
 	private static volatile Image img;
+
+	private static final long serialVersionUID = 1L;
 	private int absoluteFaceSize=0;
 	private transient CascadeClassifier faceCascade;
 	private transient boolean loaded=false;
@@ -26,6 +32,37 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	
 	public ObjectDetectionHaar(Boolean empty) {}
 
+	
+		super(
+			new EnumParameter("Haar-Classifier", HaarClassifiers.frontal_face)
+		);	
+		faceCascade=new CascadeClassifier();
+	}
+	
+
+	
+	private Mat chooseClassifier(Mat clone) {
+		HaarClassifiers haar = (HaarClassifiers) ParameterEnumPanel.getValue();
+		switch(haar) {
+			case  frontal_face:
+				return detectFrontalFaceHaar(clone);
+			case profil_face:
+				return detectProfileFaceHaar(clone);
+			case eyes:
+				return detectEyesHaar(clone);
+			case eyes_glasses:
+				return detectEyesWithGlassesHaar(clone);
+			case smiling_face:
+				return detectSmilingFaceHaar(clone);
+			case upperbody:
+				return detectUpperBodyHaar(clone);
+			case full_body:
+				return detectFullBodyHaar(clone);
+			default:
+				System.out.println("There is no such param!");
+				return null;
+		}		
+	}
 	
 	// public methods
 	// Haar
@@ -118,7 +155,8 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		Mat matout = detectEyesHaar(matIn.clone());
+		Mat matout =  new Mat();
+		chooseClassifier(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}

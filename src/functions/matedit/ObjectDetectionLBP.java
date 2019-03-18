@@ -3,6 +3,8 @@ package functions.matedit;
 import java.awt.Image;
 import java.io.File;
 
+import parameters.EnumParameter;
+import parameters.components.*;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -13,10 +15,14 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 
 import database.ImageHandler;
+import enums.LBPclassifiers;
 
 public class ObjectDetectionLBP extends MatEditFunction {
 	private static volatile Image img;
 	private int absoluteobjectsize = 0;
+
+	private static final long serialVersionUID = 136775703156348096L;
+	private int absoluteobjectsize=0;
 	private transient CascadeClassifier faceCascade;
 	private transient boolean loaded = false;
 
@@ -28,6 +34,25 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	public ObjectDetectionLBP(Boolean empty) {
 	}
 
+		super(
+			new EnumParameter("LBP-Classifier", LBPclassifiers.frontal_face)
+		);	
+		faceCascade=new CascadeClassifier();
+	}
+	
+	private Mat chooseClassifier(Mat clone) {
+		LBPclassifiers lbp = (LBPclassifiers) ParameterEnumPanel.getValue();
+		switch(lbp) {
+			case  frontal_face:
+				return detectFrontalFaceLBP(clone);
+			case profil_face:
+				return detectProfileFaceLBP(clone);
+			default:
+				System.out.println("There is no such param!");
+				return null;
+		}		
+	}
+	
 	// Public methods
 	// LBP
 	public Mat detectFrontalFaceLBP(Mat frame) {
@@ -99,7 +124,9 @@ public class ObjectDetectionLBP extends MatEditFunction {
 
 	@Override
 	protected Mat apply(Mat matIn) {
+
 		Mat matout = detectFrontalFaceLBP(matIn.clone());
+		Mat matout =  chooseClassifier(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
 	}
