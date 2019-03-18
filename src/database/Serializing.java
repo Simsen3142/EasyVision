@@ -1,11 +1,15 @@
 package database;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Base64;
 
 import javax.swing.JFileChooser;
 
@@ -65,6 +69,7 @@ public class Serializing {
 	    return success;
 	}
 	
+	
 	public static Serializable deSerialize(File f) {
 		Serializable s=null;
 		FileInputStream fis = null;
@@ -80,6 +85,35 @@ public class Serializing {
 	    }
 	    
 	    return s;
+	}
+	
+	public static Serializable deSerialize(String s) {
+		byte[] data = Base64.getDecoder().decode(s);
+		ObjectInputStream ois;
+		Serializable ser=null;
+		try {
+			ois = new ObjectInputStream(new ByteArrayInputStream(data));
+			ser = (Serializable) ois.readObject();
+			ois.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+		}
+		return ser;
+	}
+
+	public static String serialize(Serializable o) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(o);
+			oos.close();
+			baos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Base64.getEncoder().encodeToString(baos.toByteArray()); 
 	}
 	
 	private static void createFileWithDirectories(File f) {

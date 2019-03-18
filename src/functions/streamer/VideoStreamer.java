@@ -15,43 +15,13 @@ import parameters.BooleanParameter;
 import parameters.IntegerParameter;
 import parameters.group.ParameterGroup;
 
-public class VideoStreamer extends MatSender {
+public abstract class VideoStreamer extends MatStreamer {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -691043732851439207L;
-	private transient Thread streamThread;
 	private transient VideoCapture camera;
-	private Object resource;
-	private static Set<VideoStreamer> videoStreamers =Collections.synchronizedSet(new HashSet<VideoStreamer>());
-	
-	/**
-	 * @return the resource
-	 */
-	public Object getResource() {
-		return resource;
-	}
-
-	/**
-	 * @param resource the resource to set
-	 */
-	public void setResource(Object resource) {
-		this.resource = resource;
-	}
-
-	/**
-	 * @return the streamThread
-	 */
-	public Thread getStreamThread() {
-		return streamThread;
-	}
-
-	/**
-	 * @param streamThread the streamThread to set
-	 */
-	public void setStreamThread(Thread streamThread) {
-		this.streamThread = streamThread;
-	}
+	private transient Mat mat;
 	
 	/**
 	 * @return the camera
@@ -68,17 +38,7 @@ public class VideoStreamer extends MatSender {
 	}
 
 	public VideoStreamer(Object resource) {
-		super(
-			new ParameterGroup("size",
-				new BooleanParameter("change", false),
-				new IntegerParameter("width", 200, 150, 1920),
-				new IntegerParameter("height", 180, 150, 1080)
-			)
-		);
-		
-		this.resource=resource;
-
-		initStreamThread();
+		super(resource);
 	}
 	
 	public VideoStreamer(String resource) {
@@ -89,77 +49,65 @@ public class VideoStreamer extends MatSender {
 		this((Object)resource);
 	}
 	
-	protected void initCamera() {
-		if(resource instanceof Integer) {
-			this.camera=new VideoCapture((Integer)resource);
-		}
-		else if(resource instanceof String) {
-			this.camera=new VideoCapture((String)resource);
-		}
+	public VideoStreamer() {
 	}
 	
-	public VideoStreamer start() {
-		if(camera==null || !camera.isOpened())
-			initCamera();
-		
-		if(videoStreamers.add(this)) {
-			if(streamThread==null || !streamThread.isAlive() || streamThread.isInterrupted()) {
-				initStreamThread();
-				streamThread.start();
-			}
-			return this;
-		}else {
-			return getVideoStreamer(this);
+	protected void initCamera() {
+		if(getResource() instanceof Integer) {
+			this.camera=new VideoCapture((Integer)getResource());
+		}
+		else if(getResource() instanceof String) {
+			this.camera=new VideoCapture((String)getResource());
 		}
 	}
 	
 	@Override
-	public void stop() {
-		videoStreamers.remove(this);
-		if(streamThread!=null&&streamThread.isAlive()) {
-			streamThread.interrupt();
-			camera.release();
-		}
+	public MatStreamer start() {
+		if(camera==null || !camera.isOpened())
+			initCamera();
+		
+		return super.start();
 	}
 	
-	public VideoStreamer getVideoStreamer(VideoStreamer streamer) {
-		for(VideoStreamer str:videoStreamers) {
-			if(str.equals(streamer)) {
-				return str;
-			}
-		}
-		
-		return null;
+	@Override
+	public void stop() {
+		super.stop();
+		if(getStreamThread()!=null&&getStreamThread().isAlive())
+			camera.release();
+
 	}
 	
 	protected void initStreamThread() {
-		this.streamThread = new Thread(new Runnable() {
+		setStreamThread(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Mat frame = new Mat();
+				mat = new Mat();
 				
-				if(getBoolVal("size_change")) {
-					camera.set(3, getIntVal("size_width"));
-					camera.set(4, getIntVal("size_height"));
+//				if(getBoolVal("size_change")) {
+//					camera.set(3, getIntVal("size_width"));
+//					camera.set(4, getIntVal("size_height"));
+//				}
+				if(camera==null) {
+					initCamera();
 				}
-				
 				if (!camera.isOpened()) {
 					System.out.println("Error");
 				} else {
-					while (!streamThread.isInterrupted()) {
+					while (!getStreamThread().isInterrupted()) {
 						try {
-							if (camera.read(frame)) {
+							if (camera.read(mat)) {
 								if(getBoolVal("size_change")) {
 									int width=getIntVal("size_width");
 									int height=getIntVal("size_height");
-									Imgproc.resize(frame, frame, new Size(width,height));
+									Imgproc.resize(mat, mat, new Size(width,height));
 								}
 								try {
-									sendMat(frame);
+									sendMat(mat);
 									sendParameters();
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
+								System.gc();
 							}else {
 								System.out.println("Camera not available");
 								break;
@@ -170,7 +118,7 @@ public class VideoStreamer extends MatSender {
 					}
 				}
 			}
-		});
+		}));
 	}
 	
 	public static List<Integer> getAvailableCameras(){
@@ -187,31 +135,4 @@ public class VideoStreamer extends MatSender {
 		
 		return ret;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof VideoStreamer))
-			return false;
-		VideoStreamer other = (VideoStreamer) obj;
-		if (resource == null) {
-			if (other.resource != null)
-				return false;
-		} else if (!resource.equals(other.resource))
-			return false;
-		return true;
-	}
-	
-	
 }

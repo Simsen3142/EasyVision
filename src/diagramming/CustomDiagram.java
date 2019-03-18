@@ -4,31 +4,70 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
 import javax.swing.JLayeredPane;
 
 public class CustomDiagram extends JLayeredPane {
 	private static final long serialVersionUID = 1819079186185325112L;
 	private List<CustomDiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
 	private transient DiagramDragListener dragListener;
+	private transient ControlListener controlListener;
 	private transient CustomDiagram instance = this;
 	private transient CustomDiagramListenerTrigger listenerTrigger;
 	private JPanel pnlDiagramItems;
 	private JPanel pnlConnections;
+	private Image backgroundImage;
+	private boolean opaque=true;
 	
+	/**
+	 * @return the backGround
+	 */
+	public Image getBackgroundImage() {
+		return backgroundImage;
+	}
+
+	/**
+	 * @param backGround the backGround to set
+	 */
+	public void setBackgroundImage(Image background) {
+		this.backgroundImage = background;
+	}
+	
+	/**
+	 * @param backGround the backGround to set
+	 */
+	public void setBackgroundImage(ImageIcon background) {
+		this.backgroundImage = background.getImage();
+	}
+
 	/**
 	 * @return the listenerTrigger
 	 */
@@ -75,6 +114,9 @@ public class CustomDiagram extends JLayeredPane {
 		addMouseListener(new ThisMouseListener());
 		addComponentListener(new ResizeListener());
 		
+		controlListener=new ControlListener();
+		controlListener.install(this);
+		
 		pnlDiagramItems=new JPanel();
 		pnlDiagramItems.setOpaque(false);
 		pnlDiagramItems.setLayout(null);
@@ -87,6 +129,7 @@ public class CustomDiagram extends JLayeredPane {
 		
 		setLayer(pnlDiagramItems,2);
 		setLayer(pnlConnections,1);
+		super.setOpaque(false);
 	}
 	
 	public void clear() {
@@ -102,6 +145,52 @@ public class CustomDiagram extends JLayeredPane {
 //		new PanelFrame(dgrm).setVisible(true);
 //	}
 
+	@Override
+	public void paint(Graphics g) {
+		Rectangle rect=this.getVisibleRect();
+		int x=rect.x;
+		int y=rect.y;
+		int width=rect.width;
+		int height=rect.height;
+		
+		if(opaque) {
+			g.setColor(getBackground());
+			g.fillRect(x, y, width, height);
+		}
+			
+		if(backgroundImage!=null) {
+			int newHeight=height;
+			int newWidth=width;
+			
+			if(width>height) {
+				newHeight=(int) (height*0.8);
+				newWidth=newHeight;
+			}else {
+				newWidth=(int) (width*0.8);
+				newHeight=newWidth;
+			}
+			
+			x+=width/2-newWidth/2;
+			y+=height/2-newHeight/2;
+			
+			g.drawImage(backgroundImage, x,y,newWidth,newHeight, null);
+		}
+		
+//		g.setColor(Color.WHITE);
+		
+		super.paint(g);
+	}
+	
+	@Override
+	public void setOpaque(boolean opaque) {
+		this.opaque=opaque;
+	}
+	
+	@Override
+	public boolean isOpaque() {
+		return false;
+	}
+	
 	public void addDiagramItem(JComponent component, Point position) {
 		CustomDiagramItem diagramItem=new CustomDiagramItem(component, this);
 		this.addDiagramItem(diagramItem, position);
@@ -168,7 +257,69 @@ public class CustomDiagram extends JLayeredPane {
 			});
 		}
 	}
+	
+	private class ControlListener extends MouseAdapter implements KeyListener, FocusListener {
+		Point lastPoint=new Point();
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+		
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			lastPoint=e.getPoint();
+		}
+		
+		
+		public void install(JComponent component) {
+			component.addMouseListener(this);
+			component.addMouseMotionListener(this);
+			component.addKeyListener(this);
+			component.addFocusListener(this);
+		}
 
+		public void uninstall(JComponent component) {
+			component.removeMouseListener(this);
+			component.removeMouseMotionListener(this);
+			component.removeKeyListener(this);
+			component.removeFocusListener(this);
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_V:
+				if(e.isControlDown()) {
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					Transferable t=clipboard.getContents(null);
+					getListenerTrigger().triggerOnPasted(t,lastPoint);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+		}
+	}
+	
 	private class DiagramDragListener extends MouseAdapter {
 		private Point origin;
 		private boolean dragging = false;

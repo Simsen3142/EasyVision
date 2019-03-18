@@ -1,11 +1,16 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoWriter;
+
+import database.ImageHandler;
 import parameters.BooleanParameter;
 import parameters.FileParameter;
 import parameters.IntegerParameter;
@@ -17,6 +22,7 @@ public class VideoCreater extends MatEditFunction {
 	 * 
 	 */
 	private static final long serialVersionUID = 1146389294639251120L;
+	private static volatile Image img;
 	private transient VideoWriter writer;
 	private transient Size size;
 	
@@ -34,6 +40,9 @@ public class VideoCreater extends MatEditFunction {
 			)
 		);
 	}
+	
+	public VideoCreater(Boolean empty) {}
+
 	
 	public boolean initVideoWriter(){
 		File file=getFileVal("settings_file");
@@ -67,4 +76,10 @@ public class VideoCreater extends MatEditFunction {
 			writer.release();
 	}
 	
+	@Override
+	public synchronized Image getRepresentationImage() {
+		if(img==null)
+			img=ImageHandler.getImage("res/icons/videocreater.png");;
+		return img;
+	}
 }

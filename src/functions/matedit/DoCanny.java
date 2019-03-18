@@ -1,21 +1,28 @@
 package functions.matedit;
 
+import java.awt.Image;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
+
 public class DoCanny extends MatEditFunction {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3937043096717142438L;
+	private static volatile Image img;
 	public boolean withColor = true;
 
 	public DoCanny() {
 		this.withColor = true;
 	}
+	
+	public DoCanny(Boolean empty) {}
 
 	@Override
 	public Mat apply(Mat matIn) {
@@ -33,5 +40,12 @@ public class DoCanny extends MatEditFunction {
 	        return dest;
         }
         return detectedEdges;
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		if (img == null)
+			img = ImageHandler.getImage("res/icons/kantenerkennung.png");
+		return img;
 	}
 }

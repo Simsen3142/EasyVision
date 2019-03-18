@@ -20,7 +20,10 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.BorderLayout;
 
 public class CustomDiagramItem extends JPanel {
@@ -257,11 +260,11 @@ public class CustomDiagramItem extends JPanel {
 
 		this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		this.setSize(100, 50);
+		this.setSize(374, 192);
 	}
 
 	public void setBorder(Color c, int thickness) {
-		this.setBorder(new LineBorder(c, thickness));
+		this.setBorder(new LineBorder(c, thickness,true));
 	}
 	
 	
@@ -280,6 +283,7 @@ public class CustomDiagramItem extends JPanel {
 		diagram.repaint();
 	}
 	
+	
 	public boolean checkIfAlreadyConnectedTo(CustomDiagramItem item) {
 		for(CustomDiagramItemConnection con:getOutgoingConnections()) {
 			if(con.getTo().equals(item)) {
@@ -288,6 +292,7 @@ public class CustomDiagramItem extends JPanel {
 		}
 		return false;
 	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -444,6 +449,11 @@ public class CustomDiagramItem extends JPanel {
 					break;
 				case KeyEvent.VK_RIGHT:
 					setLocation(getX()+1, getY());
+					break;
+				case KeyEvent.VK_C:
+					if(e.isControlDown()) {
+						diagram.getListenerTrigger().triggerOnCopied(instance);
+					}
 					break;
 	
 				default:

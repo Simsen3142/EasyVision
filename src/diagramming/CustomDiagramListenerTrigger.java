@@ -1,5 +1,7 @@
 package diagramming;
 
+import java.awt.Point;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,5 +49,17 @@ public class CustomDiagramListenerTrigger {
 			}
 		}
 		return connect;
+	}
+	
+	public void triggerOnCopied(CustomDiagramItem diagramItem) {
+		customDiagramListeners.forEach((listener)->{
+			listener.onCopied(diagramItem);
+		});
+	}
+	
+	public void triggerOnPasted(Transferable t, Point mouseLocation) {
+		customDiagramListeners.forEach((listener)->{
+			listener.onPasted(t,mouseLocation);
+		});
 	}
 }

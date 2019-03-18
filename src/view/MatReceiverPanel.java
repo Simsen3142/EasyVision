@@ -1,6 +1,10 @@
 package view;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
+
 import org.opencv.core.*;
 import main.MatReceiver;
 import main.MatSender;
@@ -33,4 +37,9 @@ public class MatReceiverPanel extends MatPanel implements MatReceiver {
 		}
 		this.updateMat(matIn);
 	}
+	
+	public void stop() {
+		sender.removeMatReceiver(this);
+	}
+	
 }
