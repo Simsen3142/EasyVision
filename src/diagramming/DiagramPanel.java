@@ -615,6 +615,7 @@ public class DiagramPanel extends JPanel {
 					if (component instanceof MatReceiverNSenderPanel) {
 						MatReceiverNSenderPanel panel = (MatReceiverNSenderPanel) component;
 						matSender = panel.getFunction();
+						
 						senders.add(matSender);
 					}
 				}

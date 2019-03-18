@@ -402,6 +402,7 @@ public class CustomDiagramItem extends JPanel {
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
+			requestFocus();
 			if(checkIfDoubleClick(500)){
 				setBorder(Color.LIGHT_GRAY, 5);
 				selected=true;

@@ -1,5 +1,6 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import database.ImageHandler;
 import enums.Forms;
 import enums.HaarClassifiers;
 import parameters.EnumParameter;
@@ -27,6 +29,9 @@ import parameters.components.ParameterEnumPanel;
 
 public class FormDetection extends MatEditFunction {
 
+	public FormDetection(Boolean empty) {
+	}
+	
 	public FormDetection() {
 		super(
 			new EnumParameter("Form", Forms.circle)
@@ -95,6 +100,11 @@ public class FormDetection extends MatEditFunction {
 		Mat matout = findChoosenForm(matIn.clone());
 		getMats().put("matout", matout);
 		return matout;
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/formerkennung.png");
 	}
 }
 

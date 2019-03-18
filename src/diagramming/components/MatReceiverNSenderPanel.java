@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import listener.ListenerHandler;
 import main.MatSender;
 import view.MatReceiverPanel;
 import view.PanelFrame;
@@ -30,6 +31,7 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 	private boolean showPicture=false;
 	private MatReceiverPanel matReceiverPanel;
 	private static JMenuItem mntmInFensterAnzeigen;
+	private MatReceiverNSenderPanel instance=this;
 
 	/**
 	 * Create the panel.
@@ -89,13 +91,15 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 		public void actionPerformed(ActionEvent e) {
 			showPicture=chckbxmntmPic.isSelected();
 			if (showPicture) {
+				hideLabel(true);
 				matReceiverPanel = new MatReceiverPanel(function);
+				ListenerHandler.copyListeners(instance, matReceiverPanel);
 				add(matReceiverPanel, BorderLayout.CENTER);
 				matReceiverPanel.repaint();
-				hideLabel(true);
 			} else {
 				function.removeMatReceiver(matReceiverPanel);
 				remove(matReceiverPanel);
+				ListenerHandler.clearListeners(matReceiverPanel);
 				matReceiverPanel = null;
 				hideLabel(false);
 			}
