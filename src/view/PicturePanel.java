@@ -20,10 +20,11 @@ public class PicturePanel extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		
-		Dimension d=getDimension();
-		Dimension size=getSize();
-		g.drawImage(image, size.width/2-d.width/2, size.height/2-d.height/2, d.width,d.height , null);
+		if(image!=null) {
+			Dimension d=getDimension();
+			Dimension size=getSize();
+			g.drawImage(image, size.width/2-d.width/2, size.height/2-d.height/2, d.width,d.height , null);
+		}
 	}
 	
 	private Dimension getDimension(){

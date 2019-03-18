@@ -62,7 +62,6 @@ public class FunctionView extends JPanel {
 		int width=getWidth();
 		int height=getHeight();
 		int height2=height/2;
-		System.out.println("TEST");
 		if(!isLast) {
 			g.fillRect(0, 0, width, height);
 		}else {

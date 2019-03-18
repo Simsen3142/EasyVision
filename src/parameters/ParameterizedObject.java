@@ -100,6 +100,10 @@ public class ParameterizedObject implements Serializable {
 		return ((BooleanParameter)(getParameter(paramName))).getValue();
 	}
 	
+	public Enum<?> getEnumVal(String paramName) {
+		return ((EnumParameter)(getParameter(paramName))).getValue();
+	}
+	
 	public Map<String,ParameterObject> getParameters(){
 		return allParameters;
 	}

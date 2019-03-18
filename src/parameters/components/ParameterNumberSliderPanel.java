@@ -23,6 +23,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 	private EditableDoubleLabel lblMax;
 	private EditableLabel lblTitle;
 	private Function<Void,Void> onSetValue;
+	private ParameterNumberSliderPanel instance=this;
 	
 	public class LabeledSlider extends JSlider{
 		/**
@@ -50,16 +51,11 @@ public class ParameterNumberSliderPanel extends JPanel {
 		public void setValue(int val) {
 			super.setValue(val);
 			lblVal.setText(val+"");
-			if(parameter instanceof DoubleParameter)
-				parameter.setValue((double)val);
-			else if(parameter instanceof IntegerParameter)
-				parameter.setValue((int)val);
-			else if(parameter instanceof LongParameter)
-				parameter.setValue((long)val);
 			
-			if(onSetValue!=null) {
-				onSetValue.apply(null);
-			}
+			System.out.println(instance.getValue());
+			System.out.println(val);
+			if(instance.getValue().intValue()!=val)
+				instance.setValue(val);
 		}
 	}
 	
@@ -102,7 +98,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 			(txts)->{
 				double x=Double.parseDouble(txts[0]);
 				if(x>=parameter.getMinValue().doubleValue()&&x<=parameter.getMaxValue().doubleValue()) {
-					setValue((int)x);
+					setValue((int)x,false);
 					return txts[0];
 				} else
 					return txts[1];
@@ -118,7 +114,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 		slider.setMaximum(parameter.getMaxValue().intValue());
 		add(slider, "cell 0 1 3 1,growx");
 		
-		this.setValue(parameter.getValue());
+		this.setValue(parameter.getValue(),false);
 	}
 	
 	
@@ -126,13 +122,27 @@ public class ParameterNumberSliderPanel extends JPanel {
 		return slider;
 	}
 	
-	public void setValue(Number val) {
-		slider.setValue(val.intValue());
-		parameter.setValue(val);
+	private void setValue(Number val) {
+		setValue(val,true);
+		System.out.println("TEosdkzufszoi");
 	}
 	
-	public int getValue() {
-		return slider.getValue();
+	public void setValue(Number val, boolean withParameter) {
+		System.out.println("min"+parameter.getMinValue());
+		
+		if(slider.getValue()!=val.intValue())
+			slider.setValue(val.intValue());
+		System.out.println(withParameter);
+		if(withParameter) {
+			parameter.setValue(val);
+			if(onSetValue!=null) {
+				onSetValue.apply(null);
+			}
+		}
+	}
+	
+	public Number getValue() {
+		return parameter.getValue();
 	}
 	
 
