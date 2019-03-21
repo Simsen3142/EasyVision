@@ -52,8 +52,6 @@ public class PictureStreamer extends MatStreamer {
 						File f=getFileVal("file");
 						if(!new File((String)getResource()).getAbsolutePath().equals(f.getAbsolutePath())) {
 							setResource(f.getAbsolutePath());
-							System.out.println(f.getAbsolutePath());
-							System.out.println(getResource());
 							stop();
 							start();
 							break;
@@ -65,8 +63,10 @@ public class PictureStreamer extends MatStreamer {
 								Imgproc.resize(mat, mat, new Size(width,height));
 							}
 							try {
+								Thread.sleep(getIntVal("endless_delayval"));
 								sendMat(mat);
 								sendParameters();
+							} catch(InterruptedException e) {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -74,7 +74,6 @@ public class PictureStreamer extends MatStreamer {
 							System.gc();
 						}else {
 							if(getBoolVal("endless_endless")) {
-								Thread.sleep(getIntVal("endless_delayval"));
 								stop();
 								start();
 								break;

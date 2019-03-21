@@ -22,7 +22,7 @@ public class Function2 extends MatEditFunction {
 	protected Mat apply(Mat matIn) {
 		Mat matOut=matIn.clone();
 		for(int i=0;i<matIn.rows();i++) {
-			for(int c=0;c<matIn.cols();c++) {
+			for(int c=0;c<matIn.cols()/2;c++) {
 				matOut.put(i, c, new double[] {255,255,255} );
 			}
 		}

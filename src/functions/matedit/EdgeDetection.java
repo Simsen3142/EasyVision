@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
 
 import database.ImageHandler;
 
-public class DoCanny extends MatEditFunction {
+public class EdgeDetection extends MatEditFunction {
 	/**
 	 * 
 	 */
@@ -18,11 +18,11 @@ public class DoCanny extends MatEditFunction {
 	private static volatile Image img;
 	public boolean withColor = true;
 
-	public DoCanny() {
+	public EdgeDetection() {
 		this.withColor = true;
 	}
 	
-	public DoCanny(Boolean empty) {}
+	public EdgeDetection(Boolean empty) {}
 
 	@Override
 	public Mat apply(Mat matIn) {

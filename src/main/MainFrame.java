@@ -62,9 +62,25 @@ public class MainFrame extends JFrame implements Serializable {
 			e.printStackTrace();
 		}
 
-		String opencvpath = System.getProperty("user.dir") + "/opencv/build/java/x64/";
+		String bit=System.getProperty("sun.arch.data.model");
+		String folder=bit.equals("64")?"x64/":"x86/";
+		String userdir = System.getProperty("user.dir");
+		String opencvpath = userdir + "/opencv/build/java/"+folder;
+		
 		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
-		System.load(System.getProperty("user.dir") + "/opencv/build/x64/vc15/bin/opencv_ffmpeg341_64.dll");
+		
+		System.load(System.getProperty("user.dir") + "/opencv/build/bin/opencv_ffmpeg341"+(bit.equals("64")?"_64":"") +".dll");
+		
+//		System.load(userdir+"\\arduino\\rxtxParallel.dll");
+//		System.load(userdir+"\\arduino\\rxtxSerial.dll");
+		
+		System.out.println(System.getProperty("java.library.path"));
+
+		System.loadLibrary("rxtxParallel");
+		System.loadLibrary("rxtxSerial");
+		
+		System.out.println(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
+		System.out.println(userdir+"/arduino/rxtxSerial.dll");
 
 		initReflectionClasses();
 		initPreSetValues();

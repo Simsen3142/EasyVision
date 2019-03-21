@@ -201,6 +201,37 @@ public class DiagramPanel extends JPanel {
 
 			@Override
 			public void onDeleteConnection(CustomDiagramItemConnection connection) {
+				CustomDiagramItem to_item = connection.getTo().getDiagramItem();
+				DiagramOutput from = connection.getFrom();
+				DiagramInput to = connection.getTo();
+				CustomDiagramItem from_item = connection.getFrom().getDiagramItem();
+
+				if (!loading) {
+					if (from_item.getComponent() instanceof FunctionPanel<?>
+							&& to_item.getComponent() instanceof FunctionPanel<?>) {
+
+						FunctionPanel<?> pnl_from = (FunctionPanel<?>) from_item.getComponent();
+						FunctionPanel<?> pnl_to = (FunctionPanel<?>) to_item.getComponent();
+
+						if (pnl_from.getFunction() instanceof MatSender) {
+							if (pnl_to.getFunction() instanceof MatReceiver) {
+								if ("input".equals(to.getName())) {
+									((MatSender) pnl_from.getFunction())
+											.removeMatReceiver((MatReceiver) pnl_to.getFunction());
+								}
+							}
+						}
+
+						if (pnl_from.getFunction() instanceof ParameterizedObject) {
+							if (pnl_to.getFunction() instanceof ParameterReceiver) {
+								if ("input".equals(to.getName())) {
+									((ParameterizedObject) pnl_from.getFunction())
+											.removeParamterReceiver((ParameterReceiver) pnl_to.getFunction());
+								}
+							}
+						}
+					}
+				}
 			}
 
 			@Override
