@@ -81,7 +81,7 @@ public class ParameterizedObject implements Serializable {
 	}
 	
 	public double getDoubleVal(String paramName) {
-		return ((DoubleParameter)(getParameter(paramName))).getValue();
+		return ((NumberParameter<?>)(getParameter(paramName))).getValue().doubleValue();
 	}
 	
 	public File getFileVal(String paramName) {

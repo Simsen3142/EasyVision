@@ -27,7 +27,7 @@ public class FileVideoStreamer extends VideoStreamer {
 	}
 	
 	public FileVideoStreamer() {
-		this(new File("test/SampleVideo_1280x720_1mb.mp4"));
+		this(new File("res/SampleVideo_1280x720_1mb.mp4"));
 	}
 	
 	public FileVideoStreamer(Boolean empty) {}

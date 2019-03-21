@@ -19,7 +19,7 @@ public class UrlVideoStreamer extends VideoStreamer {
 	
 	public UrlVideoStreamer(String url) {
 		super(url);
-		this.addParameters(new StringParameter("url",""));
+		this.addParameters(new StringParameter("url",url));
 	}
 	
 	public UrlVideoStreamer(Boolean empty) {}

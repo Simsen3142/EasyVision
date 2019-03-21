@@ -52,8 +52,6 @@ public class ParameterNumberSliderPanel extends JPanel {
 			super.setValue(val);
 			lblVal.setText(val+"");
 			
-			System.out.println(instance.getValue());
-			System.out.println(val);
 			if(instance.getValue().intValue()!=val)
 				instance.setValue(val);
 		}
@@ -124,21 +122,19 @@ public class ParameterNumberSliderPanel extends JPanel {
 	
 	private void setValue(Number val) {
 		setValue(val,true);
-		System.out.println("TEosdkzufszoi");
 	}
 	
 	public void setValue(Number val, boolean withParameter) {
-		System.out.println("min"+parameter.getMinValue());
-		
 		if(slider.getValue()!=val.intValue())
 			slider.setValue(val.intValue());
-		System.out.println(withParameter);
 		if(withParameter) {
 			parameter.setValue(val);
 			if(onSetValue!=null) {
 				onSetValue.apply(null);
 			}
 		}
+		
+		lblVal.setText(getValue()+"");
 	}
 	
 	public Number getValue() {

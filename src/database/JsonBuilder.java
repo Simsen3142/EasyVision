@@ -1,11 +1,11 @@
-//package database;
-//
+package database;
+
 //import com.google.gson.Gson;
 //import com.google.gson.JsonElement;
-//
+
 //import java.lang.reflect.Type;
-//
-//public class JsonBuilder {
+
+public class JsonBuilder {
 //	public static JsonElement toJSONElement(Object o){
 //        Gson gson = new Gson();
 //        JsonElement jsonElement = gson.toJsonTree(o);
@@ -30,4 +30,4 @@
 //        
 //        return ret;
 //    }
-//}
+}

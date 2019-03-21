@@ -5,6 +5,8 @@ import java.util.Map;
 
 import arduino.ArduinoHandler;
 import arduino.csv.CsvConverter;
+import arduino.messages.JSONParser;
+import arduino.messages.MotorMessage;
 import arduino.serial.TwoWaySerialComm;
 import database.ImageHandler;
 import functions.RepresentationIcon;
@@ -47,15 +49,19 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		if(arduinoHandler==null)
 			arduinoHandler=ArduinoHandler.getInstance();
 		
+		String txt=JSONParser.toJSON(new MotorMessage.MotorFrequencyMessage(300, 200));
+		System.out.println(txt);
+		
 		if(arduinoHandler.getSerialComm().isConnected()) {
 			IntegerParameter param1=((IntegerParameter)parameters.get("output_error"));
 			IntegerParameter param2=((IntegerParameter)parameters.get("output_angle"));
 			StringParameter param3=((StringParameter)parameters.get("output_turn"));
 
 			int[] motorSpeed=handleMotorControl(param1.getValue(),param2.getValue(),param3.getValue());
-			String text=CsvConverter.toCsv("m1",motorSpeed[0],"m2",motorSpeed[1]);
+			String text=JSONParser.toJSON(new MotorMessage.MotorFrequencyMessage(motorSpeed[0], motorSpeed[1]));
 			
 			long now=System.currentTimeMillis();
+			
 			if(now-lastTimeSent>getIntVal("send_timetillsend")) {
 				lastTimeSent=now;
 				arduinoHandler.getSerialComm().getWriter().doWrite(text);

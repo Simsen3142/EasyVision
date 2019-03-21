@@ -92,16 +92,22 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	}
 
 	private void loadClassifier(String classifierPath) {
+<<<<<<< HEAD
 		System.out.println(classifierPath);
 		//System.out.println(new File(classifierPath).exists());
+=======
+>>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 
 		if (!loaded) {
 			getFaceCascade().load(classifierPath);
 			loaded = true;
 		}
+<<<<<<< HEAD
 
 		//System.out.println(faceCascade.empty());
 
+=======
+>>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 	}
 
 	private void detectAndDisplay(Mat frame) {
