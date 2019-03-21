@@ -1,35 +1,32 @@
 package functions.matedit;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-
 import database.ImageHandler;
+<<<<<<< HEAD:src/functions/matedit/FormDetection.java
+import enums.Forms;
+=======
 import enums.Shape;
 import enums.HaarClassifiers;
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746:src/functions/matedit/ShapeDetection.java
 import parameters.EnumParameter;
 import parameters.components.ParameterEnumPanel;
 
 public class ShapeDetection extends MatEditFunction {
 
+<<<<<<< HEAD:src/functions/matedit/FormDetection.java
+	private static final long serialVersionUID = 7427096678751354797L;
+
+	public FormDetection(Boolean empty) {
+=======
 	public ShapeDetection(Boolean empty) {
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746:src/functions/matedit/ShapeDetection.java
 	}
 	
 	public ShapeDetection() {
@@ -67,12 +64,16 @@ public class ShapeDetection extends MatEditFunction {
 		// noise reduction
 		Imgproc.GaussianBlur(grayFrame, grayFrame, new Size(), 2,2);
 		// detected circles
+<<<<<<< HEAD:src/functions/matedit/FormDetection.java
+		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
+=======
 		Vector<Mat> circlesList = new Vector<Mat>();
 		for (int i = 0; i < circlesList.size(); i++) {
 			System.out.println(i);
 		}
 
 		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0);
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746:src/functions/matedit/ShapeDetection.java
 
 		getMats().put("gray",grayFrame);
 		getMats().put("found",found);

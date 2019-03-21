@@ -13,10 +13,7 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 import enums.HaarClassifiers;
 import parameters.EnumParameter;
-import parameters.IntegerParameter;
 import parameters.components.ParameterEnumPanel;
-import parameters.group.ParameterGroup;
-
 import database.ImageHandler;
 
 public class ObjectDetectionHaar extends MatEditFunction {
@@ -118,10 +115,18 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	}
 	    
 	private void loadClassifier(String classifierPath) {
+<<<<<<< HEAD
+	//	System.out.println(new File(classifierPath).exists());
+=======
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746
 		if(!loaded) {
 			getFaceCascade().load(classifierPath);
 	        loaded=true;
 		}
+<<<<<<< HEAD
+     //   System.out.println(faceCascade.empty());
+=======
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746
 	}
 	
 	private void detectAndDisplay(Mat frame)
@@ -159,8 +164,12 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	
 	@Override
 	protected Mat apply(Mat matIn) {
+<<<<<<< HEAD
+		Mat matout =  chooseClassifier(matIn.clone());
+=======
 		Mat matout =  matIn.clone();
 		chooseClassifier(matout);
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746
 		getMats().put("matout", matout);
 		return matout;
 	}

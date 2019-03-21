@@ -13,14 +13,12 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
-
 import database.ImageHandler;
 import enums.LBPclassifiers;
 
 public class ObjectDetectionLBP extends MatEditFunction {
 	private static volatile Image img;
 	private int absoluteobjectsize = 0;
-
 	private static final long serialVersionUID = 136775703156348096L;
 	private transient CascadeClassifier faceCascade;
 	private transient boolean loaded = false;
@@ -94,10 +92,19 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	}
 
 	private void loadClassifier(String classifierPath) {
+<<<<<<< HEAD
+		System.out.println(classifierPath);
+		//System.out.println(new File(classifierPath).exists());
+=======
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746
 		if (!loaded) {
 			getFaceCascade().load(classifierPath);
 			loaded = true;
 		}
+<<<<<<< HEAD
+		//System.out.println(faceCascade.empty());
+=======
+>>>>>>> 453df690829ebc759ff97ee6a98b74d76c847746
 	}
 
 	private void detectAndDisplay(Mat frame) {

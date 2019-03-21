@@ -16,9 +16,6 @@ import view.PanelFrame;
 
 public class LineDetection extends MatEditFunction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3484600867520927562L;
 	private static volatile Image img;
 	private int width;
