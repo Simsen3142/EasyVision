@@ -10,24 +10,14 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import database.ImageHandler;
 import enums.Shape;
-<<<<<<< HEAD
-=======
-import enums.HaarClassifiers;
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 import parameters.EnumParameter;
 
 public class ShapeDetection extends MatEditFunction {
 
 	private static final long serialVersionUID = 7427096678751354797L;
 
-<<<<<<< HEAD
 
-	public ShapeDetection(Boolean empty) {
-
-=======
-	public ShapeDetection(Boolean empty) {
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
-	}
+	public ShapeDetection(Boolean empty) {}
 	
 	public ShapeDetection() {
 		super(
@@ -64,14 +54,8 @@ public class ShapeDetection extends MatEditFunction {
 		// noise reduction
 		Imgproc.GaussianBlur(grayFrame, grayFrame, new Size(), 2,2);
 		// detected circles
-<<<<<<< HEAD
-
-		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
-
-=======
 		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
 		
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 		Vector<Mat> circlesList = new Vector<Mat>();
 		for (int i = 0; i < circlesList.size(); i++) {
 			System.out.println(i);

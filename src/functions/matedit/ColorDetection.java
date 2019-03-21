@@ -49,6 +49,7 @@ public class ColorDetection extends MatEditFunction {
 		Scalar min = new Scalar(getDoubleVal("ColorRange_min_h"), getDoubleVal("ColorRange_min_s"), getDoubleVal("ColorRange_min_v"));
 		Scalar max = new Scalar(getDoubleVal("ColorRange_max_h"), getDoubleVal("ColorRange_max_s"), getDoubleVal("ColorRange_max_v"));
 		
+		
 		// Core.inRange(grayFrame, min, max, inrange);
 		Mat matout = getMats().put("ColorRange", grayFrame);
 		return matout;

@@ -115,20 +115,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	}
 	    
 	private void loadClassifier(String classifierPath) {
-<<<<<<< HEAD
-	//	System.out.println(new File(classifierPath).exists());
-=======
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
-
 		if(!loaded) {
 			getFaceCascade().load(classifierPath);
 	        loaded=true;
 		}
-<<<<<<< HEAD
-     //   System.out.println(faceCascade.empty());
-=======
-
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 	}
 	
 	private void detectAndDisplay(Mat frame)
@@ -167,11 +157,6 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	@Override
 	protected Mat apply(Mat matIn) {
 		Mat matout =  chooseClassifier(matIn.clone());
-<<<<<<< HEAD
-		chooseClassifier(matout);
-=======
-
->>>>>>> 2d5cb04dc095c768f01fbd985250c37079cd8e61
 		getMats().put("matout", matout);
 		return matout;
 	}
