@@ -98,9 +98,11 @@ public class TwoWaySerialComm {
 	}
 	
 	public SerialWriter getWriter() {
+		System.out.println("GET WRITER");
 		if(writer==null) {
 			if(port!=null) {
 				try {
+					System.out.println("INIT WRITER");
 					writer=new SerialWriter(port.getOutputStream());
 				} catch (IOException e) {
 					e.printStackTrace();

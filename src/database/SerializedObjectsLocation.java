@@ -3,7 +3,7 @@ package database;
 import java.io.File;
 
 public enum SerializedObjectsLocation {
-	BASE("data/serialized", true), CAMERA(BASE.path+"/camera"), MATEDITFUNCTION(BASE.path+"/mateditfunction"), SESSIONS(BASE.path+"/sessions");
+	BASE("data/serialized", true), MATEDITFUNCTION(BASE.path+"/mateditfunction"), SESSIONS(BASE.path+"/sessions");
 	
 	private String path;
 	

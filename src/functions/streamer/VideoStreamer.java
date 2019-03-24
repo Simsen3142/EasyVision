@@ -101,11 +101,13 @@ public abstract class VideoStreamer extends MatStreamer {
 									int height=getIntVal("size_height");
 									Imgproc.resize(mat, mat, new Size(width,height));
 								}
-								try {
-									sendMat(mat);
-									sendParameters();
-								} catch (Exception e) {
-									e.printStackTrace();
+								if(mat.rows()>0) {
+									try {
+										sendMat(mat);
+										sendParameters();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								}
 								System.gc();
 							}else {

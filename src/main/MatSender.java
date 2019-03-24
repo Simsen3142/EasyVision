@@ -65,6 +65,10 @@ public class MatSender extends ParameterizedObject {
 		receivers.clear();
 	}
 	
+	public boolean containsMatReceiver(Object receiver) {
+		return receivers.contains(receiver);
+	}
+	
 	public void clearMatReceiverFunctions() {
 		List<MatReceiver> toRemove=new ArrayList<>();
 		

@@ -25,6 +25,10 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 	private Object resource;
 	private transient static Set<MatStreamer> videoStreamers = Collections.synchronizedSet(new HashSet<MatStreamer>());
 	private transient Mat mat;
+
+	public boolean isStarted() {
+		return streamThread!=null && streamThread.isAlive();
+	}
 	
 	/**
 	 * @return the resource

@@ -67,6 +67,7 @@ public class PictureStreamer extends MatStreamer {
 								sendMat(mat);
 								sendParameters();
 							} catch(InterruptedException e) {
+								break;
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

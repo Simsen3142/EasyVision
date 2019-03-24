@@ -75,6 +75,8 @@ public class Serializing {
 		FileInputStream fis = null;
 	    ObjectInputStream in = null;
 	    try {
+	    	if(!f.exists())
+	    		f.createNewFile();
 	        fis = new FileInputStream(f);
 	        in = new ObjectInputStream(fis);
 	        s = (Serializable) in.readObject();

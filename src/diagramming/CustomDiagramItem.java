@@ -6,7 +6,10 @@ import javax.swing.SwingConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
@@ -33,10 +36,19 @@ public class CustomDiagramItem extends JPanel {
 	private ConnectingMouseMotionListener connectingListener;
 	private ControlListener controlListener;
 	private CustomDiagramItem instance = this;
-	private HashMap<String, DiagramConnector> connectors=new HashMap<String, DiagramConnector>();
+	private Map<String, DiagramConnector> connectors=new LinkedHashMap<String, DiagramConnector>();
+	private boolean selected=false;
 	
 	private DiagramOutput selectedOutput;
 	private DiagramInput selectedInput;
+	
+	/**
+	 * @param selected the selected to set
+	 */
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+		diagram.getListenerTrigger().triggerOnItemSelectionChanged(this, selected);
+	}
 
 	public JComponent getComponent() {
 		return component;
@@ -69,7 +81,7 @@ public class CustomDiagramItem extends JPanel {
 	/**
 	 * @return the connectors
 	 */
-	private HashMap<String, DiagramConnector> getConnectors() {
+	public Map<String, DiagramConnector> getConnectors() {
 		return connectors;
 	}
 	
@@ -86,6 +98,32 @@ public class CustomDiagramItem extends JPanel {
 		if(con!=null && con instanceof DiagramInput) {
 			selectedInput=(DiagramInput)con;
 			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean setSelectedInput(int index) {
+		int i=0;
+		for(DiagramConnector conn:connectors.values()) {
+			if(conn instanceof DiagramInput) {
+				if(i++==index) {
+					System.out.println("selected = "+conn.getName());
+					return setSelectedInput(conn.getName());
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean setSelectedNextFreeInput() {
+		for(DiagramConnector conn:connectors.values()) {
+			if(conn instanceof DiagramInput) {
+				if(conn.isConnectionAllowed()) {
+					return setSelectedInput(conn.getName());
+				}
+			}
 		}
 		
 		return false;
@@ -251,7 +289,7 @@ public class CustomDiagramItem extends JPanel {
 			return e.getButton() == MouseEvent.BUTTON3 || e.isShiftDown();
 		});
 		ComponentDragAdapter.install(this, (e) -> {
-			return e.getButton() == MouseEvent.BUTTON2 || e.isControlDown();
+			return e.getButton() == MouseEvent.BUTTON2 || e.isControlDown() || (e.getButton() == MouseEvent.BUTTON1 && selected);
 		});
 		ComponentCursorAdapter.install(component, KeyEvent.VK_CONTROL, InputEvent.CTRL_DOWN_MASK,
 				new Cursor(Cursor.HAND_CURSOR), new Cursor(Cursor.MOVE_CURSOR));
@@ -261,6 +299,7 @@ public class CustomDiagramItem extends JPanel {
 		this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		this.setSize(374, 192);
+		
 	}
 
 	public void setBorder(Color c, int thickness) {
@@ -345,9 +384,11 @@ public class CustomDiagramItem extends JPanel {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown() && !e.isShiftDown()) {
-				connecting = true;
-				setBorder(Color.GREEN, 5);
+			if(!selected) {
+				if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown() && !e.isShiftDown()) {
+					connecting = true;
+					setBorder(Color.GREEN, 5);
+				}
 			}
 		}
 
@@ -366,7 +407,7 @@ public class CustomDiagramItem extends JPanel {
 						
 						CustomDiagramItem itemFound = (CustomDiagramItem) component;
 						if(!checkIfAlreadyConnectedTo(itemFound) && itemFound.selectedInput.isConnectionAllowed() 
-								&& diagram.getListenerTrigger().triggerOnConnectionAvailable(instance, itemFound)) {
+								|| diagram.getListenerTrigger().triggerOnConnectionAvailable(instance, itemFound)) {
 							diagramItemFound=itemFound;
 							diagramItemFound.setBorder(Color.GREEN, 5);
 						}
@@ -383,7 +424,7 @@ public class CustomDiagramItem extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			connecting = false;
-			if(!controlListener.selected) {
+			if(!selected) {
 				setBorder(Color.BLACK, 5);
 			}
 			
@@ -397,19 +438,22 @@ public class CustomDiagramItem extends JPanel {
 	
 	
 	private class ControlListener extends MouseAdapter implements KeyListener, FocusListener {
-		private boolean selected=false;
 		private long lastTimeClicked=0;
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
-			if(checkIfDoubleClick(500)){
+			lastTimeClicked=System.currentTimeMillis();
+		}
+		
+		public void mouseReleased(MouseEvent e) {
+			if(checkIfSelectionClick(500)){
 				setBorder(Color.LIGHT_GRAY, 5);
-				selected=true;
+				setSelected(true);
 			}
 		}
 		
-		private boolean checkIfDoubleClick(int time4doubleClick) {
+		private boolean checkIfSelectionClick(int time4doubleClick) {
 			long time=System.currentTimeMillis();
 			boolean doubleclick=time-lastTimeClicked<time4doubleClick;
 			lastTimeClicked=System.currentTimeMillis();
@@ -482,7 +526,7 @@ public class CustomDiagramItem extends JPanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			setBorder(Color.BLACK, 5);
-			selected=false;
+			setSelected(false);
 			lastTimeClicked=0;
 		}
 	}

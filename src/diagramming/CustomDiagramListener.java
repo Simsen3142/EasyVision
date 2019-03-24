@@ -11,4 +11,5 @@ public interface CustomDiagramListener {
 	public boolean onConnectionAvailable(CustomDiagramItem from, CustomDiagramItem to);
 	public void onCopied(CustomDiagramItem diagramItem);
 	public void onPasted(Transferable t, Point mouseLocation);
+	public void onItemSelectionChanged(CustomDiagramItem diagramItem, boolean selected);
 }

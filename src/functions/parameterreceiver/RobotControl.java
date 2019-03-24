@@ -49,9 +49,6 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		if(arduinoHandler==null)
 			arduinoHandler=ArduinoHandler.getInstance();
 		
-		String txt=JSONParser.toJSON(new MotorMessage.MotorFrequencyMessage(300, 200));
-		System.out.println(txt);
-		
 		if(arduinoHandler.getSerialComm().isConnected()) {
 			IntegerParameter param1=((IntegerParameter)parameters.get("output_error"));
 			IntegerParameter param2=((IntegerParameter)parameters.get("output_angle"));
@@ -65,7 +62,10 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 			if(now-lastTimeSent>getIntVal("send_timetillsend")) {
 				lastTimeSent=now;
 				arduinoHandler.getSerialComm().getWriter().doWrite(text);
+				System.out.println("WOULD LIKE TO SEND");
 			}
+		}else {
+			System.out.println("NOT CONNECTED");
 		}
 		
 		// kreis! mittelpunkt

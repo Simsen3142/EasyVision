@@ -1,4 +1,4 @@
-package functions.matedit;
+package functions.matedit.multi;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -9,7 +9,10 @@ import org.opencv.core.*;
 import org.opencv.imgproc.*;
 
 import database.ImageHandler;
+import functions.matedit.ExtractBlack;
+import functions.matedit.MatEditFunction;
 import main.MatMapReceiver;
+import main.MatReceiver;
 import main.MatSender;
 import parameters.*;
 import parameters.group.*;
@@ -17,9 +20,9 @@ import parameters.group.ColorParameterGroup.ColorType;
 import view.MatEditFunctionMatsPanel;
 import view.PanelFrame;
 
-public class LineDetection extends MatEditFunction {
+public class LineDetection extends MultiMatEditFunction {
 
-	private static final long serialVersionUID = -3484600867520927562L;
+	private static final long serialVersionUID = -34843237520925562L;
 	private static volatile Image img;
 	private int width;
 	private int height;
@@ -30,40 +33,48 @@ public class LineDetection extends MatEditFunction {
 	private int sqrError;
 	private boolean crossingDetected = false;
 	
-	private Mat line;
-	private Mat squares;
-
 	@Override
-	protected Mat apply(Mat matIn) {
-		width = matIn.cols();
-		height = matIn.rows();
+	public int getNrFunctionInputs() {
+		return 1;
+	}
+	
+	@Override
+	public int getNrMatInputs() {
+		return 3;
+	}
+	
+	@Override
+	public Mat apply(Map<Integer, Mat> matsIn) {
+		Mat matMain=matsIn.get(0);
+		Mat line=matsIn.get(1);
+		Mat squares=matsIn.get(2);
+		
+		width = matMain.cols();
+		height = matMain.rows();
 
-		getMats().put("input", matIn);
-		Mat procMat = matIn.clone();
+		getMats().put("input", matMain);
+		Mat procMat = matMain;
 		getMats().put("procMat", procMat);
 
-		Mat matOut = matIn.clone();
+		Mat matOut = matMain.clone();
 		getMats().put("output", matOut);
 
-		line = new Mat();
-		line=ExtractBlack.apply(procMat, getDoubleVal("line_min"), getDoubleVal("line_max"));
+//		line = new Mat();
+//		line=ExtractBlack.apply(procMat, getDoubleVal("line_min"), getDoubleVal("line_max"));
 		getMats().put("line", line);
 
 		Imgproc.cvtColor(procMat, procMat, Imgproc.COLOR_BGR2HSV);
 		
-		squares = new Mat();
+//		squares = new Mat();
 		getMats().put("squares", squares);
-		Scalar sqrMin = new Scalar(getDoubleVal("sqr_min_h"), getDoubleVal("sqr_min_s"), getDoubleVal("sqr_min_v"));
-		Scalar sqrMax = new Scalar(getDoubleVal("sqr_max_h"), getDoubleVal("sqr_max_s"), getDoubleVal("sqr_max_v"));
-		Core.inRange(procMat, sqrMin, sqrMax, squares);
+//		Scalar sqrMin = new Scalar(getDoubleVal("sqr_min_h"), getDoubleVal("sqr_min_s"), getDoubleVal("sqr_min_v"));
+//		Scalar sqrMax = new Scalar(getDoubleVal("sqr_max_h"), getDoubleVal("sqr_max_s"), getDoubleVal("sqr_max_v"));
+//		Core.inRange(procMat, sqrMin, sqrMax, squares);
 
 //		Scalar lnMin=new Scalar(0,0,0);
 //		Scalar lnMax=new Scalar(255,255,50);
 //		Scalar sqrMin=new Scalar(25,39,43);
 //		Scalar sqrMax=new Scalar(95,255,204);
-
-		removeNoiseLine(line);
-		removeNoiseSqr(squares);
 
 		ArrayList<MatOfPoint> contoursSquare = new ArrayList<>();
 		Imgproc.findContours(squares, contoursSquare, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -103,8 +114,14 @@ public class LineDetection extends MatEditFunction {
 
 		if (!sqrDetected) {
 			crossingDetected = checkIfCrossing(line, matOut);
-			if (crossingDetected)
-				removeNoiseLineCrossing(line);
+			if (crossingDetected) {
+				MatSender sender=getMatSenderByIndex(3);
+				System.out.println("SENDER = "+sender);
+				if(sender instanceof MatEditFunction) {
+					System.out.println("//////////////////////////////"+sender);
+					line=((MatEditFunction)sender).performFunction(line);
+				}
+			}
 		}
 
 		ArrayList<MatOfPoint> contoursLine = new ArrayList<>();
@@ -159,64 +176,14 @@ public class LineDetection extends MatEditFunction {
 	
 	public LineDetection(Boolean empty) {}
 
-
 	public LineDetection() {
 		super(
-			new ParameterGroup("line",
-				new DoubleParameter("min",140,0,255),
-				new DoubleParameter("max", 255,0,255)
-			),
-			new ParameterGroup("sqr",
-				new ColorParameterGroup("min", ColorType.HSV, 
-					new DoubleParameter("h", 25, 0, 255),
-					new DoubleParameter("s", 39, 0, 255), 
-					new DoubleParameter("v", 43, 0, 255)
-				),
-				new ColorParameterGroup("max", ColorType.HSV, 
-					new DoubleParameter("h", 95, 0, 255),
-					new DoubleParameter("s", 255, 0, 255), 
-					new DoubleParameter("v", 204, 0, 255)
-				)
-			),
-			new ParameterGroup("noise", 
-				new IntegerParameter("erosion", 2, 0, 100),
-				new IntegerParameter("dilation", 3, 0, 100)
-			),
 			new ParameterGroup("output", 
 				new IntegerParameter("error",0,false),
 				new IntegerParameter("angle",0,false),
 				new StringParameter("turn","",false)
 			)
 		);
-		
-		new PanelFrame(new MatEditFunctionMatsPanel(this, "line")).setVisible(true);
-		new PanelFrame(new MatEditFunctionMatsPanel(this, "squares")).setVisible(true);
-	}
-
-	private void removeNoiseLine(Mat line) {
-		int erosion_size = getIntVal("noise_erosion");
-		int dilation_size = getIntVal("noise_dilation");
-		removeNoise(line, erosion_size, crossingDetected ? 20 * erosion_size : erosion_size, dilation_size,
-				dilation_size);
-	}
-
-	private void removeNoiseSqr(Mat sqr) {
-		int erosion_size = getIntVal("noise_erosion");
-		int dilation_size = getIntVal("noise_dilation");
-		removeNoise(sqr, erosion_size, erosion_size, dilation_size, dilation_size);
-	}
-
-	private void removeNoiseLineCrossing(Mat line) {
-		int erosion_size = getIntVal("noise_erosion");
-		int dilation_size = getIntVal("noise_dilation");
-		removeNoise(line, 0, 20 * erosion_size, 0, dilation_size);
-	}
-
-	private void removeNoise(Mat matIn, int erosionX, int erosionY, int dilationX, int dilationY) {
-		Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2 * erosionX + 1, 2 * erosionY + 1));
-		Imgproc.erode(matIn, matIn, element);
-		element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2 * dilationX + 1, 2 * dilationY + 1));
-		Imgproc.dilate(matIn, matIn, element);
 	}
 
 	private RotatedRect processLineContour(Mat matIn, MatOfPoint contour, RotatedRect bestFittingRect) {
@@ -511,6 +478,8 @@ public class LineDetection extends MatEditFunction {
 			img = ImageHandler.getImage("res/icons/linien.png");
 		return img;
 	}
+
+	
 
 //	private void editLineContour(MatOfPoint line, double minX, double maxX) {
 //		int size = line.rows();
