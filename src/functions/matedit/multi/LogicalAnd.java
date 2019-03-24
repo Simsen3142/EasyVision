@@ -14,6 +14,10 @@ public class LogicalAnd extends LogicalFunctions{
 	public LogicalAnd(Boolean empty) {
 	}
 	
+	public LogicalAnd() {
+		super();
+	}
+	
 	@Override
 	protected boolean performLogic(List<Boolean> bs) {
 		
