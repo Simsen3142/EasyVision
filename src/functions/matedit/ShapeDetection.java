@@ -10,16 +10,14 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import database.ImageHandler;
 import enums.Shape;
-import enums.HaarClassifiers;
 import parameters.EnumParameter;
-import parameters.components.ParameterEnumPanel;
 
 public class ShapeDetection extends MatEditFunction {
 
 	private static final long serialVersionUID = 7427096678751354797L;
 
-	public ShapeDetection(Boolean empty) {
-	}
+
+	public ShapeDetection(Boolean empty) {}
 	
 	public ShapeDetection() {
 		super(

@@ -56,6 +56,10 @@ public class ObjectDetectionLBP extends MatEditFunction {
 				return detectFrontalFaceLBP(clone);
 			case PROFIL_FACE:
 				return detectProfileFaceLBP(clone);
+			case SILVERWARE:
+				return detectSilverware(clone);
+			case CAT_FACE:
+				return detectCatFace(clone);
 			default:
 				System.out.println("There is no such param!");
 				return null;
@@ -70,6 +74,14 @@ public class ObjectDetectionLBP extends MatEditFunction {
 
 	public Mat detectProfileFaceLBP(Mat frame) {
 		return startDetection("opencv/build/etc/lbpcascades/lbpcascade_profileface.xml", frame);
+	}
+	
+	public Mat detectSilverware(Mat frame) {
+		return startDetection("opencv/build/etc/lbpcascades/lbpcascade_silverware.xml", frame);
+	}
+	
+	public Mat detectCatFace(Mat frame) {
+		return startDetection("opencv/build/etc/lbpcascades/lbpcascade_frontalcatface.xml", frame);
 	}
 
 	// private methods

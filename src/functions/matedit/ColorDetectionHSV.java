@@ -50,8 +50,7 @@ public class ColorDetectionHSV extends MatEditFunction {
 		
 		Scalar min = new Scalar(getDoubleVal("ColorRange_min_h"), getDoubleVal("ColorRange_min_s"), getDoubleVal("ColorRange_min_v"));
 		Scalar max = new Scalar(getDoubleVal("ColorRange_max_h"), getDoubleVal("ColorRange_max_s"), getDoubleVal("ColorRange_max_v"));
-		
-		// Imgproc.cvtColor(matIn, grayFrame, Imgproc.COLOR_BGR2GRAY);
+
 		Core.inRange(matOut, min, max, matOut);
 		return matOut;
 	}

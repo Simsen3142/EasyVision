@@ -115,12 +115,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	}
 	    
 	private void loadClassifier(String classifierPath) {
-
 		if(!loaded) {
 			getFaceCascade().load(classifierPath);
 	        loaded=true;
 		}
-
 	}
 	
 	private void detectAndDisplay(Mat frame)
@@ -159,7 +157,6 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	@Override
 	protected Mat apply(Mat matIn) {
 		Mat matout =  chooseClassifier(matIn.clone());
-
 		getMats().put("matout", matout);
 		return matout;
 	}
