@@ -52,7 +52,6 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 				text=clazz.getSimpleName();
 				
 				try {
-					System.out.println(clazz);
 					Object o=clazz.getConstructor(Boolean.class).newInstance(true);
 					if(o instanceof RepresentationIcon) {
 						Image img=((RepresentationIcon) o).getRepresentationImage();

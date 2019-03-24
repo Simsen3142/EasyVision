@@ -5,11 +5,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import arduino.ArduinoHandler;
 import arduino.MnVerbindenMitMouseListener;
 import external.JScrollMenu;
 import functions.streamer.VideoStreamer;
 import main.MainFrame;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainMenuBar extends JFrame {
 	
@@ -25,12 +28,12 @@ public class MainMenuBar extends JFrame {
 	private JMenuItem mntmPanels;
 	private JMenuItem mntmFiles;
 	private JMenuItem mntmNewFrame;
-	private JScrollMenu scrlmnCamera;
 	private JScrollMenu scrlmnMateditfunctions;
 	private JScrollMenu scrlmnPanels;
 	private JMenu mnArduino;
 	private JMenu mnSerial;
 	private JMenu mnVerbindenMit;
+	private JMenuItem mntmSerialMonitor;
 	
 	public MainMenuBar() {
 		initMenuBar(mnBar);
@@ -58,12 +61,6 @@ public class MainMenuBar extends JFrame {
 		mnView = new JMenu("View");
 		mnBar.add(mnView);
 		
-		scrlmnCamera = new JScrollMenu();
-		scrlmnCamera.setText("Camera");
-		mnView.add(scrlmnCamera);
-		
-		initCameras();
-		
 		scrlmnMateditfunctions = new JScrollMenu();
 		scrlmnMateditfunctions.setText("MatEditFunctions");
 		mnView.add(scrlmnMateditfunctions);
@@ -86,6 +83,11 @@ public class MainMenuBar extends JFrame {
 		mnVerbindenMit.addMouseListener(new MnVerbindenMitMouseListener(mnVerbindenMit));
 		mnSerial.add(mnVerbindenMit);
 		
+		mntmSerialMonitor = new JMenuItem("Serial monitor");
+		mntmSerialMonitor.addActionListener(new MntmSerialMonitorActionListener());
+		mnArduino.add(mntmSerialMonitor);
+		
+		
 		this.mnBar=mnBar;
 	}
 	
@@ -94,22 +96,11 @@ public class MainMenuBar extends JFrame {
 		return mnBar;
 	}
 	
-	private void initCameras() {
-		try {
-			for(int i:VideoStreamer.getAvailableCameras()) {
-				CameraMenuItem mnItem=new CameraMenuItem(i);
-				scrlmnCamera.add(mnItem);
-			}
-			
-			for(Object o:MainFrame.getKnownCameraResources()) {
-				CameraMenuItem mnItem=new CameraMenuItem(o);
-				scrlmnCamera.add(mnItem);
-			}
-		}catch (Exception e) {
-			e.printStackTrace();
+	
+	
+	private class MntmSerialMonitorActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			ArduinoHandler.getInstance().getSerialMonitor().show();
 		}
 	}
-	
-	
-	
 }

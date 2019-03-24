@@ -26,4 +26,7 @@ public class CustomDiagramAdapter implements CustomDiagramListener {
 	@Override
 	public void onPasted(Transferable t,Point mouseLocation) {
 	}
+	@Override
+	public void onItemSelectionChanged(CustomDiagramItem diagramItem, boolean selected) {
+	}
 }

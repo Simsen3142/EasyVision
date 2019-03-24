@@ -17,6 +17,7 @@ import database.OftenUsedObjects;
 import database.Serializing;
 import diagramming.DiagramPanel;
 import functions.matedit.MatEditFunction;
+import functions.matedit.multi.MultiMatEditFunction;
 import functions.streamer.FileVideoStreamer;
 import functions.streamer.MatStreamer;
 import functions.streamer.VideoStreamer;
@@ -41,13 +42,13 @@ public class MainFrame extends JFrame implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private transient JPanel contentPane;
 	private JPanel mainPanel;
-	private static Set<Object> knownCameraResources;
 	private transient JMenuBar menuBar;
 	private ThisWindowListener windowListener;
 
 	private static MainFrame instance;
 	private static Set<Class<? extends MatStreamer>> matStreamerClasses;
 	private static Set<Class<? extends MatEditFunction>> matEditFunctionClasses;
+	private static Set<Class<? extends MultiMatEditFunction>> multiMatEditFunctionClasses;
 	private static Set<Class<? extends ParameterReceiver>> parameterReceiverClasses;
 	private static DiagramPanel diagramPanel;
 
@@ -147,6 +148,15 @@ public class MainFrame extends JFrame implements Serializable {
 	}
 	
 	/**
+	 * @return the multiMatEditFunctionClasses
+	 */
+	public static Set<Class<? extends MultiMatEditFunction>> getMultiMatEditFunctionClasses() {
+		if (multiMatEditFunctionClasses == null)
+			initReflectionClasses();
+		return multiMatEditFunctionClasses;
+	}
+	
+	/**
 	 * @return the matEditFunctionClasses
 	 */
 	public static Set<Class<? extends ParameterReceiver>> getParameterReceiverClasses() {
@@ -163,9 +173,10 @@ public class MainFrame extends JFrame implements Serializable {
 			initReflectionClasses();
 		return matStreamerClasses;
 	}
-
+	
 	private static void initReflectionClasses() {
 		matEditFunctionClasses=new HashSet<>();
+		multiMatEditFunctionClasses=new HashSet<>();
 		parameterReceiverClasses=new HashSet<>();
 		matStreamerClasses=new HashSet<>();
 		
@@ -173,6 +184,13 @@ public class MainFrame extends JFrame implements Serializable {
 		reflections.getSubTypesOf(MatEditFunction.class).forEach((clss)->{
 			if(!Modifier.isAbstract(clss.getModifiers())) {
 				matEditFunctionClasses.add(clss);
+			}
+		});
+		
+		reflections = new Reflections("functions.matedit.multi");
+		reflections.getSubTypesOf(MultiMatEditFunction.class).forEach((clss)->{
+			if(!Modifier.isAbstract(clss.getModifiers())) {
+				multiMatEditFunctionClasses.add(clss);
 			}
 		});
 		
@@ -231,29 +249,12 @@ public class MainFrame extends JFrame implements Serializable {
 		});
 	}
 
-	/**
-	 * @return the knownCameraResources
-	 */
-	public static Set<Object> getKnownCameraResources() {
-		return knownCameraResources;
-	}
-
 	public static void initPreSetValues() {
 		instance = new MainFrame();
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void loadValues() {
-		try {
-			Set<Object> output = (Set<Object>) Serializing.deSerialize(OftenUsedObjects.LIST_CAMERA_RESOURCES.getFile());
-			if (output == null)
-				throw new NullPointerException();
-			knownCameraResources = output;
-		} catch (Exception e) {
-			e.printStackTrace();
-			knownCameraResources = new HashSet<Object>();
-		}
-		
 		try {
 			diagramPanel.load(OftenUsedObjects.SESSION.getFile());
 		} catch (Exception e) {
@@ -262,23 +263,6 @@ public class MainFrame extends JFrame implements Serializable {
 	}
 
 	public static void saveValues() {
-		try {
-//			for(VideoStreamer streamer:streamers) {
-//				boolean contain=false;
-//				for(Object res:knownCameraResources) {
-//					if(streamer.getResource().equals(res)) {
-//						contain=true;
-//						break;
-//					}
-//				}
-//				if(!contain) {
-//					knownCameraResources.add(streamer.getResource());
-//				}
-//			}
-			Serializing.serialize((Serializable) knownCameraResources, OftenUsedObjects.LIST_CAMERA_RESOURCES.getFile());
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
 		diagramPanel.save(OftenUsedObjects.SESSION.getFile());
 	}
 

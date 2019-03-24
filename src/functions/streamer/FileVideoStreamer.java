@@ -62,6 +62,7 @@ public class FileVideoStreamer extends VideoStreamer {
 									int height=getIntVal("size_height");
 									Imgproc.resize(mat, mat, new Size(width,height));
 								}
+								
 								try {
 									sendMat(mat);
 									sendParameters();

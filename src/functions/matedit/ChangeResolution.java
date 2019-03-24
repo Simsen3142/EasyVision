@@ -26,7 +26,10 @@ public class ChangeResolution extends MatEditFunction {
 		
 		Mat matOut=new Mat();
 		
-		Imgproc.resize(matIn, matOut, new Size(width,height));
+		if(matIn.cols()>0 && matIn.rows()>0) {
+			Imgproc.resize(matIn, matOut, new Size(width,height));
+		}else
+			return matIn.clone();
 
 		return matOut;
 	}
@@ -40,6 +43,14 @@ public class ChangeResolution extends MatEditFunction {
 				new IntegerParameter("height", 180, 50, 2000)
 			)
 		);	
+	}
+	
+	public static Mat apply(Mat matIn, int width, int height) {
+		ChangeResolution cr=new ChangeResolution();
+		((IntegerParameter)cr.getParameter("size_width")).setValue(width);
+		((IntegerParameter)cr.getParameter("size_height")).setValue(width);
+		
+		return cr.apply(matIn);
 	}
 
 	@Override

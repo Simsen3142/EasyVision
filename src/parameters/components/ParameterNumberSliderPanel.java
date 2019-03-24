@@ -125,8 +125,12 @@ public class ParameterNumberSliderPanel extends JPanel {
 	}
 	
 	public void setValue(Number val, boolean withParameter) {
-		if(slider.getValue()!=val.intValue())
-			slider.setValue(val.intValue());
+		try {
+			if(slider.getValue()!=val.intValue())
+				slider.setValue(val.intValue());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		if(withParameter) {
 			parameter.setValue(val);
 			if(onSetValue!=null) {

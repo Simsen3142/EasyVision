@@ -23,7 +23,7 @@ public class ContrastIncreasing extends MatEditFunction{
 	private static volatile Image img;
 
 	@Override
-	public Mat apply(Mat matIn) {
+	protected Mat apply(Mat matIn) {
 		Mat ret=new Mat();
 		
 		Mat[] channel = new Mat[] {new Mat(),new Mat(),new Mat()};

@@ -62,4 +62,10 @@ public class CustomDiagramListenerTrigger {
 			listener.onPasted(t,mouseLocation);
 		});
 	}
+	
+	public void triggerOnItemSelectionChanged(CustomDiagramItem item, boolean selected) {
+		customDiagramListeners.forEach((listener)->{
+			listener.onItemSelectionChanged(item,selected);
+		});
+	}
 }
