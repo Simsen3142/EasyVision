@@ -56,24 +56,15 @@ public class ShapeDetection extends MatEditFunction {
 		// detected circles
 		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0 );
 		
-		Vector<Mat> circlesList = new Vector<Mat>();
-		for (int i = 0; i < circlesList.size(); i++) {
-			System.out.println(i);
-		}
-
-		Imgproc.HoughCircles(grayFrame, found, Imgproc.CV_HOUGH_GRADIENT, 1, 60, 200, 20, 30, 0);
-
 		getMats().put("gray",grayFrame);
 		getMats().put("found",found);
 		
 		for (int i = 0; i < found.rows(); i++) {
 			double[] data = found.get(i, 0);
 			
-			for (int j = 0; j < data.length; j++) {
-				x = data[0];
-				y = data[1];
-				r = (int) data[2];
-			}
+			x = data[0];
+			y = data[1];
+			r = (int) data[2];
 
 			Point center = new Point(x, y);
 			// circle center

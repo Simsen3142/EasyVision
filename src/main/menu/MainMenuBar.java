@@ -13,6 +13,9 @@ import main.MainFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 public class MainMenuBar extends JFrame {
 	
@@ -34,14 +37,50 @@ public class MainMenuBar extends JFrame {
 	private JMenu mnSerial;
 	private JMenu mnVerbindenMit;
 	private JMenuItem mntmSerialMonitor;
+	private JMenu mnFile;
+	private JMenuItem mntmNew;
+	private JMenuItem mntmOpen;
+	private JMenuItem mntmSave;
+	private JMenuItem mntmSaveAs;
+	private JMenuItem mntmOpenLast;
 	
 	public MainMenuBar() {
+		initMenuBar(mnBar);
+	}
+	
+	/**
+	 * @wbp.parser.constructor
+	 */
+	public MainMenuBar(boolean nothing) {
 		initMenuBar(mnBar);
 		setJMenuBar(mnBar);
 	}
 	
 	public void initMenuBar(JMenuBar mnBar) {
 		mnBar=new JMenuBar();
+		
+		mnFile = new JMenu("File");
+		mnBar.add(mnFile);
+		
+		mntmNew = new JMenuItem("New");
+		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+		mnFile.add(mntmNew);
+		
+		mntmOpen = new JMenuItem("Open");
+		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+		mnFile.add(mntmOpen);
+		
+		mntmOpenLast = new JMenuItem("Open last");
+		mntmOpenLast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mnFile.add(mntmOpenLast);
+		
+		mntmSaveAs = new JMenuItem("Save as...");
+		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		mnFile.add(mntmSaveAs);
+		
+		mntmSave = new JMenuItem("Save");
+		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mnFile.add(mntmSave);
 
 		mnSettings = new JMenu("Settings");
 		mnBar.add(mnSettings);
@@ -87,7 +126,6 @@ public class MainMenuBar extends JFrame {
 		mntmSerialMonitor.addActionListener(new MntmSerialMonitorActionListener());
 		mnArduino.add(mntmSerialMonitor);
 		
-		
 		this.mnBar=mnBar;
 	}
 	
@@ -96,11 +134,29 @@ public class MainMenuBar extends JFrame {
 		return mnBar;
 	}
 	
-	
-	
 	private class MntmSerialMonitorActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
 			ArduinoHandler.getInstance().getSerialMonitor().show();
 		}
+	}
+	
+	public void addSaveActionListener(ActionListener al) {
+		mntmSave.addActionListener(al);
+	}
+	
+	public void addSaveAsActionListener(ActionListener al) {
+		mntmSaveAs.addActionListener(al);
+	}
+	
+	public void addOpenActionListener(ActionListener al) {
+		mntmOpen.addActionListener(al);
+	}
+	
+	public void addOpenLastActionListener(ActionListener al) {
+		mntmOpenLast.addActionListener(al);
+	}
+	
+	public void addNewActionListener(ActionListener al) {
+		mntmNew.addActionListener(al);
 	}
 }

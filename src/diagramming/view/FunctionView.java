@@ -11,6 +11,8 @@ import functions.RepresentationIcon;
 import parameters.ParameterizedObject;
 import javax.swing.JLabel;
 import java.awt.Color;
+import java.awt.EventQueue;
+
 import net.miginfocom.swing.MigLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -46,8 +48,17 @@ public class FunctionView extends JPanel {
 		initialize();
 	}
 	
+	public void setIcon(ImageIcon ic) {
+		this.icon=ic;
+		EventQueue.invokeLater(()->{
+			lblIcon.setIcon(icon);
+			this.revalidate();
+			this.repaint();
+		});
+	}
+	
 	private void initialize() {
-		setLayout(new MigLayout("insets 0 0 6, gap 0", "[68%,grow][10%]", "[36px:n:36px]"));
+		setLayout(new MigLayout("insets 0 0 6, gap 0", "[grow][10%:n:10%]", "[36px:n:36px]"));
 		lblText = new JLabel(text);
 		lblText.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		add(lblText, "cell 0 0,alignx center,aligny center");

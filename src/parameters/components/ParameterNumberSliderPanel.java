@@ -83,7 +83,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 	
 	private void initialize() {
 		setOpaque(false);
-		setLayout(new MigLayout("insets 0, gap 0", "[33%][34%][33%]", "[33%:n:33%][33.00,grow][33%:n:33%]"));
+		setLayout(new MigLayout("insets 0, gap 0", "[:33%:200px][grow][:33%:200px]", "[30px][38.00px][30px]"));
 		
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 1 0,alignx center,aligny center");

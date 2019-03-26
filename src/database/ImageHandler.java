@@ -1,6 +1,7 @@
 package database;
 
 import java.awt.Image;
+import java.util.function.Function;
 
 import javax.swing.ImageIcon;
 
@@ -41,5 +42,53 @@ public class ImageHandler {
 		if(image!=null)
 			return new ImageIcon(image.getScaledInstance(width,height,scaling));
 		return null;
+	}
+	
+	
+	//ASYNCH
+	public static void getImage(String path, Function<Image, Void> onReceive) {
+		if(activated) {
+			new Thread(()->{
+				Image img = getImageIcon(path).getImage();
+				onReceive.apply(img);
+			}).start();
+		}else {
+			onReceive.apply(null);
+		}
+	}
+	
+	public static void getImageIcon(String path, Function<ImageIcon, Void> onReceive) {
+		if(activated) {
+			new Thread(()->{
+				ImageIcon ic = new ImageIcon(path);
+				onReceive.apply(ic);
+			}).start();
+		}else {
+			onReceive.apply(null);
+		}
+	}
+	
+	public static void getScaledImageIcon(String path, int width, int height, int scaling, Function<ImageIcon, Void> onReceive) {
+		if(activated) {
+			new Thread(()->{
+				ImageIcon ic = getScaledImageIcon(getImage(path),width,height,scaling);
+				onReceive.apply(ic);
+			}).start();
+		}else {
+			onReceive.apply(null);
+		}
+	}
+	
+	public static void getScaledImageIcon(Image image, int width, int height, int scaling, Function<ImageIcon, Void> onReceive) {
+		if(activated) {
+			new Thread(()->{
+				if(image!=null) {
+					ImageIcon ic = new ImageIcon(image.getScaledInstance(width,height,scaling));
+					onReceive.apply(ic);
+				}
+			}).start();
+		}else {
+			onReceive.apply(null);
+		}
 	}
 }

@@ -3,6 +3,7 @@ package diagramming.components;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -93,8 +94,16 @@ public class FunctionPanel<type> extends JPanel {
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 		
 		if(function instanceof RepresentationIcon) {
-			picturePanel = new PicturePanel(((RepresentationIcon) function).getRepresentationImage());
-			add(picturePanel, "cell 0 1,grow");
+			((RepresentationIcon) function).getRepresentationImage((img)->{
+				picturePanel = new PicturePanel(img);
+				add(picturePanel, "cell 0 1,grow");
+				
+				EventQueue.invokeLater(()->{
+					revalidate();
+					repaint();
+				});
+				return null;
+			});
 		}
 	}
 	

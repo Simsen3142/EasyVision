@@ -42,6 +42,7 @@ public class MainFrame extends JFrame implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private transient JPanel contentPane;
 	private JPanel mainPanel;
+	private transient MainMenuBar mainMenuBar;
 	private transient JMenuBar menuBar;
 	private ThisWindowListener windowListener;
 
@@ -51,11 +52,15 @@ public class MainFrame extends JFrame implements Serializable {
 	private static Set<Class<? extends MultiMatEditFunction>> multiMatEditFunctionClasses;
 	private static Set<Class<? extends ParameterReceiver>> parameterReceiverClasses;
 	private static DiagramPanel diagramPanel;
-
+	private File fileCurrentDiagram;
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		long start=System.currentTimeMillis();
+		long actualStart=start;
+		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			UIManager.getDefaults().put("ScrollPane.ancestorInputMap", new UIDefaults.LazyInputMap(new Object[] {}));
@@ -75,17 +80,22 @@ public class MainFrame extends JFrame implements Serializable {
 //		System.load(userdir+"\\arduino\\rxtxParallel.dll");
 //		System.load(userdir+"\\arduino\\rxtxSerial.dll");
 		
-		System.out.println(System.getProperty("java.library.path"));
-
 		System.loadLibrary("rxtxParallel");
 		System.loadLibrary("rxtxSerial");
 		
-		System.out.println(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
-		System.out.println(userdir+"/arduino/rxtxSerial.dll");
-
+		System.out.println("LOADING LIBRARIES: "+(System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		
 		initReflectionClasses();
+		
+		System.out.println("REFLECTIONS: "+(System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		
 		initPreSetValues();
 
+		System.out.println("INIT MAINFRAME: "+(System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		
 //		for (int i = 0; true; i++) {
 //			VideoStreamer videoStreamer = new VideoStreamer(i);
 //			if (videoStreamer.getCamera()!=null && videoStreamer.getCamera().isOpened()) {
@@ -107,36 +117,28 @@ public class MainFrame extends JFrame implements Serializable {
 
 		
 		diagramPanel = new DiagramPanel();
+		
+		System.out.println("INIT DIAGRAM: "+(System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		
 		instance.setContentPanel(diagramPanel);
 		
+		System.out.println("SET CONTENTPANE: "+(System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		
 		loadValues();
-
+		
+		System.out.println("LOAD SESSION: "+(System.currentTimeMillis()-start));
+		System.out.println("===============");
+		System.out.println("STARTUP: "+(System.currentTimeMillis()-actualStart));
 	}
 	
-//	boolean setupCameras() {
-//		System.out.println("Getting number of cameras");
-//// Checks available cameras
-//		int numCams = CLCamera.cameraCount();
-//		println("Found " + numCams + " cameras");
-//		if (numCams == 0)
-//			return false;
-//// create cameras and start capture
-//		for (int i = 0; i < numCams; i++) {
-//// Prints Unique Identifier per camera
-//			println("Camera " + (i + 1) + " UUID " + CLCamera.cameraUUID(i));
-//// New camera instance per camera
-//			myCameras[i] = new CLCamera(this);
-//// ----------------------(i, CLEYE_GRAYSCALE/COLOR, CLEYE_QVGA/VGA, Framerate)
-//			myCameras[i].createCamera(i, CLCamera.CLEYE_COLOR, CLCamera.CLEYE_VGA, cameraRate);
-//// Starts camera captures
-//			myCameras[i].startCamera();
-//			myImages[i] = createImage(cameraWidth, cameraHeight, RGB);
-//		}
-//// resize the output window
-//		size(cameraWidth * numCams, cameraHeight);
-//		println("Complete Initializing Cameras");
-//		return true;
-//	}
+	/**
+	 * @return the mainMenuBar
+	 */
+	public MainMenuBar getMainMenuBar() {
+		return mainMenuBar;
+	}
 
 	/**
 	 * @return the matEditFunctionClasses
@@ -223,10 +225,12 @@ public class MainFrame extends JFrame implements Serializable {
 		}
 		setBounds(600, 300, 450, 300);
 
-		menuBar = new MainMenuBar().getJMenuBar();
+		mainMenuBar=new MainMenuBar();
+		menuBar = mainMenuBar.getJMenuBar();
 		setJMenuBar(menuBar);
+		initDiagramMenuFunctions();
 
-		// setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 
@@ -237,6 +241,42 @@ public class MainFrame extends JFrame implements Serializable {
 
 		setVisible(true);
 	}
+	
+	private void initDiagramMenuFunctions() {
+		mainMenuBar.addNewActionListener((e)->{
+			diagramPanel.clear();
+			fileCurrentDiagram=null;
+		});
+		
+		mainMenuBar.addOpenActionListener((e)->{
+			File f=Serializing.showOpenDialog();
+			fileCurrentDiagram=f;
+			diagramPanel.load(f);
+		});
+		
+		mainMenuBar.addOpenLastActionListener((e)->{
+			fileCurrentDiagram=null;
+			try {
+				diagramPanel.load(OftenUsedObjects.SESSION.getFile());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		mainMenuBar.addSaveAsActionListener((e)->{
+			File f=Serializing.showSaveDialog();
+			fileCurrentDiagram=f;
+			diagramPanel.save(f);
+		});
+		
+		mainMenuBar.addSaveActionListener((e)->{
+			File f;
+			f=(fileCurrentDiagram==null)?Serializing.showSaveDialog():fileCurrentDiagram;
+			diagramPanel.save(f);
+		});
+	}
+	
+	
 
 	public void setContentPanel(JPanel content) {
 		contentPane.remove(mainPanel);

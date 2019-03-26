@@ -137,6 +137,8 @@ public class MatPanel extends JPanel {
 				type = BufferedImage.TYPE_BYTE_GRAY;
 			} else if (frame.channels() == 3) {
 				type = BufferedImage.TYPE_3BYTE_BGR;
+			} else if(frame.channels() == 4) {
+				type = BufferedImage.TYPE_4BYTE_ABGR;
 			}
 			BufferedImage image = new BufferedImage(frame.width(), frame.height(), type);
 			WritableRaster raster = image.getRaster();

@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -76,8 +75,6 @@ public class DiagramPanel extends JPanel {
 	private JButton btnStart;
 	private CustomTransferHandler transferHandler;
 	private JScrollPane scrollPane;
-	private JButton btnSave;
-	private JButton btnLoad;
 	private JPanel pnlControl;
 	private List<JList<?>> lists = new ArrayList<>();
 	private boolean loading = false;
@@ -127,7 +124,7 @@ public class DiagramPanel extends JPanel {
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
 		pnlControl = new JPanel();
-		pnlControl.setLayout(new MigLayout("insets 5 0 5 0, gap 0", "[][][][]", "[]"));
+		pnlControl.setLayout(new MigLayout("insets 5 0 5 0, gap 0", "[][]", "[]"));
 		pnlControl.setBackground(new Color(101, 45, 146));
 		pnlControl.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		add(pnlControl, "cell 0 0 2 1,growx,aligny bottom");
@@ -137,34 +134,42 @@ public class DiagramPanel extends JPanel {
 		Color cDisabled=new Color(150,150,150);
 		Color cClicked=new Color(200,200,200);
 		
-		ImageIcon icStart=ImageHandler.getScaledImageIcon("res/icons/start.png", 20, 20, Image.SCALE_FAST);
-		if(icStart==null) {
-			btnStart = new JButton("Start");
-		}else {
-			btnStart=new PictureButton(icStart, cMain,cRollover,cClicked,cDisabled);
-		}
-		btnStart.setFocusable(false);
-		btnStart.addActionListener(new BtnStartActionListener());
-		pnlControl.add(btnStart,"cell 0 0");
-
-		ImageIcon icStop=ImageHandler.getScaledImageIcon("res/icons/stop.png", 20, 20, Image.SCALE_FAST);
-		if(icStop==null) {
-			btnStop = new JButton("Stop");
-		}else {
-			btnStop=new PictureButton(icStop, cMain,cRollover,cClicked,cDisabled);
-		}
-		btnStop.setFocusable(false);
-		btnStop.addActionListener(new BtnStopActionListener());
-		pnlControl.add(btnStop,"cell 1 0");
-
-		btnSave = new JButton("Save");
-		btnSave.addActionListener(new BtnSaveActionListener());
-		pnlControl.add(btnSave, "cell 2 0,alignx left,aligny center");
-
-		btnLoad = new JButton("Load");
-		btnLoad.addActionListener(new BtnLoadActionListener());
-		pnlControl.add(btnLoad, "cell 3 0,alignx left,aligny center");
+		ImageHandler.getScaledImageIcon("res/icons/start.png", 20, 20, Image.SCALE_FAST, (icStart)->{
+			if(icStart==null) {
+				btnStart = new JButton("Start");
+			}else {
+				btnStart=new PictureButton(icStart, cMain,cRollover,cClicked,cDisabled);
+			}
+			btnStart.setFocusable(false);
+			btnStart.addActionListener(new BtnStartActionListener());
+			
+			EventQueue.invokeLater(()->{
+				pnlControl.add(btnStart,"cell 0 0");
+				revalidate();
+				repaint();
+			});
+			
+			return null;
+		});
 		
+		ImageHandler.getScaledImageIcon("res/icons/stop.png", 20, 20, Image.SCALE_FAST, (icStop)->{
+			if(icStop==null) {
+				btnStop = new JButton("Stop");
+			}else {
+				btnStop=new PictureButton(icStop, cMain,cRollover,cClicked,cDisabled);
+			}
+			btnStop.setFocusable(false);
+			btnStop.addActionListener(new BtnStopActionListener());
+			
+			EventQueue.invokeLater(()->{
+				pnlControl.add(btnStop,"cell 1 0");
+				revalidate();
+				repaint();
+			});
+			
+			return null;
+		});
+
 		this.add(scrollPane, "cell 0 1,grow");
 
 		customDiagram.setSize(10000, 100000);
@@ -338,16 +343,17 @@ public class DiagramPanel extends JPanel {
 			@Override
 			public boolean onConnectionAvailable(CustomDiagramItem from, CustomDiagramItem to) {
 				MultiMatEditFunction multiFunctionTo=getFunctionFromDiagramItem(to, MultiMatEditFunction.class);
-				System.out.println("AVAILABLE?");
-				System.out.println(multiFunctionTo);
-
 				if(multiFunctionTo!=null) {
 					for(DiagramConnector connector:to.getConnectors().values()) {
 						if(connector instanceof DiagramInput) {
 							DiagramInput input=(DiagramInput) connector;
-							System.out.println("input = "+input.getName());
-							if(input.isConnectionAllowed()) {
-								System.out.println("found input = "+input.getName());
+							MatSender sender=getFunctionFromDiagramItem(from, MatSender.class);
+							
+							if(input.isConnectionAllowed() && sender!=null) {
+								if(multiFunctionTo.getSenderIndex().containsKey(sender)) {
+									return false;
+								}
+								
 								to.setSelectedInput(input.getName());
 								return true;
 							}
@@ -384,8 +390,8 @@ public class DiagramPanel extends JPanel {
 						((MatSender) o).clearMatReceivers();
 						((MatSender) o).clearParameterReceivers();
 						addMatSenderDiagramItem(mouseLocation, (MatSender) o);
+						((MatSender) o).recalculateId();
 						if(o instanceof MultiMatEditFunction) {
-							((MultiMatEditFunction) o).recalculateId();
 							((MultiMatEditFunction) o).clearMatSenderIndex();
 						}
 					} else if (o instanceof ParameterReceiver) {
@@ -585,7 +591,6 @@ public class DiagramPanel extends JPanel {
 					int y = item.getY() + item.getHeight() / 2 + i1*10;
 					return new Point(x, y);
 				},"mat_in_"+i1);
-				System.out.println("ADDING INPUT "+input.getName());
 				
 				input.setMaxConnectionNumber(1);
 				item.addDiagramConnector(input);
@@ -599,7 +604,6 @@ public class DiagramPanel extends JPanel {
 					int y = item.getY() + item.getHeight() / 2 + i1*10;
 					return new Point(x, y);
 				},"function_in_"+i1);
-				System.out.println("ADDING INPUT "+input.getName());
 				
 				input.setMaxConnectionNumber(1);
 				item.addDiagramConnector(input);
@@ -696,13 +700,10 @@ public class DiagramPanel extends JPanel {
 
 			if (component instanceof StreamerPanel) {
 				StreamerPanel streamerPanel = (StreamerPanel) component;
-				MatStreamer streamer = ((MatStreamer) streamerPanel.getFunction());
-				streamer.start();
 				matSender = streamerPanel.getFunction();
 			} else if (component instanceof MatEditFunctionDiagramPanel) {
 				MatEditFunctionDiagramPanel panel = (MatEditFunctionDiagramPanel) component;
 				matSender = panel.getFunction();
-				matSender.stop();
 			} else {
 				continue;
 			}
@@ -782,7 +783,6 @@ public class DiagramPanel extends JPanel {
 				btnStart.setEnabled(false);
 				btnStop.setEnabled(true);
 			}else {
-				
 				getMatStreamers().forEach((streamer)->{
 					streamer.start();
 				});
@@ -857,7 +857,7 @@ public class DiagramPanel extends JPanel {
 	public void load(File file) {
 		loading = true;
 		if (file != null) {
-			customDiagram.clear();
+			this.clear();
 
 			ArrayList<Serializable> senders;
 
@@ -874,11 +874,9 @@ public class DiagramPanel extends JPanel {
 		}
 		loading = false;
 	}
-
-	private class BtnSaveActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			save(Serializing.showSaveDialog());
-		}
+	
+	public void clear() {
+		customDiagram.clear();
 	}
 
 	private void createDiagram(ArrayList<Serializable> senders) {
@@ -895,16 +893,11 @@ public class DiagramPanel extends JPanel {
 			if(o instanceof MultiMatEditFunction) {
 				CustomDiagramItem itemMmefct=functions.get(o);
 				MultiMatEditFunction mmefct=(MultiMatEditFunction)o;
-				for(MatSender sender:new HashSet<>(mmefct.getSenderIndex().keySet())) {
+				for(MatSender sender:mmefct.getSenderIndex().keySet()) {
 					if(functions.containsKey(sender)) {
-						Integer index=mmefct.getSenderIndex().get(sender);
-						if(index==null)
-							index=0;
-						
+						int index=mmefct.getIndexOfMatsender(sender);
 						CustomDiagramItem itemSender=functions.get(sender);
-						System.out.println(sender);
 						itemMmefct.setSelectedInput(index);
-
 						itemSender.connectTo(itemMmefct);
 					}
 				}
@@ -979,11 +972,5 @@ public class DiagramPanel extends JPanel {
 			sender.getReceivers().removeAll(receiversToRemove);
 		}
 		return highestY;
-	}
-
-	private class BtnLoadActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			load(Serializing.showOpenDialog());
-		}
 	}
 }

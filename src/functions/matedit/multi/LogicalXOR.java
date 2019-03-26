@@ -13,6 +13,10 @@ public class LogicalXOR extends LogicalFunctions{
 	
 	public LogicalXOR(Boolean empty) {
 	}
+	
+	public LogicalXOR() {
+		super();
+	}
 
 	@Override
 	protected boolean performLogic(List<Boolean> bs) {

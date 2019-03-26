@@ -18,7 +18,6 @@ public abstract class LogicalFunctions extends MultiMatEditFunction{
 
 	@Override
 	public int getNrMatInputs() {
-		// TODO Auto-generated method stub
 		return 10;
 	}
 	
@@ -29,15 +28,23 @@ public abstract class LogicalFunctions extends MultiMatEditFunction{
 
 	@Override
 	protected Mat apply(Map<Integer, Mat> matsIn) {
-		int rows=matsIn.get(0).rows();
-		int cols=matsIn.get(0).cols();
+		int rows = 0;
+		int cols = 0;
 		
-		Mat matOut=new Mat(rows, cols, CvType.CV_8U);
+		Mat matOut = null;
 
 		
 		List<Mat> mats=new ArrayList<>();
 		for(Mat mat:matsIn.values()) {
 			if(mat!=null) {
+				
+				if(matOut==null) {
+					rows=mat.rows();
+					cols=mat.cols();
+					
+					matOut=new Mat(rows, cols, CvType.CV_8U);
+				}
+				
 				if(mat.rows()!=rows || mat.cols()!=cols) {
 					mat=ChangeResolution.apply(mat, cols, rows);
 				}

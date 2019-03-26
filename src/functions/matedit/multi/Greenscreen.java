@@ -62,7 +62,7 @@ public class Greenscreen extends MultiMatEditFunction {
 			
 			for(int col=0;col<cols;col++) {
 				for(int row=0;row<rows;row++) {
-					if(colorToOverlay.get(row, col)[0]==255) {
+					if(colorToOverlay.get(row, col)[0]>127) {
 						double[] dataOverlay=matOverlayImage.get(row, col);
 						if(dataOverlay==null) {
 							return matBasicImage;

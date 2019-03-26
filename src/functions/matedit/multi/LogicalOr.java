@@ -14,6 +14,10 @@ public class LogicalOr extends LogicalFunctions{
 	public LogicalOr(Boolean empty) {
 	}
 	
+	public LogicalOr() {
+		super();
+	}
+	
 	@Override
 	protected boolean performLogic(List<Boolean> bs) {
 		for(boolean b:bs) {

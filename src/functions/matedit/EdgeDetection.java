@@ -27,9 +27,10 @@ public class EdgeDetection extends MatEditFunction {
 	@Override
 	protected Mat apply(Mat matIn) {
 		Mat grayImage=matIn.clone();
-    	Mat detectedEdges=matIn.clone();
+    	Mat detectedEdges=new Mat();
     	
-		Imgproc.cvtColor(matIn, grayImage, Imgproc.COLOR_BGR2GRAY);
+    	if(grayImage.channels()>1)
+    		Imgproc.cvtColor(grayImage, grayImage, Imgproc.COLOR_BGR2GRAY);
     	Imgproc.blur(grayImage, detectedEdges, new Size(3, 3));
         Imgproc.Canny(detectedEdges, detectedEdges, 150, 200,3, true);
         

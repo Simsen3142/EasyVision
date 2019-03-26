@@ -2,6 +2,7 @@ package components;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Map<Integer,ImageIcon> icons;
+	private volatile Map<Integer,ImageIcon> icons;
 	private Map<Integer,String> texts;
 	private List<JList<?>> lists;
 
@@ -42,6 +43,7 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 		
 		String text;
 		ImageIcon ic=null;
+		RepresentationIcon reprIc=null;
 		
 		if(texts.containsKey(index)) {
 			text=texts.get(index);
@@ -54,8 +56,7 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 				try {
 					Object o=clazz.getConstructor(Boolean.class).newInstance(true);
 					if(o instanceof RepresentationIcon) {
-						Image img=((RepresentationIcon) o).getRepresentationImage();
-						ic=ImageHandler.getScaledImageIcon(img, 22, 20, Image.SCALE_AREA_AVERAGING);
+						reprIc=((RepresentationIcon) o);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,12 +65,29 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 				text=object.toString();
 			}
 			texts.put(index, text);
-			icons.put(index, ic);
 		}
 		
 		boolean isLast=list.getModel().getSize()-1==index%1000;
 		
 		FunctionView label = new FunctionView(text,ic,index,isSelected,isLast);
+		
+		if(reprIc!=null) {
+			final int i=index;
+			reprIc.getRepresentationImage((img)->{
+				ImageIcon icon=ImageHandler.getScaledImageIcon(img, 22, 20, Image.SCALE_AREA_AVERAGING);
+				icons.put(i, icon);
+				label.setIcon(icon);
+				
+				EventQueue.invokeLater(()->{
+					list.revalidate();
+					list.repaint();
+				});
+				
+				return null;
+			});
+		}
+		
+		
 		list.setPreferredSize(new Dimension(label.getWidth(), label.getPreferredSize().height*list.getModel().getSize()));
 
 		

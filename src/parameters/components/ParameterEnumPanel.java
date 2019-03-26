@@ -34,7 +34,7 @@ public class ParameterEnumPanel extends JPanel {
 	private void initialize() {
 		setOpaque(false);
 		this.setValue(parameter.getValue());
-		setLayout(new MigLayout("", "[grow]", "[]"));
+		setLayout(new MigLayout("", "[grow]", "[40px,fill]"));
 		Enum<?>[] enumerations= parameter.getValue().getDeclaringClass().getEnumConstants();
 		comboBox = new JComboBox<>(enumerations);
 		comboBox.setSelectedItem(parameter.getValue());

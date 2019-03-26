@@ -40,7 +40,6 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 	 */
 	public MatReceiverNSenderPanel(MatSender matSender, String name) {
 		super(matSender,name);
-		initialize(matSender, name);
 	}
 
 

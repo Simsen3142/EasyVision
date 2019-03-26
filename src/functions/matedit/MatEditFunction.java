@@ -2,6 +2,8 @@ package functions.matedit;
 
 import java.awt.Image;
 import java.util.*;
+import java.util.function.Function;
+
 import org.opencv.core.Mat;
 
 import database.ImageHandler;
@@ -72,5 +74,14 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 	@Override
 	public Image getRepresentationImage() {
 		return null;
+	}
+	
+	@Override
+	public void getRepresentationImage(Function<Image, Void> onReceive) {
+		new Thread(()-> {
+			Image img=getRepresentationImage();
+			if(img!=null)
+				onReceive.apply(img);
+		}).start();
 	}
 }
