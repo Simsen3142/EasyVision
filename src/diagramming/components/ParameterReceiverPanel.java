@@ -37,7 +37,6 @@ public class ParameterReceiverPanel extends FunctionPanel<ParameterizedObject> {
 	 */
 	public ParameterReceiverPanel(ParameterReceiver parameterReceiver, String name) {
 		super((ParameterizedObject)parameterReceiver,name);
-		initialize((ParameterizedObject)parameterReceiver, name);
 	}
 
 

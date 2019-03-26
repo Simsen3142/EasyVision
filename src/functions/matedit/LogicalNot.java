@@ -22,8 +22,8 @@ public class LogicalNot extends MatEditFunction{
 		Mat matOut=new Mat(rows,cols, CvType.CV_8U);
 		for(int col=0;col<cols;col++) {
 			for(int row=0;row<rows;row++) {
-				if(matIn.get(row, col)[0]!=255)
-					matOut.put(row, col, 255);
+				int value = (matIn.get(row, col)[0]>127)?0:255;
+				matOut.put(row, col, value);
 			}
 		}
 		

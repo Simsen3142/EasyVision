@@ -39,7 +39,7 @@ public class ParameterStringPanel extends JPanel {
 	
 	private void initialize() {
 		setOpaque(false);
-		setLayout(new MigLayout("insets 0, gap 0", "[50%][50%]", "[grow]"));
+		setLayout(new MigLayout("insets 0, gap 0", "[50%][grow]", "[40px]"));
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 0 0,growx,aligny center");
 		

@@ -77,7 +77,7 @@ public class VideoCreater extends MatEditFunction {
 	}
 	
 	@Override
-	public synchronized Image getRepresentationImage() {
+	public Image getRepresentationImage() {
 		if(img==null)
 			img=ImageHandler.getImage("res/icons/videocreater.png");;
 		return img;

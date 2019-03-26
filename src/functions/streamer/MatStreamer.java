@@ -1,10 +1,13 @@
 package functions.streamer;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -146,5 +149,14 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 		} else if (!resource.equals(other.resource))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public void getRepresentationImage(Function<Image, Void> onReceive) {
+		new Thread(()-> {
+			Image img=getRepresentationImage();
+			if(img!=null)
+				onReceive.apply(img);
+		}).start();
 	}
 }

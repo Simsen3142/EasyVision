@@ -48,7 +48,7 @@ public class ChangeResolution extends MatEditFunction {
 	public static Mat apply(Mat matIn, int width, int height) {
 		ChangeResolution cr=new ChangeResolution();
 		((IntegerParameter)cr.getParameter("size_width")).setValue(width);
-		((IntegerParameter)cr.getParameter("size_height")).setValue(width);
+		((IntegerParameter)cr.getParameter("size_height")).setValue(height);
 		
 		return cr.apply(matIn);
 	}

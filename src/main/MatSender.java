@@ -8,6 +8,7 @@ import java.util.Map;
 import org.opencv.core.Mat;
 
 import functions.matedit.MatEditFunction;
+import functions.matedit.multi.MultiMatEditFunction;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
@@ -18,7 +19,12 @@ public class MatSender extends ParameterizedObject {
 	private static final long serialVersionUID = -2517783983705667237L;
 	private List<MatReceiver> receivers=Collections.synchronizedList(new ArrayList<>());
 	private List<MatMapReceiver> receivers_map=Collections.synchronizedList(new ArrayList<>());
+	private int id=System.identityHashCode(this);
 	
+	public void recalculateId() {
+		this.id*=Math.random();
+	}
+
 	/**
 	 * @return the receivers
 	 */
@@ -108,5 +114,41 @@ public class MatSender extends ParameterizedObject {
 	
 	public void stop() {
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof MultiMatEditFunction))
+			return false;
+		MultiMatEditFunction other = (MultiMatEditFunction) obj;
+		if (id != other.getId())
+			return false;
+		return true;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
 }

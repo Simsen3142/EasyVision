@@ -42,7 +42,7 @@ public class ParameterBooleanCheckboxPanel extends JPanel {
 	
 	private void initialize() {
 		setOpaque(false);
-		setLayout(new MigLayout("", "[429px][21px]", "[grow]"));
+		setLayout(new MigLayout("insets 0, gap 0", "[80%:0:80%][21px,grow]", "[grow]"));
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 0 0,growx,aligny center");
 
@@ -56,7 +56,7 @@ public class ParameterBooleanCheckboxPanel extends JPanel {
 				}
 			}
 		});
-		this.add(checkBox, "cell 1 0,alignx left,aligny center");
+		this.add(checkBox, "cell 1 0,alignx center,aligny center");
 		this.setValue(parameter.getValue());
 	}
 	

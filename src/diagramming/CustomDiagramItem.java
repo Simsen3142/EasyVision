@@ -108,7 +108,6 @@ public class CustomDiagramItem extends JPanel {
 		for(DiagramConnector conn:connectors.values()) {
 			if(conn instanceof DiagramInput) {
 				if(i++==index) {
-					System.out.println("selected = "+conn.getName());
 					return setSelectedInput(conn.getName());
 				}
 			}
@@ -172,6 +171,8 @@ public class CustomDiagramItem extends JPanel {
 	}
 	
 	public void deleteThis() {
+		this.setSelected(false);
+		
 		CustomDiagram diagrm=diagram;
 		diagrm.removeDiagramItem(instance);
 		
@@ -292,11 +293,11 @@ public class CustomDiagramItem extends JPanel {
 			return e.getButton() == MouseEvent.BUTTON2 || e.isControlDown() || (e.getButton() == MouseEvent.BUTTON1 && selected);
 		});
 		ComponentCursorAdapter.install(component, KeyEvent.VK_CONTROL, InputEvent.CTRL_DOWN_MASK,
-				new Cursor(Cursor.HAND_CURSOR), new Cursor(Cursor.MOVE_CURSOR));
+				new Cursor(Cursor.DEFAULT_CURSOR), new Cursor(Cursor.MOVE_CURSOR));
 		ComponentCursorAdapter.install(component, KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK,
-				new Cursor(Cursor.HAND_CURSOR), new Cursor(Cursor.SE_RESIZE_CURSOR));
+				new Cursor(Cursor.DEFAULT_CURSOR), new Cursor(Cursor.SE_RESIZE_CURSOR));
 
-		this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
 		this.setSize(374, 192);
 		

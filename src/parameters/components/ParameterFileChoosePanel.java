@@ -54,7 +54,7 @@ public class ParameterFileChoosePanel extends JPanel {
 	
 	private void initialize() {
 		setOpaque(false);
-		setLayout(new MigLayout("gap 0, insets 0", "[30%][60%][10%]", "[grow]"));
+		setLayout(new MigLayout("gap 0, insets 0", "[30%:n:30%][grow][10%:n:10%]", "[40px]"));
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 0 0,growx,aligny center");
 		

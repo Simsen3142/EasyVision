@@ -37,7 +37,7 @@ public class ParameterNoneditablePanel extends JPanel {
 	
 	private void initialize(Parameter parameter) {
 		setOpaque(false);
-		setLayout(new MigLayout("insets 0, gap 0", "[50%][50%]", "[grow]"));
+		setLayout(new MigLayout("insets 0, gap 0", "[50%][grow]", "[40px]"));
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 0 0,growx,aligny center");
 		

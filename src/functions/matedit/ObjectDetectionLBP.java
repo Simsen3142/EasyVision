@@ -36,7 +36,6 @@ public class ObjectDetectionLBP extends MatEditFunction {
 		EnumParameter param=(EnumParameter)getParameter("lbpclassifier");
 		param.setOnChange((newVal)->{
 			loaded=false;
-			System.out.println("2ONCHANGEDUodikzajutzudila");
 			return null;
 		});
 	}

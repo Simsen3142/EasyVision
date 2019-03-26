@@ -2,6 +2,8 @@ package functions.streamer;
 
 import java.awt.Image;
 import java.io.File;
+
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;

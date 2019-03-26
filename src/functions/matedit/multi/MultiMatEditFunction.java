@@ -1,10 +1,12 @@
 package functions.matedit.multi;
 
 import java.awt.Image;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.opencv.core.Mat;
 
@@ -21,33 +23,26 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 	 */
 	private static final long serialVersionUID = -6443555271381178386L;
 	private transient Map<String, Mat> mats=new HashMap<>();
-	private Map<MatSender, Integer> senderIndex=new HashMap<>();
+	private Map<MatSender,Integer> senderIndex=new HashMap<>();
 	private transient Map<Integer, Mat> matsIn;
 	private boolean send=true;
 	private transient Mat mat;
-	private int id=System.identityHashCode(this);
-	
-	public void recalculateId() {
-		this.id*=Math.random();
-	}
 	
 	/**
 	 * @return the senderIndex
 	 */
-	public Map<MatSender, Integer> getSenderIndex() {
+	public Map<MatSender,Integer> getSenderIndex() {
 		if(senderIndex==null)
 			senderIndex=new HashMap<>();
 		return senderIndex;
 	}
 	
 	public MatSender getMatSenderByIndex(int index) {
-		Set<MatSender> senderSet=getSenderIndex().keySet();
-		for(MatSender sender:senderSet) {
+		for(MatSender sender:getSenderIndex().keySet()) {
 			if(senderIndex.get(sender).equals(index)) {
 				return sender;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -67,7 +62,7 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 	}
 	
 	public void addMatSender(MatSender sender, int index) {
-		getSenderIndex().put(sender, index);
+		getSenderIndex().put(sender,index);
 	}
 	
 	public void removeMatSender(MatSender sender) {
@@ -152,32 +147,12 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof MultiMatEditFunction))
-			return false;
-		MultiMatEditFunction other = (MultiMatEditFunction) obj;
-		if (id != other.id)
-			return false;
-		return true;
+	public void getRepresentationImage(Function<Image, Void> onReceive) {
+		new Thread(()-> {
+			Image img=getRepresentationImage();
+			if(img!=null)
+				onReceive.apply(img);
+		}).start();
 	}
 }
