@@ -23,11 +23,10 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6910437341294708314L;
+	private static final long serialVersionUID = -6910412345708314L;
 	private transient Thread streamThread;
 	private Object resource;
-	private transient static Set<MatStreamer> videoStreamers = Collections.synchronizedSet(new HashSet<MatStreamer>());
-	private transient Mat mat;
+//	private transient static Set<MatStreamer> videoStreamers = Collections.synchronizedSet(new HashSet<MatStreamer>());
 
 	public boolean isStarted() {
 		return streamThread!=null && streamThread.isAlive();
@@ -55,10 +54,10 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 	}
 
 	/**
-	 * @param streamThread the streamThread to set
+	 * @param t the streamThread to set
 	 */
-	public void setStreamThread(Thread streamThread) {
-		this.streamThread = streamThread;
+	public void setStreamThread(Thread t) {
+		this.streamThread = t;
 	}
 	
 	protected MatStreamer() {}
@@ -67,8 +66,8 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 		super(
 			new ParameterGroup("size",
 				new BooleanParameter("change", false),
-				new IntegerParameter("width", 200, 150, 1920),
-				new IntegerParameter("height", 180, 150, 1080)
+				new IntegerParameter("width", 200, 50, 5000),
+				new IntegerParameter("height", 180, 50, 5000)
 			)
 		);
 		this.resource=resource;
@@ -84,7 +83,7 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 	}
 	
 	public MatStreamer start() {
-		if(videoStreamers.add(this)) {
+//		if(videoStreamers.add(this)) {
 			if(streamThread==null || !streamThread.isAlive() || streamThread.isInterrupted()) {
 				new Thread(()->{
 					if(streamThread!=null) {
@@ -101,41 +100,33 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 				}).start();
 			}
 			return this;
-		}else {
-			return getVideoStreamer(this);
-		}
+//		}else {
+//			return getVideoStreamer(this);
+//		}
 	}
 	
 	@Override
 	public void stop() {
-		videoStreamers.remove(this);
+//		videoStreamers.remove(this);
 		if(streamThread!=null&&streamThread.isAlive()) {
 			streamThread.interrupt();
 		}
 	}
 	
-	public MatStreamer getVideoStreamer(MatStreamer streamer) {
-		for(MatStreamer str:videoStreamers) {
-			if(str.equals(streamer)) {
-				return str;
-			}
-		}
-		
-		return null;
-	}
+//	public MatStreamer getVideoStreamer(MatStreamer streamer) {
+//		for(MatStreamer str:videoStreamers) {
+//			if(str.equals2(streamer)) {
+//				return str;
+//			}
+//		}
+//		
+//		return null;
+//	}
 	
 	protected abstract void initStreamThread();
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
+	public boolean equals2(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)

@@ -22,7 +22,7 @@ public abstract class LogicalFunctions extends MultiMatEditFunction{
 	}
 	
 	@Override
-	public int getNrToWork() {
+	public int getNrToSend() {
 		return getSenderIndex().size();
 	}
 

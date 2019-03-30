@@ -29,13 +29,13 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.BorderLayout;
 
-public class CustomDiagramItem extends JPanel {
+public class DiagramItem extends JPanel {
 	private static final long serialVersionUID = 5435912444464919228L;
 	private JComponent component;
-	private CustomDiagram diagram;
+	private Diagram diagram;
 	private ConnectingMouseMotionListener connectingListener;
 	private ControlListener controlListener;
-	private CustomDiagramItem instance = this;
+	private DiagramItem instance = this;
 	private Map<String, DiagramConnector> connectors=new LinkedHashMap<String, DiagramConnector>();
 	private boolean selected=false;
 	
@@ -173,10 +173,10 @@ public class CustomDiagramItem extends JPanel {
 	public void deleteThis() {
 		this.setSelected(false);
 		
-		CustomDiagram diagrm=diagram;
+		Diagram diagrm=diagram;
 		diagrm.removeDiagramItem(instance);
 		
-		List<CustomDiagramItemConnection> connections=new ArrayList<>();
+		List<DiagramItemConnection> connections=new ArrayList<>();
 		for(DiagramConnector connector:connectors.values()) {
 			connector.getConnections().forEach((connection)->connections.add(connection));
 		}
@@ -201,50 +201,50 @@ public class CustomDiagramItem extends JPanel {
 	/**
 	 * @return the diagram
 	 */
-	public CustomDiagram getDiagram() {
+	public Diagram getDiagram() {
 		return diagram;
 	}
 
 	/**
 	 * @param diagram the diagram to set
 	 */
-	public void setDiagram(CustomDiagram diagram) {
+	public void setDiagram(Diagram diagram) {
 		this.diagram = diagram;
 	}
 	
-	public List<CustomDiagramItemConnection> getConnections() {
-		List<CustomDiagramItemConnection> ret=new ArrayList<>();
+	public List<DiagramItemConnection> getConnections() {
+		List<DiagramItemConnection> ret=new ArrayList<>();
 		ret.addAll(getIncomingConnections());
 		ret.addAll(getOutgoingConnections());
 		
 		return ret;
 	}
 
-	public List<CustomDiagramItemConnection> getOutgoingConnections(){
-		List<CustomDiagramItemConnection> ret=new ArrayList<>();
+	public List<DiagramItemConnection> getOutgoingConnections(){
+		List<DiagramItemConnection> ret=new ArrayList<>();
 		
 		for(DiagramOutput output:getOutputs()) {
-			for(CustomDiagramItemConnection con:output.getConnections()) {
+			for(DiagramItemConnection con:output.getConnections()) {
 				ret.add(con);
 			}
 		}
 		return ret;
 	}
 	
-	public List<CustomDiagramItemConnection> getIncomingConnections(){
-		List<CustomDiagramItemConnection> ret=new ArrayList<>();
+	public List<DiagramItemConnection> getIncomingConnections(){
+		List<DiagramItemConnection> ret=new ArrayList<>();
 		
 		for(DiagramInput input:getInputs()) {
-			for(CustomDiagramItemConnection con:input.getConnections()) {
+			for(DiagramItemConnection con:input.getConnections()) {
 				ret.add(con);
 			}
 		}
 		return ret;
 	}
 	
-	public void removeConnection(CustomDiagramItemConnection connection) {
+	public void removeConnection(DiagramItemConnection connection) {
 		for(DiagramConnector connector:connectors.values()) {
-			ArrayList<CustomDiagramItemConnection> connections=connector.getConnections();
+			ArrayList<DiagramItemConnection> connections=connector.getConnections();
 			for(int i=0;i<connections.size();i++) {
 				if(connections.get(i).equals(connection)) {
 					connections.remove(i);
@@ -254,7 +254,7 @@ public class CustomDiagramItem extends JPanel {
 		}
 	}
 
-	public CustomDiagramItem(JComponent component, CustomDiagram diagram) {
+	public DiagramItem(JComponent component, Diagram diagram) {
 		controlListener=new ControlListener();
 		controlListener.install(this);
 		connectingListener = new ConnectingMouseMotionListener();
@@ -308,10 +308,10 @@ public class CustomDiagramItem extends JPanel {
 	}
 	
 	
-	public void connectTo(CustomDiagramItem item) {
+	public void connectTo(DiagramItem item) {
 		if(checkIfAlreadyConnectedTo(item))
 			return;
-		CustomDiagramItemConnection connection=new CustomDiagramItemConnection(
+		DiagramItemConnection connection=new DiagramItemConnection(
 				this.selectedOutput,
 				item.selectedInput);
 		
@@ -319,13 +319,11 @@ public class CustomDiagramItem extends JPanel {
 		diagram.addDiagramConnection(connection);
 		
 		item.selectedInput.getConnections().add(connection);
-		
-		diagram.repaint();
 	}
 	
 	
-	public boolean checkIfAlreadyConnectedTo(CustomDiagramItem item) {
-		for(CustomDiagramItemConnection con:getOutgoingConnections()) {
+	public boolean checkIfAlreadyConnectedTo(DiagramItem item) {
+		for(DiagramItemConnection con:getOutgoingConnections()) {
 			if(con.getTo().equals(item)) {
 				return true;
 			}
@@ -358,9 +356,9 @@ public class CustomDiagramItem extends JPanel {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof CustomDiagramItem))
+		if (!(obj instanceof DiagramItem))
 			return false;
-		CustomDiagramItem other = (CustomDiagramItem) obj;
+		DiagramItem other = (DiagramItem) obj;
 		if (component == null) {
 			if (other.component != null)
 				return false;
@@ -371,7 +369,7 @@ public class CustomDiagramItem extends JPanel {
 
 	private class ConnectingMouseMotionListener extends MouseAdapter {
 		private boolean connecting;
-		private CustomDiagramItem diagramItemFound;
+		private DiagramItem diagramItemFound;
 
 		public void install(JComponent component) {
 			component.addMouseListener(this);
@@ -400,15 +398,17 @@ public class CustomDiagramItem extends JPanel {
 				Component component = diagram.getPnlDiagramItems().getComponentAt(pnt);
 				if (component != instance 
 						&& component != null 
-						&& component instanceof CustomDiagramItem) {
+						&& component instanceof DiagramItem) {
 					if (diagramItemFound != component) {
 						if (diagramItemFound != null) {
 							diagramItemFound.setBorder(Color.BLACK, 5);
 						}
 						
-						CustomDiagramItem itemFound = (CustomDiagramItem) component;
-						if(!checkIfAlreadyConnectedTo(itemFound) && itemFound.selectedInput.isConnectionAllowed() 
-								|| diagram.getListenerTrigger().triggerOnConnectionAvailable(instance, itemFound)) {
+						DiagramItem itemFound = (DiagramItem) component;
+						
+						boolean triggerOutcome= diagram.getListenerTrigger().triggerOnConnectionAvailable(instance, itemFound);
+						if((!checkIfAlreadyConnectedTo(itemFound) && itemFound.selectedInput.isConnectionAllowed() && triggerOutcome) 
+								|| triggerOutcome) {
 							diagramItemFound=itemFound;
 							diagramItemFound.setBorder(Color.GREEN, 5);
 						}
@@ -448,7 +448,7 @@ public class CustomDiagramItem extends JPanel {
 		}
 		
 		public void mouseReleased(MouseEvent e) {
-			if(checkIfSelectionClick(500)){
+			if(checkIfSelectionClick(200)){
 				setBorder(Color.LIGHT_GRAY, 5);
 				setSelected(true);
 			}

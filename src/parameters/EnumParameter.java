@@ -14,7 +14,7 @@ public class EnumParameter extends Parameter<Enum <?>> {
 
 	
 	@Override
-	protected JComponent getEditComponent() {
+	public JComponent getEditComponent() {
 		return new ParameterEnumPanel(this);
 	}
 

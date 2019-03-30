@@ -1,6 +1,5 @@
 package parameters;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,11 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import main.ParameterReceiver;
 import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
@@ -22,7 +18,7 @@ public class ParameterizedObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 681876050920298547L;
-	protected Set<ParameterGroup> paramGroups=new LinkedHashSet<ParameterGroup>();
+//	protected Set<ParameterGroup> paramGroups=new LinkedHashSet<ParameterGroup>();
 	protected Map<String,Parameter<?>> parameters=new HashMap<String,Parameter<?>>();
 	protected Map<String,ParameterObject> allParameters=new LinkedHashMap<String,ParameterObject>();
 	private List<ParameterReceiver> paramReceivers=new ArrayList<>();
@@ -43,7 +39,7 @@ public class ParameterizedObject implements Serializable {
 				this.parameters.put(parameter.getFullName(),parameter);
 			}else if(param instanceof ParameterGroup) {
 				ParameterGroup pg=(ParameterGroup)param;
-				paramGroups.add(pg);
+//				paramGroups.add(pg);
 				addParameters(pg.getParameters());
 			}
 		}
@@ -104,17 +100,17 @@ public class ParameterizedObject implements Serializable {
 		return ((EnumParameter)(getParameter(paramName))).getValue();
 	}
 	
-	public Map<String,ParameterObject> getParameters(){
+	public Map<String,ParameterObject> getAllParameters(){
 		return allParameters;
 	}
 	
-	public Map<String,Parameter<?>> getAllParameters(){
+	public Map<String,Parameter<?>> getParameters(){
 		return parameters;
 	}
 	
-	public Set<ParameterGroup> getParameterGroups(){
-		return paramGroups;
-	}
+//	public Set<ParameterGroup> getParametesrGroups(){
+//		return paramGroups;
+//	}
 	
 	public void showParameterChangeDialog() {
 		ParameterChangeDialog dlg=new ParameterChangeDialog(this);

@@ -22,7 +22,9 @@ public class MatSender extends ParameterizedObject {
 	private int id=System.identityHashCode(this);
 	
 	public void recalculateId() {
+		System.out.println(id);
 		this.id*=Math.random();
+		System.out.println(id);
 	}
 
 	/**
@@ -137,10 +139,10 @@ public class MatSender extends ParameterizedObject {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof MultiMatEditFunction))
+		if (!(obj instanceof MatSender))
 			return false;
-		MultiMatEditFunction other = (MultiMatEditFunction) obj;
-		if (id != other.getId())
+		MatSender other = (MatSender) obj;
+		if (id != other.id)
 			return false;
 		return true;
 	}
