@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import java.awt.Color;
@@ -33,6 +34,7 @@ public class DiagramItemConnection extends JPanel {
 	private Point pnt1;
 	private Point pnt2;
 	private transient List<int[]> lines=new ArrayList<>();
+	private final DiagramItemConnection instance=this;
 
 	private static Polygon arrowHead;
 
@@ -170,20 +172,46 @@ public class DiagramItemConnection extends JPanel {
 	private class SelectionListener extends MouseAdapter implements FocusListener {
 		@Override
 		public void mousePressed(MouseEvent e) {
+			
+			if(selected) {
+				transferFocus();
+				return;
+			}
+			
 			if(isLineClicked(e.getX(), e.getY())) {
 				requestFocus();
+			}else {
+				if(getParent() instanceof JLayeredPane) {
+					JLayeredPane pane=(JLayeredPane) getParent();
+					pane.setLayer(instance, 0);
+				}
 			}
 		}
 
 		@Override
 		public void focusGained(FocusEvent e) {
 			selected = true;
-			getParent().repaint();
+			
+			if(getParent() instanceof JLayeredPane) {
+				JLayeredPane pane=(JLayeredPane) getParent();
+				pane.setLayer(instance, 1);
+			}
+			
+			EventQueue.invokeLater(()->{
+				revalidate();
+				repaint();
+			});	
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) {
 			selected = false;
+			
+			if(getParent() instanceof JLayeredPane) {
+				JLayeredPane pane=(JLayeredPane) getParent();
+				pane.setLayer(instance, 0);
+			}
+			
 			EventQueue.invokeLater(()->{
 				revalidate();
 				repaint();

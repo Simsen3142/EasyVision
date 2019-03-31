@@ -118,7 +118,7 @@ public class ColorParameterGroupPanel extends JPanel implements IParameterGroupP
 			
 			g2.setPaint(fromTo);
 			
-			g2.fillRect(x1, 0, x2, height);
+			g2.fillRect(x1, 0, x2-x1, height);
 		}
 		
 		return g;
