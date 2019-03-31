@@ -35,13 +35,13 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JLayeredPane;
 
-public class CustomDiagram extends JLayeredPane {
+public class Diagram extends JLayeredPane {
 	private static final long serialVersionUID = 1819079186185325112L;
-	private List<CustomDiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
+	private List<DiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
 	private transient DiagramDragListener dragListener;
 	private transient ControlListener controlListener;
-	private transient CustomDiagram instance = this;
-	private transient CustomDiagramListenerTrigger listenerTrigger;
+	private transient Diagram instance = this;
+	private transient DiagramListenerTrigger listenerTrigger;
 	private JPanel pnlDiagramItems;
 	private JPanel pnlConnections;
 	private Image backgroundImage;
@@ -71,7 +71,7 @@ public class CustomDiagram extends JLayeredPane {
 	/**
 	 * @return the listenerTrigger
 	 */
-	public CustomDiagramListenerTrigger getListenerTrigger() {
+	public DiagramListenerTrigger getListenerTrigger() {
 		return listenerTrigger;
 	}
 
@@ -89,24 +89,24 @@ public class CustomDiagram extends JLayeredPane {
 		return pnlConnections;
 	}
 
-	public void addDiagramListener(CustomDiagramListener listener) {
+	public void addDiagramListener(DiagramListener listener) {
 		listenerTrigger.getCustomDiagramListeners().add(listener);
 	}
 	
-	public boolean removeDiagramListener(CustomDiagramListener listener) {
+	public boolean removeDiagramListener(DiagramListener listener) {
 		return listenerTrigger.getCustomDiagramListeners().remove(listener);
 	}
 	
-	public void clearDiagramListeners(CustomDiagramListener listener) {
+	public void clearDiagramListeners(DiagramListener listener) {
 		listenerTrigger.getCustomDiagramListeners().clear();
 	}
 
 	/**
 	 * Create the panel.
 	 */
-	public CustomDiagram() {
+	public Diagram() {
 		super();
-		listenerTrigger=new CustomDiagramListenerTrigger();
+		listenerTrigger=new DiagramListenerTrigger();
 		setLayout(null);
 		dragListener = new DiagramDragListener();
 		addMouseListener(dragListener);
@@ -192,19 +192,19 @@ public class CustomDiagram extends JLayeredPane {
 	}
 	
 	public void addDiagramItem(JComponent component, Point position) {
-		CustomDiagramItem diagramItem=new CustomDiagramItem(component, this);
+		DiagramItem diagramItem=new DiagramItem(component, this);
 		this.addDiagramItem(diagramItem, position);
 		listenerTrigger.triggerOnDiagramItemCreated(diagramItem);
 	}
 
-	public void addDiagramItem(CustomDiagramItem item, Point position) {
+	public void addDiagramItem(DiagramItem item, Point position) {
 		item.setDiagram(this);
 		diagramItems.add(item);
 		pnlDiagramItems.add(item);
 		item.setBounds(position.x, position.y, 100, 50);
 	}
 
-	public void removeDiagramItem(CustomDiagramItem item) {
+	public void removeDiagramItem(DiagramItem item) {
 		diagramItems.remove(item);
 		pnlDiagramItems.remove(item);
 		if (item.getDiagram() == this)
@@ -212,23 +212,29 @@ public class CustomDiagram extends JLayeredPane {
 		listenerTrigger.triggerOnDiagramItemDeleted(item);
 	}
 	
-	public void addDiagramConnection(CustomDiagramItemConnection connection) {
+	public void addDiagramConnection(DiagramItemConnection connection) {
 		Rectangle visibleRect=getVisibleRect();
-		connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
-		pnlConnections.add(connection);
+		EventQueue.invokeLater(()->{
+			connection.setBounds(visibleRect.x, visibleRect.y, 10, 10);
+			pnlConnections.add(connection);
+			connection.revalidate();
+			connection.repaint();
+		});
 		listenerTrigger.triggerOnConnectionCreated(connection);
 	}
 	
-	public void removeDiagramConnection(CustomDiagramItemConnection connection) {
-		pnlConnections.remove(connection);
-		this.repaint();
+	public void removeDiagramConnection(DiagramItemConnection connection) {
+		EventQueue.invokeLater(()->{
+			pnlConnections.remove(connection);
+			this.repaint();
+		});
 		listenerTrigger.triggerOnConnectionDeleted(connection);
 	}
 
 	/**
 	 * @return the diagramItems
 	 */
-	public List<CustomDiagramItem> getDiagramItems() {
+	public List<DiagramItem> getDiagramItems() {
 		return diagramItems;
 	}
 

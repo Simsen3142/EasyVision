@@ -59,11 +59,18 @@ public class PictureStreamer extends MatStreamer {
 							break;
 						}
 						if ((mat=Imgcodecs.imread(f.getAbsolutePath()))!=null) {
+							IntegerParameter widthParam=(IntegerParameter) getParameter("size_width");
+							IntegerParameter heightParam=(IntegerParameter) getParameter("size_height");
+							
 							if(getBoolVal("size_change")) {
-								int width=getIntVal("size_width");
-								int height=getIntVal("size_height");
+								int width=widthParam.getValue();
+								int height=heightParam.getValue();
 								Imgproc.resize(mat, mat, new Size(width,height));
+							}else {
+								widthParam.setValue(mat.cols());
+								heightParam.setValue(mat.rows());
 							}
+							
 							try {
 								Thread.sleep(getIntVal("endless_delayval"));
 								sendMat(mat);

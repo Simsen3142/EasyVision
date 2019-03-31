@@ -21,19 +21,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class CustomDiagramItemConnection extends JPanel {
+public class DiagramItemConnection extends JPanel {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2444362256939007590L;
+	private static final long serialVersionUID = 2421362256939007590L;
 	private boolean selected = false;
 	private DiagramOutput from;
 	private DiagramInput to;
 	private Point pnt1;
 	private Point pnt2;
-	private AffineTransform tx = new AffineTransform();
-	private CustomDiagramItemConnection instance = this;
 	private transient List<int[]> lines=new ArrayList<>();
 
 	private static Polygon arrowHead;
@@ -69,7 +67,7 @@ public class CustomDiagramItemConnection extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public CustomDiagramItemConnection(DiagramOutput from, DiagramInput to) {
+	public DiagramItemConnection(DiagramOutput from, DiagramInput to) {
 		super();
 		addKeyListener(new ThisKeyListener());
 		SelectionListener listener = new SelectionListener();
@@ -160,7 +158,7 @@ public class CustomDiagramItemConnection extends JPanel {
 	public void deleteConnection() {
 		from.getDiagramItem().removeConnection(this);
 		to.getDiagramItem().removeConnection(this);
-		CustomDiagram diagram = (CustomDiagram) getParent().getParent();
+		Diagram diagram = (Diagram) getParent().getParent();
 		diagram.removeDiagramConnection(this);
 	}
 

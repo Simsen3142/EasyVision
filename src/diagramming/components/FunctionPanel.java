@@ -43,13 +43,14 @@ public class FunctionPanel<type> extends JPanel {
 	private static JPopupMenu popupMenu;
 	private PicturePanel picturePanel;
 	private LayoutManager layoutHide;
-	private static LayoutManager layoutVisible;
+	private LayoutManager layoutVisible;
 
 	public void hideLabel(boolean hide) {
 		lblName.setVisible(!hide);
-		picturePanel.setVisible(!hide);
+		if(picturePanel!=null)
+			picturePanel.setVisible(!hide);
 		
-		setLayout(hide?layoutHide:layoutVisible);
+		this.setLayout(hide?layoutHide:layoutVisible);
 	}
 	
 	/**
@@ -80,12 +81,11 @@ public class FunctionPanel<type> extends JPanel {
 		addPopup(this);
 		
 		if(layoutVisible==null)
-			layoutVisible=new MigLayout("insets 0 3 10 3, gap 0", "[grow]", "[50%][35.00,grow]");
+			layoutVisible=new MigLayout("insets 0 3 10 3, gap 0", "[grow]", "[50%:n:50%][40%:n,grow]");
 		if(layoutHide==null)
 			layoutHide=new BorderLayout(4,4);
 		setLayout(layoutVisible);
-		this.removeAll();
-
+		
 		lblName = new JLabel(name);
 		lblName.setFont(new Font("Arial", Font.BOLD, 20));
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
@@ -96,9 +96,9 @@ public class FunctionPanel<type> extends JPanel {
 		if(function instanceof RepresentationIcon) {
 			((RepresentationIcon) function).getRepresentationImage((img)->{
 				picturePanel = new PicturePanel(img);
-				add(picturePanel, "cell 0 1,grow");
 				
 				EventQueue.invokeLater(()->{
+					add(picturePanel, "cell 0 1,grow");
 					revalidate();
 					repaint();
 				});

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 public class DiagramConnector {
-	protected ArrayList<CustomDiagramItemConnection> connections=new ArrayList<>();
-	protected CustomDiagramItem diagramItem;
+	protected ArrayList<DiagramItemConnection> connections=new ArrayList<>();
+	protected DiagramItem diagramItem;
 	protected String name;
 	protected Function<Void, Point> findPosition;
 	protected int maxConnectionNumber=100;
@@ -14,7 +14,7 @@ public class DiagramConnector {
 	/**
 	 * @return the connections
 	 */
-	public ArrayList<CustomDiagramItemConnection> getConnections() {
+	public ArrayList<DiagramItemConnection> getConnections() {
 		return connections;
 	}
 	
@@ -25,9 +25,9 @@ public class DiagramConnector {
 	/**
 	 * @return the diagramItem
 	 */
-	public CustomDiagramItem getDiagramItem() {
+	public DiagramItem getDiagramItem() {
 		return diagramItem;
-	}
+	} /* Type of Parameter is Void*/
 	
 	/**
 	 * @return the maxConnectionNumber
@@ -49,13 +49,13 @@ public class DiagramConnector {
 		return findPosition.apply(null);
 	}
 
-	public DiagramConnector(CustomDiagramItem diagramItem, Function<Void, Point> findPosition, String name) {
+	public DiagramConnector(DiagramItem diagramItem, Function<Void, Point> findPosition, String name) {
 		this.diagramItem=diagramItem;
 		this.name=name;
 		this.findPosition=findPosition;
 	}
 
-	public DiagramConnector(CustomDiagramItem diagramItem, Function<Void, Point> findPosition) {
+	public DiagramConnector(DiagramItem diagramItem, Function<Void, Point> findPosition) {
 		this(diagramItem,findPosition,"input");
 	}
 	

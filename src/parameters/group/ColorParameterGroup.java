@@ -13,7 +13,7 @@ public class ColorParameterGroup extends ParameterGroup {
 	 */
 	private static final long serialVersionUID = -216641001692023432L;
 
-	public enum ColorType{
+	public static enum ColorType{
 		RGB, BGR, HSV
 	}
 	
@@ -43,13 +43,17 @@ public class ColorParameterGroup extends ParameterGroup {
 		Number v2=((NumberParameter<?>)parameters.get(1)).getValue();
 		Number v3=((NumberParameter<?>)parameters.get(2)).getValue();
 		
+		return getColor(v1,v2,v3);
+	}
+	
+	public Color getColor(Number v1, Number v2, Number v3) {
 		switch(type) {
-			case HSV:
-			 	return Color.getHSBColor(v1.floatValue()/255f,v2.floatValue()/255f,v3.floatValue()/255f);
-			case RGB:
-			 	return new Color(v1.intValue(),v2.intValue(),v3.intValue());
-			case BGR:
-			 	return new Color(v3.intValue(),v2.intValue(),v1.intValue());
+		case HSV:
+		 	return Color.getHSBColor(v1.floatValue()/180f,v2.floatValue()/255f,v3.floatValue()/255f);
+		case RGB:
+		 	return new Color(v1.intValue(),v2.intValue(),v3.intValue());
+		case BGR:
+		 	return new Color(v3.intValue(),v2.intValue(),v1.intValue());
 		}
 		
 		return null;

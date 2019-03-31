@@ -29,7 +29,7 @@ public class ParameterGroupPanel extends JPanel implements IParameterGroupPanel 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 3), new EmptyBorder(5, 3, 3, 3)));
 
-		editableLabel = new EditableLabel(parameterGroup.getFullName());
+		editableLabel = new EditableLabel(parameterGroup.getName());
 		add(editableLabel);
 		
 		addChildren();

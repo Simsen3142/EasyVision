@@ -49,7 +49,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.border.LineBorder;
 
 import java.awt.Color;
@@ -70,7 +69,7 @@ public class DiagramPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private CustomDiagram customDiagram;
+	private Diagram customDiagram;
 	private JPanel pnlLists;
 	private JButton btnStart;
 	private CustomTransferHandler transferHandler;
@@ -80,6 +79,7 @@ public class DiagramPanel extends JPanel {
 	private boolean loading = false;
 	private JButton btnStop;
 	private MatStreamer selectedMatStreamer=null;
+	private Dimension itemSize=new Dimension(300, 220);
 
 //	/**
 //	 * Launch the application.
@@ -108,27 +108,28 @@ public class DiagramPanel extends JPanel {
 	public DiagramPanel() {
 		super();
 		setBackground(new Color(250,250,255));
+		
 		transferHandler = new CustomTransferHandler();
 
 		this.setLayout(new MigLayout("insets 0, gap 0", "[80%][grow]", "[][grow]"));
 
-		customDiagram = new CustomDiagram();
+		customDiagram = new Diagram();
 		customDiagram.setBorder(new LineBorder(new Color(0, 0, 0)));
 		customDiagram.setTransferHandler(transferHandler);
 		Dimension d = new Dimension(50000, 50000);
 		customDiagram.setPreferredSize(d);
-
+		
 		scrollPane = new JScrollPane(
 				customDiagram
 		);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-
+		
 		pnlControl = new JPanel();
 		pnlControl.setLayout(new MigLayout("insets 5 0 5 0, gap 0", "[][]", "[]"));
 		pnlControl.setBackground(new Color(101, 45, 146));
 		pnlControl.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		add(pnlControl, "cell 0 0 2 1,growx,aligny bottom");
-
+		
 		Color cMain=new Color(255,255,255);
 		Color cRollover=new Color(230,230,230);
 		Color cDisabled=new Color(150,150,150);
@@ -169,8 +170,9 @@ public class DiagramPanel extends JPanel {
 			
 			return null;
 		});
-
+		
 		this.add(scrollPane, "cell 0 1,grow");
+		
 
 		customDiagram.setSize(10000, 100000);
 
@@ -182,10 +184,19 @@ public class DiagramPanel extends JPanel {
 			}
 		});
 
-		customDiagram.setBackgroundImage(ImageHandler.getImage("res/EVLogo_transparency.jpg"));
+		ImageHandler.getImage("res/EVLogo_transparency.jpg",(img)->{
+			customDiagram.setBackgroundImage(img);
+			
+			EventQueue.invokeLater(()->{
+				customDiagram.revalidate();
+				customDiagram.repaint();
+			});
+
+			return null;
+		});	
 		customDiagram.setOpaque(true);
 		customDiagram.setBackground(new Color(231, 231, 234));
-
+		
 		pnlLists = new JPanel();
 		pnlLists.setOpaque(false);
 		this.add(pnlLists, "cell 1 1,growx,aligny top");
@@ -193,52 +204,54 @@ public class DiagramPanel extends JPanel {
 
 		initLists();
 		
-		customDiagram.addDiagramListener(new CustomDiagramListener() {
+		customDiagram.addDiagramListener(new DiagramListener() {
 			
 			@Override
-			public void onDeleteItem(CustomDiagramItem diagramItem) {
-				Component component = diagramItem.getComponent();
-				MatSender sender = null;
-				ParameterReceiver rec = null;
-
-				if (component instanceof MatReceiverNSenderPanel) {
-					sender=getFunctionFromDiagramItem(diagramItem, MatSender.class);
-
-					if(sender!=null) {
-						sender.stop();
-						sender.clearMatReceiverFunctions();
-					}
-				} else if (component instanceof ParameterReceiverPanel) {
-					rec = (ParameterReceiver) ((ParameterReceiverPanel) component).getFunction();
-				}
-
-				for (DiagramInput input : diagramItem.getInputs()) {
-					for (CustomDiagramItemConnection con : input.getConnections()) {
-						CustomDiagramItem fromItem = con.getFrom().getDiagramItem();
-						Component fromComp = fromItem.getComponent();
-
-						if (fromComp instanceof MatReceiverNSenderPanel) {
-							MatSender fromSender = ((MatReceiverNSenderPanel) fromComp).getFunction();
-							if (sender != null && sender instanceof MatReceiver) {
-								fromSender.removeMatReceiver((MatReceiver) sender);
-							}
-							if (sender != null && sender instanceof MatMapReceiver) {
-								fromSender.removeMatMapReceiver((MatMapReceiver) sender);
-							}
-							if (rec != null && rec instanceof ParameterReceiver) {
-								fromSender.removeParamterReceiver(rec);
-							}
-						}
-					}
-				}
+			public void onDeleteItem(DiagramItem diagramItem) {
+				MatSender sender=getFunctionFromDiagramItem(diagramItem, MatSender.class);
+				sender.stop();
+//				Component component = diagramItem.getComponent();
+//				MatSender sender = null;
+//				ParameterReceiver rec = null;
+//
+//				if (component instanceof MatReceiverNSenderPanel) {
+//					sender=getFunctionFromDiagramItem(diagramItem, MatSender.class);
+//
+//					if(sender!=null) {
+//						sender.stop();
+//						sender.clearMatReceiverFunctions();
+//					}
+//				} else if (component instanceof ParameterReceiverPanel) {
+//					rec = (ParameterReceiver) ((ParameterReceiverPanel) component).getFunction();
+//				}
+//
+//				for (DiagramInput input : diagramItem.getInputs()) {
+//					for (DiagramItemConnection con : input.getConnections()) {
+//						DiagramItem fromItem = con.getFrom().getDiagramItem();
+//						Component fromComp = fromItem.getComponent();
+//
+//						if (fromComp instanceof MatReceiverNSenderPanel) {
+//							MatSender fromSender = ((MatReceiverNSenderPanel) fromComp).getFunction();
+//							if (sender != null && sender instanceof MatReceiver) {
+//								fromSender.removeMatReceiver((MatReceiver) sender);
+//							}
+//							if (sender != null && sender instanceof MatMapReceiver) {
+//								fromSender.removeMatMapReceiver((MatMapReceiver) sender);
+//							}
+//							if (rec != null && rec instanceof ParameterReceiver) {
+//								fromSender.removeParamterReceiver(rec);
+//							}
+//						}
+//					}
+//				}
 			}
 
 			@Override
-			public void onDeleteConnection(CustomDiagramItemConnection connection) {
-				CustomDiagramItem to_item = connection.getTo().getDiagramItem();
+			public void onDeleteConnection(DiagramItemConnection connection) {
+				DiagramItem to_item = connection.getTo().getDiagramItem();
 				DiagramOutput from = connection.getFrom();
 				DiagramInput to = connection.getTo();
-				CustomDiagramItem from_item = connection.getFrom().getDiagramItem();
+				DiagramItem from_item = connection.getFrom().getDiagramItem();
 				
 				if(to_item.getComponent() instanceof MultiMatEditFunctionDiagramPanel) {
 					MultiMatEditFunction function=getFunctionFromDiagramItem(to_item, MultiMatEditFunction.class);
@@ -275,14 +288,14 @@ public class DiagramPanel extends JPanel {
 			}
 
 			@Override
-			public void onCreateConnection(CustomDiagramItemConnection connection) {
-				CustomDiagramItem to_item = connection.getTo().getDiagramItem();
+			public void onCreateConnection(DiagramItemConnection connection) {
+				DiagramItem to_item = connection.getTo().getDiagramItem();
 				DiagramOutput from = connection.getFrom();
 				DiagramInput to = connection.getTo();
-				CustomDiagramItem from_item = connection.getFrom().getDiagramItem();
+				DiagramItem from_item = connection.getFrom().getDiagramItem();
 
 				if (to_item.getComponent() instanceof ParameterReceiverPanel) {
-					if (!from.getName().equals("parameter_out")) {
+					if(!from.getName().equals("parameter_out")) {
 						connection.setFrom((DiagramOutput) from.getDiagramItem().getConnector("parameter_out"));
 					}
 
@@ -293,14 +306,14 @@ public class DiagramPanel extends JPanel {
 					});
 				}
 				
-				if(to_item.getComponent() instanceof MultiMatEditFunctionDiagramPanel) {
-					MultiMatEditFunction function=getFunctionFromDiagramItem(to_item, MultiMatEditFunction.class);
+				MultiMatEditFunction mmefct = getFunctionFromDiagramItem(to_item, MultiMatEditFunction.class);
+				if(mmefct != null) {
 					MatSender sender=getFunctionFromDiagramItem(from_item, MatSender.class);
 					int index=0;
 					if(to.getName().contains("_in_")) {
 						index=Integer.parseInt(to.getName().split("_")[2]);
 					}
-					function.addMatSender(sender, index);
+					mmefct.addMatSender(sender, index);
 					
 					if(to.getName().startsWith("function")) {
 						EventQueue.invokeLater(() -> {
@@ -341,36 +354,76 @@ public class DiagramPanel extends JPanel {
 			}
 
 			@Override
-			public boolean onConnectionAvailable(CustomDiagramItem from, CustomDiagramItem to) {
+			public boolean onConnectionAvailable(DiagramItem from, DiagramItem to) {
+				
+				boolean ret=false;
+				
 				MultiMatEditFunction multiFunctionTo=getFunctionFromDiagramItem(to, MultiMatEditFunction.class);
 				if(multiFunctionTo!=null) {
-					for(DiagramConnector connector:to.getConnectors().values()) {
-						if(connector instanceof DiagramInput) {
-							DiagramInput input=(DiagramInput) connector;
-							MatSender sender=getFunctionFromDiagramItem(from, MatSender.class);
-							
-							if(input.isConnectionAllowed() && sender!=null) {
-								if(multiFunctionTo.getSenderIndex().containsKey(sender)) {
-									return false;
-								}
-								
-								to.setSelectedInput(input.getName());
-								return true;
-							}
-								
+					
+					MatSender sender=getFunctionFromDiagramItem(from, MatSender.class);
+					
+					if(multiFunctionTo.getSenderIndex().containsKey(sender)) {
+						return false;
+					}
+				}
+				
+				List<DiagramConnector> cons=new ArrayList<>(to.getConnectors().values());
+				for(int i=cons.size()-1;i>=0;i--) {
+					DiagramConnector con=cons.get(i);
+					if(con instanceof DiagramInput) {
+						DiagramInput input=(DiagramInput) con;
+						if(input.isConnectionAllowed()) {
+							to.setSelectedInput(input.getName());
+							ret = true;
 						}
 					}
 				}
 				
-				return false;
+				if(ret) {
+					MatReceiver matRec=getFunctionFromDiagramItem(to, MatReceiver.class);
+					Color c=Color.GREEN;
+					
+					if(matRec!=null) {
+						if(!from.getSelectedOutput().getName().equals("output")) {
+							from.setSelectedOutput("output");
+						}
+						
+						if(to.getSelectedInput().getName().startsWith("function")) {
+							c=Color.RED;
+						}
+						
+					}else {
+						ParameterReceiver rec=getFunctionFromDiagramItem(to, ParameterReceiver.class);
+						if(rec!=null) {
+							if(!from.getSelectedOutput().getName().equals("parameter_out")) {
+								from.setSelectedOutput("parameter_out");
+							}
+							c=Color.BLUE;
+						}
+					}
+					
+					final Color c2=c;
+					EventQueue.invokeLater(()->{
+						from.setBorder(c2, 5);
+						from.revalidate();
+						from.repaint();
+						
+						to.setBorder(c2, 5);
+						to.revalidate();
+						to.repaint();								
+					});
+				}
+				
+				return ret;
 			}
 
 			@Override
-			public void onCreateItem(CustomDiagramItem diagramItem) {
+			public void onCreateItem(DiagramItem diagramItem) {
 			}
 
 			@Override
-			public void onCopied(CustomDiagramItem diagramItem) {
+			public void onCopied(DiagramItem diagramItem) {
 				JComponent comp = diagramItem.getComponent();
 				if (comp instanceof FunctionPanel<?>) {
 					ParameterizedObject po = (ParameterizedObject) ((FunctionPanel) comp).getFunction();
@@ -409,7 +462,7 @@ public class DiagramPanel extends JPanel {
 			}
 
 			@Override
-			public void onItemSelectionChanged(CustomDiagramItem diagramItem, boolean selected) {
+			public void onItemSelectionChanged(DiagramItem diagramItem, boolean selected) {
 				if(selected) {
 					selectedMatStreamer=getFunctionFromDiagramItem(diagramItem, MatStreamer.class);
 				}else {
@@ -562,9 +615,10 @@ public class DiagramPanel extends JPanel {
 		}
 	}
 
-	private CustomDiagramItem addMatSenderDiagramItem(Point pos, MatSender sender) {
-		CustomDiagramItem item;
+	private DiagramItem addMatSenderDiagramItem(Point pos, MatSender sender) {
+		DiagramItem item;
 		MatReceiverNSenderPanel panel;
+		
 		if (sender instanceof MatStreamer) {
 			panel = new StreamerPanel((MatStreamer) sender);
 		} else if (sender instanceof MatEditFunction) {
@@ -576,7 +630,7 @@ public class DiagramPanel extends JPanel {
 			};
 		}
 
-		item = new CustomDiagramItem(panel, customDiagram);
+		item = new DiagramItem(panel, customDiagram);
 
 		if (panel instanceof StreamerPanel) {
 			item.getSelectedInput().setMaxConnectionNumber(0);
@@ -620,9 +674,11 @@ public class DiagramPanel extends JPanel {
 			}
 		}
 
-		customDiagram.addDiagramItem(item, pos);
-		item.setSize(300, 220);
-
+		EventQueue.invokeLater(() -> {
+			customDiagram.addDiagramItem(item, pos);
+			item.setSize(itemSize);
+		});
+		
 		item.addDiagramConnector(new DiagramOutput(item, (nix) -> {
 			int x = item.getX() + item.getWidth();
 			int y = item.getY() + item.getHeight() / 2 + 10;
@@ -661,21 +717,21 @@ public class DiagramPanel extends JPanel {
 		return item;
 	}
 
-	private CustomDiagramItem addParamReceiverDiagramItem(Point pos, ParameterReceiver receiver) {
-		CustomDiagramItem item;
+	private DiagramItem addParamReceiverDiagramItem(Point pos, ParameterReceiver receiver) {
+		DiagramItem item;
 		JComponent panel;
 
 		panel = new ParameterReceiverPanel(receiver, receiver.getClass().getSimpleName());// new
 																							// MatReceiverNSenderPanel(receiver,"Name")
 																							// {};
 
-		item = new CustomDiagramItem(panel, customDiagram);
+		item = new DiagramItem(panel, customDiagram);
 
 		item.getSelectedInput().setMaxConnectionNumber(1);
 		item.getSelectedOutput().setMaxConnectionNumber(0);
 
 		customDiagram.addDiagramItem(item, pos);
-		item.setSize(300, 220);
+		item.setSize(itemSize);
 
 		CustomTransferHandler.cleanText();
 		CustomTransferHandler.setBoxCreate(false);
@@ -691,9 +747,9 @@ public class DiagramPanel extends JPanel {
 	private ArrayList<MatSender> createFunctions() {
 		ArrayList<MatSender> ret = new ArrayList<>();
 
-		List<CustomDiagramItem> diagramItems = customDiagram.getDiagramItems();
+		List<DiagramItem> diagramItems = customDiagram.getDiagramItems();
 
-		for (CustomDiagramItem item : diagramItems) {
+		for (DiagramItem item : diagramItems) {
 			MatSender matSender = null;
 
 			Component component = item.getComponent();
@@ -711,9 +767,9 @@ public class DiagramPanel extends JPanel {
 			if (matSender != null) {
 				matSender.clearMatReceiverFunctions();
 
-				List<CustomDiagramItemConnection> links = item.getOutgoingConnections();
-				for (CustomDiagramItemConnection link : links) {
-					CustomDiagramItem itemTo = link.getTo().getDiagramItem();
+				List<DiagramItemConnection> links = item.getOutgoingConnections();
+				for (DiagramItemConnection link : links) {
+					DiagramItem itemTo = link.getTo().getDiagramItem();
 
 					Component destComponent = itemTo.getComponent();
 					if (destComponent instanceof MatEditFunctionDiagramPanel) {
@@ -756,16 +812,16 @@ public class DiagramPanel extends JPanel {
 		return null;
 	}
 	
-	private <T> T getFunctionFromDiagramItem(CustomDiagramItem item, Class<T> c) {
+	private <T> T getFunctionFromDiagramItem(DiagramItem item, Class<T> c) {
 		return getFunctionFromComponent(item.getComponent(), c);
 	}
 	
 	private ArrayList<MatStreamer> getMatStreamers(){
 		ArrayList<MatStreamer> ret = new ArrayList<>();
 		
-		List<CustomDiagramItem> diagramItems = customDiagram.getDiagramItems();
+		List<DiagramItem> diagramItems = customDiagram.getDiagramItems();
 
-		for (CustomDiagramItem item : diagramItems) {
+		for (DiagramItem item : diagramItems) {
 			MatStreamer streamer=getFunctionFromDiagramItem(item, MatStreamer.class);
 			if(streamer!=null) {
 				ret.add(streamer);
@@ -808,9 +864,9 @@ public class DiagramPanel extends JPanel {
 
 	public List<MatSender> getMatSenders() {
 		List<MatSender> ret = new ArrayList<>();
-		List<CustomDiagramItem> diagramItems = customDiagram.getDiagramItems();
+		List<DiagramItem> diagramItems = customDiagram.getDiagramItems();
 
-		for (CustomDiagramItem item : diagramItems) {
+		for (DiagramItem item : diagramItems) {
 			MatSender matSender = null;
 			Component component = item.getComponent();
 
@@ -825,6 +881,13 @@ public class DiagramPanel extends JPanel {
 	}
 	
 	public void save(File file) {
+		new Thread(()->{
+			saveSynch(file);
+		}).start();
+	}
+
+	
+	private synchronized void saveSynch(File file) {
 		if (file != null) {
 			createFunctions();
 			getMatStreamers().forEach((streamer)->{
@@ -832,9 +895,9 @@ public class DiagramPanel extends JPanel {
 			});
 
 			ArrayList<Serializable> functions = new ArrayList<>();
-			List<CustomDiagramItem> diagramItems = customDiagram.getDiagramItems();
+			List<DiagramItem> diagramItems = customDiagram.getDiagramItems();
 
-			for (CustomDiagramItem item : diagramItems) {
+			for (DiagramItem item : diagramItems) {
 				Serializable function;
 				Component component = item.getComponent();
 
@@ -852,22 +915,27 @@ public class DiagramPanel extends JPanel {
 			Serializing.serialize(functions, file);
 		}
 	}
+	
+	
+	public void load(File file) {
+		new Thread(()->{
+			loadSynch(file);
+		}).start();
+	}
+	
 
 	@SuppressWarnings("unchecked")
-	public void load(File file) {
+	private synchronized void loadSynch(File file) {
 		loading = true;
 		if (file != null) {
 			this.clear();
-
 			ArrayList<Serializable> senders;
-
 			try {
 				senders = (ArrayList<Serializable>) Serializing.deSerialize(file);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
 			}
-
 			if (senders != null) {
 				createDiagram(senders);
 			}
@@ -880,23 +948,23 @@ public class DiagramPanel extends JPanel {
 	}
 
 	private void createDiagram(ArrayList<Serializable> senders) {
-		int posX = 5;
-		int posY = 5;
-		Map<Object, CustomDiagramItem> functions=new HashMap<>();
+		int posX = 5; // Startposition x
+		int posY = 5; // Startposition y
+		Map<Object, DiagramItem> functions=new HashMap<>(); // List for functions, to check, if function has been added before
 
-		for (Serializable sender : senders) {
-			posY = handleDiagramCreationTree(posX, posY, sender, posY, null, functions) + 10;
+		for (Serializable sender : senders) { // iterating over all serializables
+			posY = handleDiagramCreationTree(posX, posY, sender, posY, null, functions) + 30; 
 		}
 		
 		//MultiMatSender sender creation
 		for(Object o:functions.keySet()) {
 			if(o instanceof MultiMatEditFunction) {
-				CustomDiagramItem itemMmefct=functions.get(o);
+				DiagramItem itemMmefct=functions.get(o);
 				MultiMatEditFunction mmefct=(MultiMatEditFunction)o;
 				for(MatSender sender:mmefct.getSenderIndex().keySet()) {
 					if(functions.containsKey(sender)) {
 						int index=mmefct.getIndexOfMatsender(sender);
-						CustomDiagramItem itemSender=functions.get(sender);
+						DiagramItem itemSender=functions.get(sender);
 						itemMmefct.setSelectedInput(index);
 						itemSender.connectTo(itemMmefct);
 					}
@@ -906,7 +974,7 @@ public class DiagramPanel extends JPanel {
 	}
 
 	private int handleDiagramCreationTree(int posX, int posY, Object diagramObject, int highestY,
-			CustomDiagramItem ancestorItem, Map<Object, CustomDiagramItem> functions) {
+			DiagramItem ancestorItem, Map<Object, DiagramItem> functions) {
 		
 		MatSender sender = null;
 		ParameterReceiver paramReceiver = null;
@@ -916,9 +984,10 @@ public class DiagramPanel extends JPanel {
 		if (diagramObject instanceof ParameterReceiver) {
 			paramReceiver = (ParameterReceiver) diagramObject;
 		}
+		
 
 		Point p = new Point(posX, posY);
-		CustomDiagramItem item = null;
+		DiagramItem item = null;
 
 		if (sender != null) {
 			if(sender instanceof MultiMatEditFunction) {
@@ -955,8 +1024,8 @@ public class DiagramPanel extends JPanel {
 			List<MatReceiver> receiversToRemove = new ArrayList<>();
 			for (MatReceiver receiver : sender.getReceivers()) {
 				if (receiver instanceof MatSender) {
-					int y = handleDiagramCreationTree(posX + item.getWidth() + 30, posY + (i * (30 + item.getHeight())),
-							(MatSender) receiver, highestY, item, functions);
+					int y = handleDiagramCreationTree(posX + (int)itemSize.getWidth() + 30, posY + (i * (30 + (int)itemSize.getHeight())),
+					(MatSender) receiver, highestY, item, functions);
 					highestY = y > highestY ? y : highestY;
 					i++;
 				} else {
@@ -964,8 +1033,8 @@ public class DiagramPanel extends JPanel {
 				}
 			}
 			for (ParameterReceiver receiver : sender.getParamReceivers()) {
-				int y = handleDiagramCreationTree(posX + item.getWidth() + 30, posY + (i * (30 + item.getHeight())),
-						(ParameterReceiver) receiver, highestY, item, functions);
+				int y = handleDiagramCreationTree(posX + (int)itemSize.getWidth() + 30, posY + (i * (30 + (int)itemSize.getHeight())),
+				(ParameterReceiver) receiver, highestY, item, functions);
 				highestY = y > highestY ? y : highestY;
 				i++;
 			}

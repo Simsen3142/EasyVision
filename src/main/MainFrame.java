@@ -13,6 +13,7 @@ import javax.swing.UIDefaults;
 import org.opencv.core.Core;
 import org.reflections.Reflections;
 
+import database.ImageHandler;
 import database.OftenUsedObjects;
 import database.Serializing;
 import diagramming.DiagramPanel;
@@ -25,9 +26,11 @@ import main.menu.MainMenuBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.UIManager;
 import javax.swing.JMenuBar;
@@ -177,10 +180,12 @@ public class MainFrame extends JFrame implements Serializable {
 	}
 	
 	private static void initReflectionClasses() {
-		matEditFunctionClasses=new HashSet<>();
-		multiMatEditFunctionClasses=new HashSet<>();
-		parameterReceiverClasses=new HashSet<>();
-		matStreamerClasses=new HashSet<>();
+		ClassComparator comparator=new ClassComparator();
+		
+		matEditFunctionClasses=new TreeSet<>(comparator);
+		multiMatEditFunctionClasses=new TreeSet<>(comparator);
+		parameterReceiverClasses=new TreeSet<>(comparator);
+		matStreamerClasses=new TreeSet<>(comparator);
 		
 		Reflections reflections = new Reflections("functions.matedit");
 		reflections.getSubTypesOf(MatEditFunction.class).forEach((clss)->{
@@ -188,14 +193,13 @@ public class MainFrame extends JFrame implements Serializable {
 				matEditFunctionClasses.add(clss);
 			}
 		});
-		
+
 		reflections = new Reflections("functions.matedit.multi");
 		reflections.getSubTypesOf(MultiMatEditFunction.class).forEach((clss)->{
 			if(!Modifier.isAbstract(clss.getModifiers())) {
 				multiMatEditFunctionClasses.add(clss);
 			}
 		});
-		
 		reflections = new Reflections("functions.parameterreceiver");
 		reflections.getSubTypesOf(ParameterReceiver.class).forEach((clss)->{
 			if(!Modifier.isAbstract(clss.getModifiers())) {
@@ -218,7 +222,14 @@ public class MainFrame extends JFrame implements Serializable {
 		boolean first = instance == null;
 		if (first) {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setTitle("Main Frame");
+			setTitle("Easy Vision");
+			ImageHandler.getImage("res/EVLogo.jpg", (img)->{
+				EventQueue.invokeLater(()->{
+					if(img!=null)
+						setIconImage(img);
+				});
+				return null;
+			});
 			addWindowListener(windowListener = new ThisWindowListener());
 		} else {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -319,5 +330,13 @@ public class MainFrame extends JFrame implements Serializable {
 			diagramPanel.getMatSenders().forEach((matSender)->matSender.stop());
 			System.exit(0);
 		}
+	}
+	
+	private static class ClassComparator implements Comparator<Class<?>>{
+		@Override
+		public int compare(Class<?> o1, Class<?> o2) {
+			return o1.getSimpleName().compareTo(o2.getSimpleName());
+		}
+		
 	}
 }

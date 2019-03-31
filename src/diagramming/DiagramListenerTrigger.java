@@ -6,43 +6,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CustomDiagramListenerTrigger {
-	private List<CustomDiagramListener> customDiagramListeners=Collections.synchronizedList(new ArrayList<>());
+public class DiagramListenerTrigger {
+	private List<DiagramListener> customDiagramListeners=Collections.synchronizedList(new ArrayList<>());
 	
 	/**
 	 * @return the customDiagramListeners
 	 */
-	public List<CustomDiagramListener> getCustomDiagramListeners() {
+	public List<DiagramListener> getCustomDiagramListeners() {
 		return customDiagramListeners;
 	}
 
-	public void triggerOnDiagramItemDeleted(CustomDiagramItem item) {
+	public void triggerOnDiagramItemDeleted(DiagramItem item) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onDeleteItem(item);
 		});
 	}
 	
-	public void triggerOnDiagramItemCreated(CustomDiagramItem item) {
+	public void triggerOnDiagramItemCreated(DiagramItem item) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onCreateItem(item);
 		});
 	}
 	
-	public void triggerOnConnectionDeleted(CustomDiagramItemConnection connection) {
+	public void triggerOnConnectionDeleted(DiagramItemConnection connection) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onDeleteConnection(connection);
 		});
 	}
 	
-	public void triggerOnConnectionCreated(CustomDiagramItemConnection connection) {
+	public void triggerOnConnectionCreated(DiagramItemConnection connection) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onCreateConnection(connection);
 		});
 	}
 	
-	public boolean triggerOnConnectionAvailable(CustomDiagramItem from, CustomDiagramItem to) {
+	public boolean triggerOnConnectionAvailable(DiagramItem from, DiagramItem to) {
 		boolean connect=true;
-		for(CustomDiagramListener listener:customDiagramListeners) {
+		for(DiagramListener listener:customDiagramListeners) {
 			if(connect!=listener.onConnectionAvailable(from,to)) {
 				connect=!connect;
 				break;
@@ -51,7 +51,7 @@ public class CustomDiagramListenerTrigger {
 		return connect;
 	}
 	
-	public void triggerOnCopied(CustomDiagramItem diagramItem) {
+	public void triggerOnCopied(DiagramItem diagramItem) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onCopied(diagramItem);
 		});
@@ -63,7 +63,7 @@ public class CustomDiagramListenerTrigger {
 		});
 	}
 	
-	public void triggerOnItemSelectionChanged(CustomDiagramItem item, boolean selected) {
+	public void triggerOnItemSelectionChanged(DiagramItem item, boolean selected) {
 		customDiagramListeners.forEach((listener)->{
 			listener.onItemSelectionChanged(item,selected);
 		});

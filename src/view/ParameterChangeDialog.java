@@ -47,7 +47,7 @@ public class ParameterChangeDialog extends JDialog {
 	}
 
 	private void initParamChangers() {
-		for(ParameterObject param:parameterizedObject.getParameters().values()) {
+		for(ParameterObject param:parameterizedObject.getAllParameters().values()) {
 			if(param.getParamGroup()==null) {
 				pnl_paramChange.add(param.getComponent());
 			}

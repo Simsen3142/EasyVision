@@ -57,7 +57,7 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 
 	public abstract int getNrMatInputs();
 	
-	public int getNrToWork() {
+	public int getNrToSend() {
 		return getNrMatInputs();
 	}
 	
@@ -132,7 +132,7 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 		int i=getIndexOfMatsender(sender);
 		getMatsIn().put(i, matIn.clone());
 		
-		if(matsIn.size()>=getNrToWork()) {
+		if(matsIn.size()>=getNrToSend()) {
 			performFunction(matsIn);
 			clearMatsIn(matsIn);
 		}

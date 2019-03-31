@@ -26,12 +26,12 @@ public class ColorDetectionHSV extends MatEditFunction {
 	public ColorDetectionHSV() {
 		super(new ParameterGroup("ColorRange",
 				new ColorParameterGroup("min", ColorType.HSV, 
-						new DoubleParameter("h", 25, 0, 255),
+						new DoubleParameter("h", 25, 0, 180),
 						new DoubleParameter("s", 97, 0, 255), 
 						new DoubleParameter("v", 43, 0, 255)
 					),
 					new ColorParameterGroup("max", ColorType.HSV, 
-						new DoubleParameter("h", 95, 0, 255),
+						new DoubleParameter("h", 95, 0, 180),
 						new DoubleParameter("s", 255, 0, 255), 
 						new DoubleParameter("v", 204, 0, 255)
 					)));
