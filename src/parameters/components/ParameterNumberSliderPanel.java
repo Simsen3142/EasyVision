@@ -8,6 +8,9 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import parameters.*;
 import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.function.Function;
 
 public class ParameterNumberSliderPanel extends JPanel {
@@ -29,10 +32,13 @@ public class ParameterNumberSliderPanel extends JPanel {
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -310439884404868136L;
+		private Function<Graphics, Graphics> paint;
+
 
 		public LabeledSlider() {
 			super();
+			setOpaque(false);
 		}
 		
 		@Override
@@ -54,6 +60,18 @@ public class ParameterNumberSliderPanel extends JPanel {
 			
 			if(instance.getValue().intValue()!=val)
 				instance.setValue(val);
+		}
+		
+		public void paint(Graphics g) {
+			if(paint!=null) {
+				g=paint.apply(g);
+			}
+			
+			super.paintComponent(g);
+		}
+		
+		public void declareSliderPaint(Function<Graphics, Graphics> paint) {
+			this.paint=paint;
 		}
 	}
 	

@@ -16,7 +16,6 @@ public class ArduinoHandler {
 	private static ArduinoHandler instance;
 	private TwoWaySerialComm serialComm;
 	private SerialMonitor serialMonitor;
-	private CsvConverter csvConverter;
 	
 	public static synchronized ArduinoHandler getInstance() {
 		if(instance==null)
@@ -48,7 +47,6 @@ public class ArduinoHandler {
 	private ArduinoHandler() {
 		serialComm=new TwoWaySerialComm();
 		serialMonitor=new SerialMonitor();
-		csvConverter=new CsvConverter();
 		
 		serialComm.addOnReceive(
 			this.getOnReceive()
@@ -59,7 +57,6 @@ public class ArduinoHandler {
 		return (line) -> 
 		{
 			serialMonitor.append(line+"\n");
-			double[] csvs = csvConverter.convertCsvs(line,";",".");
 			
 			return null;
 		};
