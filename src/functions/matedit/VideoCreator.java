@@ -17,7 +17,7 @@ import parameters.IntegerParameter;
 import parameters.StringParameter;
 import parameters.group.ParameterGroup;
 
-public class VideoCreater extends MatEditFunction {
+public class VideoCreator extends MatEditFunction {
 	/**
 	 * 
 	 */
@@ -26,7 +26,7 @@ public class VideoCreater extends MatEditFunction {
 	private transient VideoWriter writer;
 	private transient Size size;
 	
-	public VideoCreater() {
+	public VideoCreator() {
 		super(
 			new ParameterGroup("settings",
 				new FileParameter("file", null),
@@ -41,7 +41,7 @@ public class VideoCreater extends MatEditFunction {
 		);
 	}
 	
-	public VideoCreater(Boolean empty) {}
+	public VideoCreator(Boolean empty) {}
 
 	
 	public boolean initVideoWriter(){
