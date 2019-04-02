@@ -116,9 +116,7 @@ public class LineDetection extends MultiMatEditFunction {
 			crossingDetected = checkIfCrossing(line, matOut);
 			if (crossingDetected) {
 				MatSender sender=getMatSenderByIndex(3);
-				System.out.println("SENDER = "+sender);
 				if(sender instanceof MatEditFunction) {
-					System.out.println("//////////////////////////////"+sender);
 					line=((MatEditFunction)sender).performFunction(line);
 				}
 			}
@@ -367,7 +365,6 @@ public class LineDetection extends MultiMatEditFunction {
 								if(min < foundBeginning[0] && max > foundBeginning[0]) {
 									if(++smallerCount>=smallerAmtNeeded) {
 										Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(0,255,255),1);
-										System.out.println("KREUZUNG!");
 										return true;
 									}
 								}else {
@@ -382,7 +379,6 @@ public class LineDetection extends MultiMatEditFunction {
 								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(100,255,100),1);
 								lastNormal=foundBeginning;
 								smallerCount=0;
-								System.out.println("KREUZUNG?");
 							} else {
 								widths.add(beginning[1]);
 								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(0,0,0),1);
@@ -413,7 +409,6 @@ public class LineDetection extends MultiMatEditFunction {
 							int max=lastNormal[0]+hysterese;
 							if(min < foundBeginning[0] && max > foundBeginning[0]) {
 								if(++smallerCount>=smallerAmtNeeded) {
-									System.out.println("KREUZUNG!");
 									return true;
 								}
 							}else {
@@ -424,7 +419,6 @@ public class LineDetection extends MultiMatEditFunction {
 							if(beginning[1]>multi4crossing*avgWidth && avgWidth>0) {
 								lastNormal=foundBeginning;
 								smallerCount=0;
-								System.out.println("KREUZUNG?");
 							} else {
 								widths.add(beginning[1]);
 							}

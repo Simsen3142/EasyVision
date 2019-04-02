@@ -114,7 +114,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 			(txts)->{
 				double x=Double.parseDouble(txts[0]);
 				if(x>=parameter.getMinValue().doubleValue()&&x<=parameter.getMaxValue().doubleValue()) {
-					setValue((int)x,false);
+					setValue(x,true);
 					return txts[0];
 				} else
 					return txts[1];
@@ -144,13 +144,15 @@ public class ParameterNumberSliderPanel extends JPanel {
 	
 	public void setValue(Number val, boolean withParameter) {
 		try {
-			if(slider.getValue()!=val.intValue())
+			if(slider.getValue()!=val.intValue()) {
 				slider.setValue(val.intValue());
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		if(withParameter) {
 			parameter.setValue(val);
+			
 			if(onSetValue!=null) {
 				onSetValue.apply(null);
 			}

@@ -50,7 +50,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		if(arduinoHandler==null)
 			arduinoHandler=ArduinoHandler.getInstance();
 		
-		if(arduinoHandler.getSerialComm().isConnected()) {
+		if(arduinoHandler.getSerialComm().isConnected() || true) {
 			IntegerParameter param1=((IntegerParameter)parameters.get("output_error"));
 			IntegerParameter param2=((IntegerParameter)parameters.get("output_angle"));
 			StringParameter param3=((StringParameter)parameters.get("output_turn"));
@@ -62,8 +62,9 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 			
 			if(now-lastTimeSent>getIntVal("send_timetillsend")) {
 				lastTimeSent=now;
-				arduinoHandler.getSerialComm().getWriter().doWrite(text);
-				System.out.println("WOULD LIKE TO SEND");
+//				arduinoHandler.getSerialComm().getWriter().doWrite(text);
+				
+				System.out.println(text);
 			}
 		}else {
 			System.out.println("NOT CONNECTED");
@@ -91,9 +92,9 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		
 		int val1=maxstepspersec,val2=maxstepspersec;
 		if(d1<0) {
-			val1+=d1;
+			val2+=d1;
 		}else {
-			val2-=d1;
+			val1-=d1;
 		}
 		
 		ret[1]=val1;
