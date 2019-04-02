@@ -1,6 +1,7 @@
 package database;
 
 import java.awt.Image;
+import java.io.File;
 import java.util.function.Function;
 
 import javax.swing.ImageIcon;
@@ -23,14 +24,22 @@ public class ImageHandler {
 	}
 
 	public static Image getImage(String path) {
-		if(activated)
-			return getImageIcon(path).getImage();
+		try {
+			if(activated && new File(path).exists())
+				return getImageIcon(path).getImage();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
 	public static ImageIcon getImageIcon(String path) {
-		if(activated)
-			return new ImageIcon(path);
+		try {
+			if(activated && new File(path).exists())
+				return new ImageIcon(path);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -49,7 +58,7 @@ public class ImageHandler {
 	public static void getImage(String path, Function<Image, Void> onReceive) {
 		if(activated) {
 			new Thread(()->{
-				Image img = getImageIcon(path).getImage();
+				Image img = getImage(path);
 				onReceive.apply(img);
 			}).start();
 		}else {
@@ -71,7 +80,7 @@ public class ImageHandler {
 	public static void getScaledImageIcon(String path, int width, int height, int scaling, Function<ImageIcon, Void> onReceive) {
 		if(activated) {
 			new Thread(()->{
-				ImageIcon ic = getScaledImageIcon(getImage(path),width,height,scaling);
+				ImageIcon ic = getScaledImageIcon(path,width,height,scaling);
 				onReceive.apply(ic);
 			}).start();
 		}else {

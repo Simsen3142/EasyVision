@@ -43,7 +43,7 @@ public class Diagram extends JLayeredPane {
 	private transient Diagram instance = this;
 	private transient DiagramListenerTrigger listenerTrigger;
 	private JPanel pnlDiagramItems;
-	private JPanel pnlConnections;
+	private JLayeredPane pnlConnections;
 	private Image backgroundImage;
 	private boolean opaque=true;
 	
@@ -85,7 +85,7 @@ public class Diagram extends JLayeredPane {
 	/**
 	 * @return the pnlConnections
 	 */
-	public JPanel getPnlConnections() {
+	public JLayeredPane getPnlConnections() {
 		return pnlConnections;
 	}
 
@@ -122,7 +122,7 @@ public class Diagram extends JLayeredPane {
 		pnlDiagramItems.setLayout(null);
 		this.add(pnlDiagramItems);
 		
-		pnlConnections=new JPanel();
+		pnlConnections=new JLayeredPane();
 		pnlConnections.setOpaque(false);
 		pnlConnections.setLayout(null);
 		this.add(pnlConnections);

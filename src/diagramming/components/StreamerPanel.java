@@ -7,7 +7,7 @@ public class StreamerPanel extends MatReceiverNSenderPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7461022580410662185L;
+	private static final long serialVersionUID = 746103210410662185L;
 
 	/**
 	 * Create the panel.
