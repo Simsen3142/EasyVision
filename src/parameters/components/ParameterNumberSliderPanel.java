@@ -112,10 +112,14 @@ public class ParameterNumberSliderPanel extends JPanel {
 		lblVal = new EditableDoubleLabel("0");
 		lblVal.setEditable(true, 
 			(txts)->{
-				double x=Double.parseDouble(txts[0]);
-				if(x>=parameter.getMinValue().doubleValue()&&x<=parameter.getMaxValue().doubleValue()) {
+				Number x=Double.parseDouble(txts[0]);
+				if(x.doubleValue()>=parameter.getMinValue().doubleValue()
+						&&x.doubleValue()<=parameter.getMaxValue().doubleValue()) {
+					if(parameter instanceof IntegerParameter) {
+						x=x.intValue();
+					}
 					setValue(x,true);
-					return txts[0];
+					return x+"";
 				} else
 					return txts[1];
 			}
