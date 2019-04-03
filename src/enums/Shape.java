@@ -1,5 +1,5 @@
 package enums;
 
 public enum Shape {
-	CIRCLE, RECTANGLE
+	CIRCLE, RECTANGLE, TRIANGLE
 }
