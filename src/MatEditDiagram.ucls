@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.3" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="functions.matedit.LineDetection" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/LineDetection.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="603" width="328" x="23" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="functions.matedit.NoiseRemoval" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/NoiseRemoval.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="189" width="193" x="391" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="functions.matedit.ContrastIncreasing" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ContrastIncreasing.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="181" x="624" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="functions.matedit.LogicalNot" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/LogicalNot.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="135" width="181" x="845" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="functions.matedit.ObjectDetectionLBP" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ObjectDetectionLBP.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="387" width="207" x="1066" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="functions.matedit.ChangeResolution" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ChangeResolution.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="189" width="181" x="1313" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="functions.matedit.EdgeDetection" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/EdgeDetection.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="181" x="1534" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="functions.matedit.VideoCreator" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/VideoCreator.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="243" width="181" x="1755" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="functions.matedit.Function2" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/Function2.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="131" x="1976" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="functions.matedit.ObjectDetectionHaar" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ObjectDetectionHaar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="441" width="209" x="2147" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="functions.matedit.ColorDetectionRGB" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ColorDetectionRGB.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="181" x="2396" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="functions.matedit.ShapeDetection" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ShapeDetection.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="207" width="181" x="2617" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="functions.matedit.ColorDetectionHSV" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ColorDetectionHSV.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="181" x="2838" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="functions.matedit.ExtractBlack" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/ExtractBlack.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="181" x="3059" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="functions.matedit.MatEditFunction" project="EasyVision" 
+    file="/EasyVision/src/functions/matedit/MatEditFunction.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="333" width="278" x="1614" y="180"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <generalization id="16">    
+    <bendpoint x="1262" y="553"/>    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="17">    
+    <bendpoint x="1004" y="553"/>    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="19">    
+    <bendpoint x="576" y="552"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="20">    
+    <bendpoint x="2401" y="553"/>    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="21">    
+    <bendpoint x="786" y="554"/>    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="22">    
+    <bendpoint x="3085" y="553"/>    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="23">    
+    <bendpoint x="2638" y="554"/>    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="25">    
+    <bendpoint x="318" y="553"/>    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="27">    
+    <bendpoint x="2148" y="554"/>    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="28">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="29">    
+    <bendpoint x="2873" y="552"/>    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
