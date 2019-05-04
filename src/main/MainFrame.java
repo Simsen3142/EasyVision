@@ -13,6 +13,9 @@ import javax.swing.UIDefaults;
 import org.opencv.core.Core;
 import org.reflections.Reflections;
 
+import arduino.messages.JSONMessage;
+import arduino.messages.MotorMessage;
+import arduino.messages.MotorMessage.MotorStepsDoneMessage;
 import database.ImageHandler;
 import database.OftenUsedObjects;
 import database.Serializing;

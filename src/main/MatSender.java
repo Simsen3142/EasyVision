@@ -7,12 +7,13 @@ import java.util.Map;
 
 import org.opencv.core.Mat;
 
+import functions.UniqueFunction;
 import functions.matedit.MatEditFunction;
 import functions.matedit.multi.MultiMatEditFunction;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
-public class MatSender extends ParameterizedObject {
+public class MatSender extends ParameterizedObject implements UniqueFunction {
 	/**
 	 * 
 	 */
@@ -21,10 +22,9 @@ public class MatSender extends ParameterizedObject {
 	private List<MatMapReceiver> receivers_map=Collections.synchronizedList(new ArrayList<>());
 	private int id=System.identityHashCode(this);
 	
+	@Override
 	public void recalculateId() {
-		System.out.println(id);
 		this.id*=Math.random();
-		System.out.println(id);
 	}
 
 	/**

@@ -58,6 +58,8 @@ public class ClassListCellRenderer extends DefaultListCellRenderer {
 					if(o instanceof RepresentationIcon) {
 						reprIc=((RepresentationIcon) o);
 					}
+				}catch (NoSuchMethodException e) {
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

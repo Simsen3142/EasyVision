@@ -5,13 +5,13 @@ import com.google.gson.Gson;
 import java.lang.reflect.Type;
 
 public class JSONMessage {
-    private String type;
+    private int type;
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public JSONMessage(String type){
+    public JSONMessage(int type){
         this.type=type;
     }
 

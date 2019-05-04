@@ -22,7 +22,7 @@ public class TwoWaySerialComm {
 	private SerialPort port;
 	private SerialReadingThread reader;
 	private SerialWriter writer;
-	private int baudRate=9600;
+	private int baudRate=250000;
 	private List<Function<String,Void>> onReceives;
 	
 	/**
@@ -44,17 +44,23 @@ public class TwoWaySerialComm {
 	 */
 	public void startReader() {
 		if(reader==null) {
-			try {
-				reader=new SerialReadingThread(port.getInputStream());
-				reader.setOnReceives(onReceives);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			initReader();
 		}
 		
 		if(reader.isAlive())
 			return ;
 		reader.start();
+	}
+	
+	public void initReader() {
+		try {
+			reader=new SerialReadingThread(port.getInputStream());
+			if(onReceives==null)
+				onReceives=new ArrayList<>();
+			reader.setOnReceives(onReceives);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -98,7 +104,6 @@ public class TwoWaySerialComm {
 	}
 	
 	public SerialWriter getWriter() {
-		System.out.println("GET WRITER");
 		if(writer==null) {
 			if(port!=null) {
 				try {
@@ -114,11 +119,7 @@ public class TwoWaySerialComm {
 	
 	private void setPort(SerialPort port) {
 		this.port=port;
-		try {
-			reader=new SerialReadingThread(port.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		initReader();
 	}
 
 	public SerialPort connect(String portName) throws Exception {
@@ -149,7 +150,7 @@ public class TwoWaySerialComm {
 	}
 	
 	public void removeOnReceive(Function<String,Void> onReceive) {
-		reader.removeOnReceive(onReceive);
+		onReceives.remove(onReceive);
 	}
 
 	public List<CommPortIdentifier> getAvailablePorts(){
@@ -161,7 +162,6 @@ public class TwoWaySerialComm {
 		while(enumComm.hasMoreElements()) {
 			serialPortId = (CommPortIdentifier)enumComm.nextElement();
 			if(serialPortId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-				System.out.println(serialPortId);
 				openPorts.add(serialPortId);
 			}
 		}

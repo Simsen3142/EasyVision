@@ -25,7 +25,7 @@ public class UrlVideoStreamer extends VideoStreamer {
 	public UrlVideoStreamer(Boolean empty) {}
 	
 	@Override
-	public MatStreamer start() {
+	public void start() {
 		getParameter("url").setOnChange((newVal)->{
 			super.setResource(newVal);
 			super.stop();
@@ -35,8 +35,8 @@ public class UrlVideoStreamer extends VideoStreamer {
 		super.setResource(getParameter("url").getValue());
 
 		System.out.println(getResource());
-
-		return super.start();
+		super.start();
+		return;
 	}
 	
 	@Override

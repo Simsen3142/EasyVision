@@ -62,6 +62,15 @@ public class MatPanel extends JPanel {
 		this.addMouseListener(ThisPopupMouseListener.getInstance());
 	}
 	
+	/**
+	 * Create the panel.
+	 */
+	public MatPanel(Mat mat) {
+		super();
+		setMat(mat);
+		this.addMouseListener(ThisPopupMouseListener.getInstance());
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		try {

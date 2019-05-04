@@ -32,6 +32,7 @@ public class LineDetection extends MultiMatEditFunction {
 	private boolean sqrDetected;
 	private int sqrError;
 	private boolean crossingDetected = false;
+	private boolean tooFar = false;
 	
 	@Override
 	public int getNrFunctionInputs() {
@@ -113,7 +114,7 @@ public class LineDetection extends MultiMatEditFunction {
 		((StringParameter)getParameter("output_turn")).setValue(turnOutput);
 
 		if (!sqrDetected) {
-			crossingDetected = checkIfCrossing(line, matOut);
+			crossingDetected = checkIfCrossing(line);
 			if (crossingDetected) {
 				MatSender sender=getMatSenderByIndex(3);
 				if(sender instanceof MatEditFunction) {
@@ -121,6 +122,8 @@ public class LineDetection extends MultiMatEditFunction {
 				}
 			}
 		}
+		
+		tooFar=checkIfTooFar(line);
 
 		ArrayList<MatOfPoint> contoursLine = new ArrayList<>();
 		Imgproc.findContours(line, contoursLine, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -164,8 +167,18 @@ public class LineDetection extends MultiMatEditFunction {
 					Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
 		}
 		
-		((IntegerParameter)getParameter("output_error")).setValue(error);;
-		((IntegerParameter)getParameter("output_angle")).setValue(angle);;
+		
+		IntegerParameter paramError=(IntegerParameter)getParameter("output_lnerrorx");
+		IntegerParameter paramAngle=(IntegerParameter)getParameter("output_angle");
+		
+		if(tooFar) {
+			int errorNew=error<0?-100000:100000;
+			paramError.setValue(errorNew);
+			paramAngle.setValue(0);
+		}else {
+			paramError.setValue(error);
+			paramAngle.setValue(angle);
+		}
 		
 		line=null;
 		squares=null;
@@ -173,11 +186,19 @@ public class LineDetection extends MultiMatEditFunction {
 	}
 	
 	public LineDetection(Boolean empty) {}
-
+	
 	public LineDetection() {
 		super(
+			new ParameterGroup("toofar", 
+				new DoubleParameter("uppercent", 70, 0, 100),
+				new DoubleParameter("percentnotwhite", 1, 0, 100)
+			),	
+			new ParameterGroup("crossing", 
+				new DoubleParameter("sidepercent", 10, 0, 100),
+				new DoubleParameter("percentwhite", 2, 0, 100)
+			),	
 			new ParameterGroup("output", 
-				new IntegerParameter("error",0,false),
+				new IntegerParameter("lnerrorx",0,false),
 				new IntegerParameter("angle",0,false),
 				new StringParameter("turn","",false)
 			)
@@ -309,163 +330,65 @@ public class LineDetection extends MultiMatEditFunction {
 			Imgproc.line(matIn, point[j], point[(j + 1) % 4], color, thickness);
 		}
 	}
-
-	private boolean checkIfCrossing(Mat line, Mat matIn) {
-		int crossingSize = width / 5;
-
-		int heightDivision=100;
-		final int heightIncrease = (height > heightDivision ? (height / heightDivision) : 1)*-1;
-		final int widthIncrease = width > 50 ? (width / 50) : 1;
+	
+	private boolean checkIfCrossing(Mat line) {
+		double sidepercentcrossing=getDoubleVal("crossing_sidepercent")/100;
+		double percentWhite4Crossing=getDoubleVal("crossing_percentwhite")/100;
 		
-		List<Integer> widths=new ArrayList<>();
+		int rectWidth=(int) (line.width()*sidepercentcrossing);
+		int rectHeight=(int) (line.height()*sidepercentcrossing);
 		
-		int multi4crossing=3;
-
-		int[] lastNormal = null;
-		int beginX=0;
-		int xLength = 0;
-		boolean lastFound = false;
-		List<int[]> lastBeginnings = new ArrayList<>();
-		List<int[]> currentBeginnings = new ArrayList<>();
-		boolean lineContinues = false;
-		boolean foundSomething=false;
+		Rect rL=new Rect(0, 0, rectWidth, line.height());
+		Rect rR=new Rect(line.width()-rectWidth, 0, rectWidth, line.height());
+//		Rect rU=new Rect(0, 0, line.width(), rectHeight);
+		Mat mL=new Mat(line,rL);
+		Mat mR=new Mat(line,rR);
+//		Mat mU=new Mat(line,rU);
 		
 		
-		int smallerCount=0;
-		int smallerAmtNeeded=3;
-		for (int y = height-1; y >0; y += heightIncrease) {
-			for (int x = 0; x < width; x += widthIncrease) {
-				boolean pixelFilled = line.get(y, x)[0] != 0;
-				if (pixelFilled) {
-					if (!lastFound) {
-						lastFound = true;
-						beginX=x;
-					}
-					xLength += widthIncrease;
-				} else if (lastFound) {
-					int[] beginning=new int[] { beginX, xLength };
-					int[] foundBeginning=new int[2];
-					lineContinues = checkIfLineContinues(beginning, lastBeginnings, widthIncrease,foundBeginning);
-					if(lineContinues)
-						foundSomething=true;
-					if(!foundSomething)
-						lineContinues=true;
-					
-					if (lineContinues) {
-						currentBeginnings.add(beginning);
-						if(lastNormal!=null) {
-							if(foundBeginning[1]<1.5*lastNormal[1]) {
-								widths.add(beginning[1]);
-								int hysterese=(int) ((double)lastNormal[1]*1);
-								int min=lastNormal[0]-hysterese;
-								int max=lastNormal[0]+hysterese;
-								
-								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(255,255,255),1);
-								
-								if(min < foundBeginning[0] && max > foundBeginning[0]) {
-									if(++smallerCount>=smallerAmtNeeded) {
-										Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(0,255,255),1);
-										return true;
-									}
-								}else {
-									lastNormal=null;
-								}
-							}else {
-								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(255,100,100),1);
-							}
-						} else {
-							double avgWidth=getListAverage(widths);
-							if(beginning[1]>multi4crossing*avgWidth && avgWidth>0) {
-								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(100,255,100),1);
-								lastNormal=foundBeginning;
-								smallerCount=0;
-							} else {
-								widths.add(beginning[1]);
-								Imgproc.line(matIn, new Point(beginning[0],y),  new Point(beginning[0]+beginning[1],y), new Scalar(0,0,0),1);
-							}
-						}
-					}
-//					if(xLength>crossingSize)
-					lastFound = false;
-					xLength = 0;
-				}
-			}
-			if (lastFound) {
-				int[] beginning=new int[] { beginX, xLength };
-				int[] foundBeginning=new int[2];
-				lineContinues = checkIfLineContinues(beginning, lastBeginnings, widthIncrease,foundBeginning);
-				if(lineContinues)
-					foundSomething=true;
-				if(!foundSomething)
-					lineContinues=true;
-				
-				if (lineContinues) {
-					currentBeginnings.add(beginning);
-					if(lastNormal!=null) {
-						if(foundBeginning[1]<1.5*lastNormal[1]) {
-							widths.add(beginning[1]);
-							int hysterese=(int) ((double)lastNormal[1]*1);
-							int min=lastNormal[0]-hysterese;
-							int max=lastNormal[0]+hysterese;
-							if(min < foundBeginning[0] && max > foundBeginning[0]) {
-								if(++smallerCount>=smallerAmtNeeded) {
-									return true;
-								}
-							}else {
-								lastNormal=null;
-							}
-						} else {
-							double avgWidth=getListAverage(widths);
-							if(beginning[1]>multi4crossing*avgWidth && avgWidth>0) {
-								lastNormal=foundBeginning;
-								smallerCount=0;
-							} else {
-								widths.add(beginning[1]);
-							}
-						}
-					}
-				}			
-			}
-
-			lastBeginnings.clear();
-			lastBeginnings.addAll(currentBeginnings);
-			currentBeginnings.clear();
-			lastFound = false;
-			xLength = 0;
-		}
-		return false;
-	}
-
-	private double getListAverage(List<Integer> numbers) {
-		return numbers.stream().mapToInt(val -> val).average().orElse(0.0);
-
-	}
-
-	private boolean checkIfLineContinues(int[] beginning, List<int[]> lastBeginnings, int widthIncrease) {
-		return checkIfLineContinues(beginning, lastBeginnings, widthIncrease, null);
-	}
-
-	private boolean checkIfLineContinues(int[] beginning, List<int[]> lastBeginnings, int widthIncrease,
-			int[] foundBeginning) {
-		for (int[] lbeginning : lastBeginnings) {
-			int lx1 = lbeginning[0];
-			int lx2 = lbeginning[0] + lbeginning[1];
-
-			int x1 = beginning[0];
-			int x2 = x1 + beginning[1];
-
-			int hysterese = 3 * widthIncrease;
-			if ((lx1 > x1 - hysterese && lx1 < x2 + hysterese) || (x1 > lx1 - hysterese && x1 < lx2 + hysterese)) {
-				if (foundBeginning != null) {
-					foundBeginning[0] = lbeginning[0];
-					foundBeginning[1] = lbeginning[1];
-				}
-				return true;
-			}
-		}
-		return false;
+//		boolean left=getPercentOfWhite(mL)>percentWhite4Crossing;
+//		boolean right=getPercentOfWhite(mR)>percentWhite4Crossing;
+//		boolean up=getPercentOfWhite(mU)>percentWhite4Crossing;
+		
+		
+		return getPercentOfWhite(mL)>percentWhite4Crossing && getPercentOfWhite(mR)>percentWhite4Crossing;
 	}
 	
+	private boolean checkIfTooFar(Mat line) {
+		double uppercentTooFar = getDoubleVal("toofar_uppercent")/100;
+		double percentnotWhite4Toofar =  getDoubleVal("toofar_percentnotwhite")/100;
+		
+		int rectHeight=(int) (line.height()*uppercentTooFar);
+		Rect r=new Rect(0, 0, line.width(), rectHeight);
+		Mat m=new Mat(line,r);
+		
+		return getPercentOfWhite(m)<percentnotWhite4Toofar;
+	}
+	
+	private double getPercentOfWhite(Mat matIn) {
+		int sumWhite=0;
+		int sumBlack=0;
+		
+		int stepRow=matIn.rows()/100;
+		if(stepRow<1)
+			stepRow=1;
+		int stepCols=matIn.cols()/100;
+		if(stepCols<1)
+			stepCols=1;
+		
+		for(int row=0;row<matIn.rows();row+=stepRow) {
+			for(int col=0;col<matIn.cols();col+=stepCols) {
+				if(matIn.get(row, col)[0]==255) {
+					sumWhite++;
+				}else {
+					sumBlack++;
+				}
+			}
+		}
+		
+		return (double)sumWhite/(double)(sumWhite+sumBlack);
+	}
+
 	@Override
 	public Image getRepresentationImage() {
 		if (img == null)
