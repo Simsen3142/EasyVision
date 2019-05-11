@@ -64,6 +64,7 @@ public class MainFrame extends JFrame implements Serializable {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		System.out.println("STARTUP...");
 		long start=System.currentTimeMillis();
 		long actualStart=start;
 		
@@ -89,7 +90,8 @@ public class MainFrame extends JFrame implements Serializable {
 		try {
 			System.loadLibrary("rxtxParallel");
 			System.loadLibrary("rxtxSerial");
-		}catch (Exception e) {
+		}catch (UnsatisfiedLinkError e) {
+			System.out.println("ERROR:");
 			e.printStackTrace();
 		}
 		
