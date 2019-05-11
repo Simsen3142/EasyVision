@@ -86,8 +86,12 @@ public class MainFrame extends JFrame implements Serializable {
 //		System.load(userdir+"\\arduino\\rxtxParallel.dll");
 //		System.load(userdir+"\\arduino\\rxtxSerial.dll");
 		
-		System.loadLibrary("rxtxParallel");
-		System.loadLibrary("rxtxSerial");
+		try {
+			System.loadLibrary("rxtxParallel");
+			System.loadLibrary("rxtxSerial");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		System.out.println("LOADING LIBRARIES: "+(System.currentTimeMillis()-start));
 		start=System.currentTimeMillis();

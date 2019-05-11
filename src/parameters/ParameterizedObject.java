@@ -1,5 +1,6 @@
 package parameters;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import diagramming.components.FunctionPanel;
 import main.ParameterReceiver;
 import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
@@ -111,6 +114,17 @@ public class ParameterizedObject implements Serializable {
 //	public Set<ParameterGroup> getParametesrGroups(){
 //		return paramGroups;
 //	}
+	
+	public <T extends ParameterReceiver> List<T> getParameterReceiverWhichExtend(Class<T> c) {
+		List<T> ret=new ArrayList<>();
+		for(ParameterReceiver paramRec:getParamReceivers()) {
+			if(c.isAssignableFrom(paramRec.getClass())) {
+				ret.add((T)paramRec);
+			}
+		}
+		
+		return ret;
+	}
 	
 	public void showParameterChangeDialog() {
 		ParameterChangeDialog dlg=new ParameterChangeDialog(this);
