@@ -1,5 +1,6 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Timestamp;
@@ -10,6 +11,7 @@ import javax.swing.JOptionPane;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import database.ImageHandler;
 import functions.Startable;
 import parameters.BooleanParameter;
 import parameters.FileParameter;
@@ -20,6 +22,10 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 	
 	private transient boolean saving=false;
 	private transient Mat m;
+	private static volatile Image img;
+	
+	public PhotoSaver(Boolean empty) {
+	}
 	
 	public PhotoSaver() {
 		super(new FileParameter("file", null),
@@ -91,6 +97,13 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 	@Override
 	public boolean isStarted() {
 		return saving;
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		if (img == null)
+			img = ImageHandler.getImage("res/icons/fotospeichern.png");
+		return img;
 	}
 
 }

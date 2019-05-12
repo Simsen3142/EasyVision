@@ -1,5 +1,6 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.util.ArrayList;
 
 import org.opencv.core.CvType;
@@ -10,6 +11,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
+import database.ImageHandler;
 import parameters.DoubleParameter;
 import parameters.group.ParameterGroup;
 
@@ -17,6 +19,9 @@ public class ContourSelection extends MatEditFunction {
 	
 	private transient int width;
 	private transient int height;
+	
+	public ContourSelection(Boolean empty) {
+	}
 	
 	public ContourSelection() {
 		super(
@@ -84,5 +89,8 @@ public class ContourSelection extends MatEditFunction {
 		return ret;
 	}
 	
-
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/selectcontour.png");
+	}
 }

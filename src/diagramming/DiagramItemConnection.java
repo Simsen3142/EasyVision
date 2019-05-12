@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -135,6 +136,8 @@ public class DiagramItemConnection extends JPanel {
 			lines.add(new int[] {xin, pnt2.y, pnt2.x, pnt2.y});
 		}
 		
+		g2.setStroke(new BasicStroke(2));
+		
 		drawLines(g2);
 		drawArrowHead(g2, pnt2);
 	}
@@ -146,11 +149,13 @@ public class DiagramItemConnection extends JPanel {
 	}
 
 	private void drawArrowHead(Graphics2D g2d, Point p) {
+		int size=5;
+		
 		if (arrowHead == null) {
 			arrowHead = new Polygon();
-			arrowHead.addPoint(0, 5);
-			arrowHead.addPoint(-5, -5);
-			arrowHead.addPoint(5, -5);
+			arrowHead.addPoint(0, size);
+			arrowHead.addPoint(-size, -size);
+			arrowHead.addPoint(size, -size);
 		}
 		g2d.translate(p.x - 2, p.y);
 		g2d.rotate(Math.PI + Math.PI / 2);

@@ -1,5 +1,6 @@
 package functions.matedit.multi;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,20 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
+
 public class HandDetection extends MultiMatEditFunction {
+
+	private static volatile Image img;
+	
+	public HandDetection(Boolean empty) {
+		
+	}
+	
+
+	public HandDetection() {
+		
+	}
 
 	@Override
 	public int getNrFunctionInputs() {
@@ -169,6 +183,11 @@ public class HandDetection extends MultiMatEditFunction {
 
 	private double distanceFormula(Point start, Point end) {
 		return Math.sqrt(Math.abs(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2)));
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/hand.png");
 	}
 
 }

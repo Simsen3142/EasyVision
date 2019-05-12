@@ -59,12 +59,12 @@ public class RatioChecker extends MultiMatEditFunction{
 			double widthPerHeight=width/height;
 			double heightPerWidth=height/width;
 			
-			boolean inBounce=heightPerWidth<=getDoubleVal("maxHeightPerWith") && 
-					widthPerHeight<=getDoubleVal("maxWidthPerHeight");
-			
-			drawRect(pic,new Scalar(0,255,0),3,rect);
+			boolean inBounce=heightPerWidth>=getDoubleVal("maxHeightPerWith") && 
+					widthPerHeight>=getDoubleVal("maxWidthPerHeight");
+			Scalar c=inBounce?new Scalar(0,255,0):new Scalar(0,0,255);
+			drawRect(pic,c,3,rect);
 			Point center=new Point(rect.x+rect.width/2, rect.y+rect.height/2);
-			Imgproc.putText(pic, Math.round(width)+" - "+ Math.round(height), center, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
+			Imgproc.putText(pic, Math.round(width)+" - "+ Math.round(height), center, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 0));
 			
 			if(inBounce) {
 				contourOk.add(contour);
@@ -79,8 +79,8 @@ public class RatioChecker extends MultiMatEditFunction{
 			}
 		}
 		
-		Imgproc.drawContours(pic, contourOk, -1, new Scalar(0,255,0),3);
-		Imgproc.drawContours(pic, contourNotok, -1, new Scalar(0,0,255),3);
+//		Imgproc.drawContours(pic, contourOk, -1, new Scalar(0,255,0),3);
+//		Imgproc.drawContours(pic, contourNotok, -1, new Scalar(0,0,255),3);
 		
 		return pic;
 	}
@@ -94,7 +94,7 @@ public class RatioChecker extends MultiMatEditFunction{
 	
 	
 	private void drawRect(Mat matIn, Scalar color, int thickness, Rect rect) {
-		drawRect(matIn, new Scalar(255, 255, 0), 1, new Point(rect.x, rect.y),
+		drawRect(matIn, color, thickness, new Point(rect.x, rect.y),
 				new Point(rect.x + rect.width, rect.y),
 				new Point(rect.x + rect.width, rect.y + rect.height),
 				new Point(rect.x, rect.y + rect.height));	

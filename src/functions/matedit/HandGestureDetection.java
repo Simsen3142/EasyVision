@@ -1,5 +1,6 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
 import parameters.FileParameter;
 import view.MatPanel;
 import view.PanelFrame;
@@ -18,6 +20,10 @@ public class HandGestureDetection extends MatEditFunction {
 	private transient MatOfPoint mpeace;
 	private transient MatOfPoint mfist;
 	private transient MatOfPoint mstop;
+	private static volatile Image img;
+
+	public HandGestureDetection(Boolean empty) {
+	}
 	
 	public HandGestureDetection() {
 		super(
@@ -97,6 +103,13 @@ public class HandGestureDetection extends MatEditFunction {
 		System.out.println(contours.get(0).rows());
 		
 		return contours.get(0);
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		if (img == null)
+			img = ImageHandler.getImage("res/icons/gesturedetection.png");
+		return img;
 	}
 
 }

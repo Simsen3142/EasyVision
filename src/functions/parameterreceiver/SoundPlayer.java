@@ -6,6 +6,9 @@ import java.util.Map;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineEvent.Type;
+import javax.sound.sampled.LineListener;
 
 import com.google.common.reflect.Parameter;
 
@@ -17,6 +20,8 @@ import parameters.ParameterizedObject;
 
 public class SoundPlayer extends ParameterizedObject implements ParameterReceiver {
 	private int id=System.identityHashCode(this);
+	
+	private transient volatile boolean alreadyPlaying=false;
 
 
 	@Override
@@ -38,12 +43,28 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	public void onParameterReceived(Map<String, ParameterObject> parameters) {
 		for(String paramname :parameters.keySet()) {
 			if(paramname.equals("playsound")) {
-				playSound(getFileVal("soundfile"));
+				if(!alreadyPlaying) {
+					Object lock=new Object();
+					alreadyPlaying=true;
+					
+					playSound(getFileVal("soundfile"),lock);
+					
+					new Thread(()-> {
+						try {
+							System.out.println("WAITING...");
+							synchronized(lock) {
+								lock.wait();
+							}
+						} catch (InterruptedException e) {
+						}
+						alreadyPlaying=false;
+					}).start();
+				}
 			}
 		}
 	}
 	
-	public static synchronized void playSound(File file) {
+	public static synchronized void playSound(File file, Object lock) {
 		new Thread(new Runnable() { // the wrapper thread is unnecessary, unless it blocks on the Clip finishing,
 									// see comments
 			public void run() {
@@ -53,6 +74,19 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 							.getAudioInputStream(file.getAbsoluteFile());
 					clip.open(inputStream);
 					clip.start();
+					clip.addLineListener(new LineListener() {
+						
+						@Override
+						public void update(LineEvent event) {
+							System.out.println("XI: "+event.getType().equals(Type.STOP));
+							if(event.getType().equals(Type.STOP)) {
+								synchronized(lock) {
+									lock.notifyAll();
+								}
+							}
+						}
+					});
+					
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}
