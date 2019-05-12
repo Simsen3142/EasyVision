@@ -11,25 +11,27 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
+
+import enums.DPMClassifiers;
 import enums.HaarClassifiers;
 import parameters.EnumParameter;
 import parameters.components.ParameterEnumPanel;
 import database.ImageHandler;
 
-public class ObjectDetectionHaar extends MatEditFunction {
+public class ObjectDetectionDPM extends MatEditFunction {
 	private static volatile Image img;
 
 	private static final long serialVersionUID = 1L;
-	private int absoluteobjectSize=0;
+	private int absoluteObjectSize=0;
 	private transient CascadeClassifier objectCascade;
 	private transient boolean loaded=false;
 	
 	
-	public ObjectDetectionHaar(Boolean empty) {}
+	public ObjectDetectionDPM(Boolean empty) {}
 
-	public ObjectDetectionHaar() {
+	public ObjectDetectionDPM() {
 		super(
-			new EnumParameter("haarclassifier", HaarClassifiers.FRONTAL_FACE)
+			new EnumParameter("DPMclassifier", DPMClassifiers.CAR)
 		);	
 		objectCascade=new CascadeClassifier();
 	}
@@ -37,7 +39,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 
 	
 	private Mat chooseClassifier(Mat clone) {
-		EnumParameter param=(EnumParameter)getParameter("haarclassifier");
+		EnumParameter param=(EnumParameter)getParameter("DPMclassifier");
 		if(!param.hasOnChange()) {
 			param.setOnChange((newVal)->{
 				loaded=false;
@@ -45,22 +47,10 @@ public class ObjectDetectionHaar extends MatEditFunction {
 			});
 		}
 		
-		HaarClassifiers haar = (HaarClassifiers) param.getValue();
+		DPMClassifiers haar = (DPMClassifiers) param.getValue();
 		switch(haar) {
-			case  FRONTAL_FACE:
-				return detectFrontalFaceHaar(clone);
-			case PROFIL_FACE:
-				return detectProfileFaceHaar(clone);
-			case EYES:
-				return detectEyesHaar(clone);
-			case EYES_GLASSES:
-				return detectEyesWithGlassesHaar(clone);
-			case SMILING_FACE:
-				return detectSmilingFaceHaar(clone);
-			case UPPER_BODY:
-				return detectUpperBodyHaar(clone);
-			case FULL_BODY:
-				return detectFullBodyHaar(clone);
+			case  CAR:
+				return detectcarDPM(clone);
 			default:
 				System.out.println("There is no such param!");
 				return null;
@@ -68,33 +58,9 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	}
 	
 	// public methods
-	// Haar
-	public Mat detectEyesHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_eye.xml",frame);
-	}
-	
-	public Mat detectEyesWithGlassesHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_eye_tree_eyeglasses.xml", frame);
-	}
-	
-	public Mat detectFrontalFaceHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_frontalface_alt.xml", frame);
-	}
-	
-	public Mat detectFullBodyHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_fullbody.xml", frame);
-	}
-	
-	public Mat detectUpperBodyHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_upperbody.xml", frame);
-	}
-	
-	public Mat detectSmilingFaceHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_smile.xml", frame);
-	}
-	
-	public Mat detectProfileFaceHaar(Mat frame) {
-		return startDetection("opencv/build/etc/haarcascades/haarcascade_profileface.xml", frame);
+	// DPM
+	public Mat detectcarDPM(Mat frame) {
+		return startDetection("opencv/build/etc/dpmcascades/dpm_car.xml",frame);
 	}
 	
 	//private methods
@@ -106,7 +72,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 		return frame;
 	}
 	
-	private CascadeClassifier getobjectCascade() {
+	private CascadeClassifier getObjectCascade() {
 		if(objectCascade==null) {
 			objectCascade=new CascadeClassifier();
 		}
@@ -116,7 +82,7 @@ public class ObjectDetectionHaar extends MatEditFunction {
 	    
 	private void loadClassifier(String classifierPath) {
 		if(!loaded) {
-			getobjectCascade().load(classifierPath);
+			getObjectCascade().load(classifierPath);
 	        loaded=true;
 		}
 	}
@@ -131,20 +97,20 @@ public class ObjectDetectionHaar extends MatEditFunction {
 		// equalize the frame histogram to improve the result
 		Imgproc.equalizeHist(grayFrame, grayFrame);
 		
-		// minimum object size
-		if (absoluteobjectSize == 0)
+		// minimum face size
+		if (absoluteObjectSize == 0)
 		{
 			int height = grayFrame.rows();
 			if (Math.round(height * 0.2f) > 0)
 			{
-				absoluteobjectSize = Math.round(height * 0.2f);
+				absoluteObjectSize = Math.round(height * 0.2f);
 			}
 		}
 		
 		// object detection
-		objectCascade.detectMultiScale(grayFrame, found, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,new Size(absoluteobjectSize, absoluteobjectSize), new Size());
+		objectCascade.detectMultiScale(grayFrame, found, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,new Size(absoluteObjectSize, absoluteObjectSize), new Size());
 				
-		// each rectangle in the matofrect is a object
+		// each rectangle in the matofrect is a detected object
 		Rect[] foundArray = found.toArray();
 		// draw every rectangle
 		for (int i = 0; i < foundArray.length; i++) {

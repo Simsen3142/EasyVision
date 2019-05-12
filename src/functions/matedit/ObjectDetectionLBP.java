@@ -20,7 +20,7 @@ public class ObjectDetectionLBP extends MatEditFunction {
 	private static volatile Image img;
 	private int absoluteobjectsize = 0;
 	private static final long serialVersionUID = 136775703156348096L;
-	private transient CascadeClassifier faceCascade;
+	private transient CascadeClassifier objectCascade;
 	private transient boolean loaded = false;
 
 
@@ -32,7 +32,7 @@ public class ObjectDetectionLBP extends MatEditFunction {
 		super(
 			new EnumParameter("lbpclassifier", LBPclassifiers.FRONTAL_FACE)
 		);	
-		faceCascade=new CascadeClassifier();
+		objectCascade=new CascadeClassifier();
 		EnumParameter param=(EnumParameter)getParameter("lbpclassifier");
 		param.setOnChange((newVal)->{
 			loaded=false;
@@ -94,18 +94,18 @@ public class ObjectDetectionLBP extends MatEditFunction {
 		return frame;
 	}
 
-	private CascadeClassifier getFaceCascade() {
-		if (faceCascade == null) {
-			faceCascade = new CascadeClassifier();
+	private CascadeClassifier getobjectCascade() {
+		if (objectCascade == null) {
+			objectCascade = new CascadeClassifier();
 		}
 
-		return faceCascade;
+		return objectCascade;
 	}
 
 	private void loadClassifier(String classifierPath) {
 
 		if (!loaded) {
-			getFaceCascade().load(classifierPath);
+			getobjectCascade().load(classifierPath);
 			loaded = true;
 		}
 	}
@@ -119,7 +119,7 @@ public class ObjectDetectionLBP extends MatEditFunction {
 		// equalize the frame histogram to improve the result
 		Imgproc.equalizeHist(grayFrame, grayFrame);
 
-		// minimum face size
+		// minimum object size
 		if (absoluteobjectsize == 0) {
 			int height = grayFrame.rows();
 			if (Math.round(height * 0.2f) > 0) {
@@ -127,11 +127,11 @@ public class ObjectDetectionLBP extends MatEditFunction {
 			}
 		}
 
-		// face detection
-		faceCascade.detectMultiScale(grayFrame, found, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
+		// object detection
+		objectCascade.detectMultiScale(grayFrame, found, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
 				new Size(absoluteobjectsize, absoluteobjectsize), new Size());
 
-		// each rectangle in the matofrect faces is a face
+		// each rectangle in the matofrect is a object
 		Rect[] foundArray = found.toArray();
 		// draw every rectangle
 		for (int i = 0; i < foundArray.length; i++) {
