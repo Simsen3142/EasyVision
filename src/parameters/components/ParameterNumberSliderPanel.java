@@ -14,19 +14,24 @@ import java.awt.Graphics2D;
 import java.util.function.Function;
 
 public class ParameterNumberSliderPanel extends JPanel {
+	
+	public static enum Type {
+		DECIMAL, BINARY;
+	}
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private NumberParameter<?> parameter;
 	private LabeledSlider slider;
-	private ParameterNumberSliderPanel pnl=this;
 	private EditableDoubleLabel lblMin;
 	private EditableDoubleLabel lblVal;
 	private EditableDoubleLabel lblMax;
 	private EditableLabel lblTitle;
 	private Function<Void,Void> onSetValue;
 	private ParameterNumberSliderPanel instance=this;
+	private Type type=Type.DECIMAL;
 	
 	public class LabeledSlider extends JSlider{
 		/**
@@ -44,19 +49,20 @@ public class ParameterNumberSliderPanel extends JPanel {
 		@Override
 		public void setMaximum(int max) {
 			super.setMaximum(max);
-			lblMax.setText(max+"");
+			new Integer(max);
+			lblMax.setText(getNrString(max));
 		}
 		
 		@Override
 		public void setMinimum(int min) {
 			super.setMinimum(min);
-			lblMin.setText(min+"");
+			lblMin.setText(getNrString(min));
 		}
 		
 		@Override
 		public void setValue(int val) {
 			super.setValue(val);
-			lblVal.setText(val+"");
+			lblVal.setText(getNrString(val));
 			
 			if(instance.getValue().intValue()!=val)
 				instance.setValue(val);
@@ -94,9 +100,43 @@ public class ParameterNumberSliderPanel extends JPanel {
 		this.onSetValue=onSetValue;
 	}
 	
-	public ParameterNumberSliderPanel(NumberParameter<?> parameter) {
+	public ParameterNumberSliderPanel(NumberParameter<?> parameter, Type type) {
 		this.parameter=parameter;
+		this.type=type;
 		initialize();
+	}
+	
+	public ParameterNumberSliderPanel(NumberParameter<?> parameter) {
+		this(parameter,Type.DECIMAL);
+	}
+	
+	public static String getBinaryNumberString(int nr, int length) {
+		String s=Integer.toBinaryString(nr);
+		for(int i=s.length();i<length;i++) {
+			s="0"+s;
+		}
+		
+		return s;
+	}
+	
+	private String getNrString(int nr) {
+		String s="";
+		switch(type) {
+		case BINARY:
+			if(parameter instanceof BinaryIntParameter) {
+				int l=Integer.toBinaryString(parameter.getMaxValue().intValue()).length();
+				s=getBinaryNumberString(nr,l);
+			}
+			break;
+		case DECIMAL:
+			s=nr+"";
+			break;
+		default:
+			break;
+		}
+		
+		return s;
+		
 	}
 	
 	private void initialize() {
@@ -161,8 +201,11 @@ public class ParameterNumberSliderPanel extends JPanel {
 				onSetValue.apply(null);
 			}
 		}
-		
-		lblVal.setText(getValue()+"");
+		if(type == Type.BINARY) {
+			lblVal.setText(getNrString(getValue().intValue()));
+		}else {
+			lblVal.setText(getValue()+"");
+		}
 	}
 	
 	public Number getValue() {

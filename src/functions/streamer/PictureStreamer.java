@@ -40,8 +40,6 @@ public class PictureStreamer extends MatStreamer {
 		);
 	}
 	
-
-	
 	@Override
 	protected void initStreamThread() {
 		this.setStreamThread(new Thread(new Runnable() {

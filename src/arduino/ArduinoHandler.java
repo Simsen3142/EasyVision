@@ -47,10 +47,6 @@ public class ArduinoHandler {
 	private ArduinoHandler() {
 		serialComm=new TwoWaySerialComm();
 		serialMonitor=new SerialMonitor();
-		
-		serialComm.addOnReceive(
-			this.getOnReceive()
-		);
 	}
 	
 	public Function<String, Void> getOnReceive(){

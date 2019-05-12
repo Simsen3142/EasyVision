@@ -116,4 +116,7 @@ public class ParameterizedObject implements Serializable {
 		ParameterChangeDialog dlg=new ParameterChangeDialog(this);
 		dlg.setVisible(true);
 	}
+
+	public void stop() {
+	}
 }

@@ -24,14 +24,16 @@ public class CameraVideoStreamer extends VideoStreamer {
 	}
 	
 	@Override
-	public MatStreamer start() {
+	public void start() {
 		getParameter("cameranr").setOnChange((newVal)->{
 			super.setResource(newVal);
 			super.stop();
 			super.start();
 			return null;
 		});
-		return super.start();
+		
+		super.start();
+		return;
 	}
 	
 	@Override

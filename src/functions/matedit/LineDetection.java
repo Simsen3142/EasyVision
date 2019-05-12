@@ -21,17 +21,17 @@ public class LineDetection extends MatEditFunction {
 
 	private static final long serialVersionUID = -3484600867520927562L;
 	private static volatile Image img;
-	private int width;
-	private int height;
+	private transient int width;
+	private transient int height;
 
-	private int error;
-	private int angle;
-	private boolean sqrDetected;
-	private int sqrError;
-	private boolean crossingDetected = false;
+	private transient int error;
+	private transient int angle;
+	private transient boolean sqrDetected;
+	private transient int sqrError;
+	private transient boolean crossingDetected = false;
 	
-	private Mat line;
-	private Mat squares;
+	private transient Mat line;
+	private transient Mat squares;
 
 	@Override
 	protected Mat apply(Mat matIn) {
@@ -102,7 +102,7 @@ public class LineDetection extends MatEditFunction {
 		((StringParameter)getParameter("output_turn")).setValue(turnOutput);
 
 		if (!sqrDetected) {
-			crossingDetected = checkIfCrossing(line, matOut);
+			crossingDetected = checkIfCrossing1(line, matOut);
 			if (crossingDetected)
 				removeNoiseLineCrossing(line);
 		}
@@ -149,7 +149,7 @@ public class LineDetection extends MatEditFunction {
 					Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
 		}
 		
-		((IntegerParameter)getParameter("output_error")).setValue(error);;
+		((IntegerParameter)getParameter("output_lnerrorx")).setValue(error);;
 		((IntegerParameter)getParameter("output_angle")).setValue(angle);;
 		
 		line=null;
@@ -183,7 +183,7 @@ public class LineDetection extends MatEditFunction {
 				new IntegerParameter("dilation", 3, 0, 100)
 			),
 			new ParameterGroup("output", 
-				new IntegerParameter("error",0,false),
+				new IntegerParameter("lnerrorx",0,false),
 				new IntegerParameter("angle",0,false),
 				new StringParameter("turn","",false)
 			)
@@ -345,6 +345,30 @@ public class LineDetection extends MatEditFunction {
 		}
 	}
 
+	private boolean checkIfCrossing1(Mat line, Mat matIn) {
+		double percentOfImg=0.1;
+		
+		
+		int rectWidth=(int) (matIn.width()*percentOfImg);
+		
+		Rect rL=new Rect(0, 0, rectWidth, matIn.height());
+		Rect rR=new Rect(matIn.width()-rectWidth, 0, rectWidth, matIn.height());
+		Mat mL=new Mat(matIn,rL);
+		Mat mR=new Mat(matIn,rR);
+		
+		getPercentOfImg(mL);
+		
+		return false;
+	}
+	
+	private double getPercentOfImg(Mat matIn) {
+		Scalar sc=Core.sumElems(matIn);
+		
+		return 0.0;
+	}
+	
+
+	
 	private boolean checkIfCrossing(Mat line, Mat matIn) {
 		int crossingSize = width / 5;
 

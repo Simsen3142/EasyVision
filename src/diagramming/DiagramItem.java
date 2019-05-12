@@ -315,10 +315,12 @@ public class DiagramItem extends JPanel {
 				this.selectedOutput,
 				item.selectedInput);
 		
-		this.selectedOutput.getConnections().add(connection);
-		diagram.addDiagramConnection(connection);
-		
-		item.selectedInput.getConnections().add(connection);
+		if(!this.selectedOutput.connections.contains(connection)) {
+			this.selectedOutput.getConnections().add(connection);
+			diagram.addDiagramConnection(connection);
+			
+			item.selectedInput.getConnections().add(connection);
+		}
 	}
 	
 	
@@ -531,4 +533,6 @@ public class DiagramItem extends JPanel {
 			lastTimeClicked=0;
 		}
 	}
+	
+	
 }

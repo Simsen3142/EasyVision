@@ -62,11 +62,12 @@ public abstract class VideoStreamer extends MatStreamer {
 	}
 	
 	@Override
-	public MatStreamer start() {
+	public void start() {
 		if(camera==null || !camera.isOpened())
 			initCamera();
 		
-		return super.start();
+		super.start();
+		return;
 	}
 	
 	@Override

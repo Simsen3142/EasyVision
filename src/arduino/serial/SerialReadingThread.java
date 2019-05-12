@@ -34,17 +34,18 @@ public class SerialReadingThread extends Thread {
 				while (!this.isInterrupted()) {
 					try {
 						try {
+							
 							if(reader!=null)
 								line = reader.readLine();
 			                if (line == null || line.isEmpty()) {
 			                    Thread.sleep(50);
 			                    continue;
 			                }
+			                
 						}catch (IOException e) {
 		                    Thread.sleep(50);
 		                    continue;
 						}
-						System.out.println(line);
 						handleLine(line);
 						line="";
 						
@@ -57,11 +58,13 @@ public class SerialReadingThread extends Thread {
 		
 		private void handleLine(String line) {
 			invokeOnReceives(line);
+			System.out.println(onReceives.size());
 		}
 
 		public void addOnReceive(Function<String,Void> onReceive) {
 			if(onReceives==null)
 				onReceives=new ArrayList<>();
+			
 			onReceives.add(onReceive);
 		}
 
@@ -71,8 +74,8 @@ public class SerialReadingThread extends Thread {
 		
 		private void invokeOnReceives(String line) {
 			if(onReceives!=null) {
-				for(Function<String,Void> onReceives:onReceives) {
-					onReceives.apply(line);
+				for(Function<String,Void> onReceive:onReceives) {
+					onReceive.apply(line);
 				}
 			}
 		}

@@ -39,6 +39,13 @@ public class ParameterFileChoosePanel extends JPanel {
 			lblTitle.setForeground(c);
 	}
 	
+	public static JFileChooser getFileChooser() {
+		if(fileChooser==null) {
+			fileChooser=new JFileChooser();
+		}
+		return fileChooser;
+	}
+	
 	public void declareOnSetValue(Function<Void,Void> onSetValue) {
 		this.onSetValue=onSetValue;
 	}

@@ -22,6 +22,9 @@ import org.opencv.imgproc.Imgproc;
 import database.ImageHandler;
 import enums.Shape;
 import parameters.EnumParameter;
+import parameters.IntegerParameter;
+import parameters.StringParameter;
+import parameters.group.ParameterGroup;
 
 public class ShapeDetection extends MatEditFunction {
 
@@ -32,7 +35,12 @@ public class ShapeDetection extends MatEditFunction {
 	
 	public ShapeDetection() {
 		super(
-			new EnumParameter("shape", Shape.CIRCLE)
+			new EnumParameter("shape", Shape.CIRCLE),
+			new ParameterGroup("output", 
+				new IntegerParameter("xpos",0,false),
+				new IntegerParameter("ypos",0,false),
+				new IntegerParameter("diameter",0,false)
+			)
 		);	
 	}
 	

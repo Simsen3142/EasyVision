@@ -14,12 +14,13 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import functions.RepresentationIcon;
+import functions.Startable;
 import main.MatSender;
 import parameters.BooleanParameter;
 import parameters.IntegerParameter;
 import parameters.group.ParameterGroup;
 
-public abstract class MatStreamer extends MatSender implements RepresentationIcon {
+public abstract class MatStreamer extends MatSender implements RepresentationIcon, Startable {
 	/**
 	 * 
 	 */
@@ -82,7 +83,7 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 		this((Object)resource);
 	}
 	
-	public MatStreamer start() {
+	public void start() {
 //		if(videoStreamers.add(this)) {
 			if(streamThread==null || !streamThread.isAlive() || streamThread.isInterrupted()) {
 				new Thread(()->{
@@ -99,7 +100,7 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 					streamThread.start();
 				}).start();
 			}
-			return this;
+			return;
 //		}else {
 //			return getVideoStreamer(this);
 //		}

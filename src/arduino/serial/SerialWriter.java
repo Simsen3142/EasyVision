@@ -25,15 +25,17 @@ public class SerialWriter {
 
 	private synchronized void doWriteSynch(String text) {
 		System.out.println("WRITING: "+text);
-		System.out.println("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 		writer.println(text);
-		System.out.println("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
 		writer.flush();
-		System.out.println("2222222222221111111111111111111111111111111122222222222222222222222222222222222222222222");
+		
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void doWrite(String text) {
-		System.out.println("WRITE ?");
 		new Thread(()->{
 			doWriteSynch(text);
 		}).start();
