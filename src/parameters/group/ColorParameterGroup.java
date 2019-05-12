@@ -4,6 +4,9 @@ import java.awt.Color;
 
 import javax.swing.JComponent;
 
+import org.opencv.core.Scalar;
+
+import parameters.IntegerParameter;
 import parameters.NumberParameter;
 import parameters.components.ColorParameterGroupPanel;
 
@@ -19,11 +22,34 @@ public class ColorParameterGroup extends ParameterGroup {
 	
 	private ColorType type;
 	
+	public ColorParameterGroup(String name, ColorType type) {
+		super(name);
+		switch(type) {
+			case RGB:
+				this.getParameters().add(new IntegerParameter("r", 100,0,255));
+				this.getParameters().add(new IntegerParameter("g", 100,0,255));
+				this.getParameters().add(new IntegerParameter("b", 100,0,255));
+				break;
+			case BGR:
+				this.getParameters().add(new IntegerParameter("b", 100,0,255));
+				this.getParameters().add(new IntegerParameter("g", 100,0,255));
+				this.getParameters().add(new IntegerParameter("r", 100,0,255));
+				break;
+			case HSV:
+				this.getParameters().add(new IntegerParameter("h", 100,0,180));
+				this.getParameters().add(new IntegerParameter("s", 100,0,255));
+				this.getParameters().add(new IntegerParameter("v", 100,0,255));
+				break;
+		}
+		
+		this.type=type;
+	}
+	
 	public ColorParameterGroup(String name, ColorType type, NumberParameter<?>...parameters) {
 		super(name, parameters);
 		this.type=type;
 	}
-
+	
 	/**
 	 * @return the type
 	 */
@@ -58,6 +84,11 @@ public class ColorParameterGroup extends ParameterGroup {
 		}
 		
 		return null;
+	}
+	
+	public Scalar getColorOpencv() {
+		Color c=getColor();
+		return new Scalar(c.getBlue(),c.getGreen(),c.getRed());
 	}
 	
 	public static int getBrightness(Color c) {

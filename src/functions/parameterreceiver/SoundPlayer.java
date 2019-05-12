@@ -1,7 +1,9 @@
 package functions.parameterreceiver;
 
+import java.awt.Image;
 import java.io.File;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,13 +14,15 @@ import javax.sound.sampled.LineListener;
 
 import com.google.common.reflect.Parameter;
 
+import database.ImageHandler;
 import diagramming.components.ParameterReceiverPanel;
+import functions.RepresentationIcon;
 import main.ParameterReceiver;
 import parameters.FileParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
-public class SoundPlayer extends ParameterizedObject implements ParameterReceiver {
+public class SoundPlayer extends ParameterizedObject implements ParameterReceiver, RepresentationIcon {
 	private int id=System.identityHashCode(this);
 	
 	private transient volatile boolean alreadyPlaying=false;
@@ -33,6 +37,10 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	 */
 	public int getId() {
 		return id;
+	}
+	
+	public SoundPlayer(Boolean empty) {
+		
 	}
 	
 	public SoundPlayer() {
@@ -117,5 +125,18 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 		if (id != other.id)
 			return false;
 		return true;
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/speaker.png");
+	}
+	
+	@Override
+	public void getRepresentationImage(Function<Image, Void> onReceive) {
+		new Thread(()-> {
+			Image img=getRepresentationImage();
+			onReceive.apply(img);
+		}).start();
 	}
 }

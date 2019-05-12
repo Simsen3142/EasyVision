@@ -303,9 +303,10 @@ public class DiagramPanel extends JPanel {
 
 				if (rec!=null) {
 					if(!from.getName().equals("parameter_out")) {
-						connection.setFrom((DiagramOutput) from.getDiagramItem().getConnector("parameter_out"));
+						String outputname=from.getDiagramItem().getOutputs().size()>1?"parameter_out":"output";
+						connection.setFrom((DiagramOutput) from.getDiagramItem().getConnector(outputname));
 					}
-
+					
 					EventQueue.invokeLater(() -> {
 						connection.setForeground(Color.BLUE);
 						connection.revalidate();
@@ -1082,14 +1083,29 @@ public class DiagramPanel extends JPanel {
 					receiversToRemove.add(receiver);
 				}
 			}
-			for (ParameterReceiver receiver : sender.getParamReceivers()) {
+
+			sender.getReceivers().removeAll(receiversToRemove);
+		}
+		
+		//Param Receiver:
+		List<ParameterReceiver> rcvrs=sender!=null?sender.getParamReceivers():null;
+		
+		if(rcvrs==null) {
+			if(paramReceiver instanceof ParameterizedObject) {
+				rcvrs=((ParameterizedObject) paramReceiver).getParamReceivers();
+			}
+		}
+
+		if(rcvrs!=null) {
+			for (ParameterReceiver receiver : rcvrs) {
 				int y = handleDiagramCreationTree(posX + (int)itemSize.getWidth() + 30, posY + (i * (30 + (int)itemSize.getHeight())),
 				(ParameterReceiver) receiver, highestY, item, functions);
 				highestY = y > highestY ? y : highestY;
 				i++;
 			}
-			sender.getReceivers().removeAll(receiversToRemove);
 		}
+		
+		
 		return highestY;
 	}
 }

@@ -36,7 +36,7 @@ public class ColorParameterGroupPanel extends JPanel implements IParameterGroupP
 	}
 
 	private void initialize() {
-		setLayout(new MigLayout("insets 0, gap 0", "[33%:n:33%,center][grow,center][33%:n:33%,center]", "[20px][60.00px:n:60px]"));
+		setLayout(new MigLayout("insets 0, gap 0", "[33%:n:33%,center][grow,center][33%:n:33%,center]", "[20px][70.00px:n:70px]"));
 		
 		label = new EditableLabel(cParamGroup.getName());
 		add(label, "cell 1 0,alignx center");
