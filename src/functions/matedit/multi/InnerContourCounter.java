@@ -21,7 +21,8 @@ public class InnerContourCounter extends MultiMatEditFunction {
 
 	public InnerContourCounter() {
 		super(new IntegerParameter("count", 0,false),
-				new ColorParameterGroup("markcolor", ColorType.HSV));
+				new ColorParameterGroup("markcolor", ColorType.HSV),
+				new ColorParameterGroup("textcolor", ColorType.HSV));
 		}
 	
 	@Override
@@ -46,7 +47,8 @@ public class InnerContourCounter extends MultiMatEditFunction {
 
 		int count=0;
 
-		Scalar c=((ColorParameterGroup)getAllParameters().get("markcolor")).getColorOpencv();
+		Scalar c1=((ColorParameterGroup)getAllParameters().get("markcolor")).getColorOpencv();
+		Scalar c2=((ColorParameterGroup)getAllParameters().get("textcolor")).getColorOpencv();
 		
 		for (int i = 0; i < contours.size();i++) {
 			if(contours.size()<=i)
@@ -55,15 +57,15 @@ public class InnerContourCounter extends MultiMatEditFunction {
 			double[] contourInfo = hierarchy.get(0, i);
 			Rect r = Imgproc.boundingRect(contours.get(i));
 			if (contourInfo[2] < 0) {
-				drawRect(pic,c,2,r);
+				drawRect(pic,c1,2,r);
 				count++;
 				Point center=new Point(r.x+r.width/2, r.y+r.height/2);
-				Imgproc.putText(pic, count+"", center, Core.FONT_HERSHEY_PLAIN, 1, c);
+				Imgproc.putText(pic, count+"", center, Core.FONT_HERSHEY_PLAIN, 1, c1);
 
 			}
 		}
 		
-		Imgproc.putText(pic,"Anzahl: " +count, new Point(20,20), Core.FONT_HERSHEY_PLAIN, 1, c);
+		Imgproc.putText(pic,"Anzahl: " +count, new Point(20,40), Core.FONT_HERSHEY_PLAIN, 3, c2);
 
 		
 		((IntegerParameter)getParameter("count")).setValue(count);

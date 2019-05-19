@@ -20,6 +20,9 @@ import main.ParameterReceiver;
 import parameters.DoubleParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
+import parameters.group.ColorParameterGroup;
+import parameters.group.ParameterGroup;
+import parameters.group.ColorParameterGroup.ColorType;
 
 public class RatioChecker extends MultiMatEditFunction{
 	
@@ -36,7 +39,19 @@ public class RatioChecker extends MultiMatEditFunction{
 	public RatioChecker() {
 		super(
 			new DoubleParameter("maxHeightPerWith", 0,0,100),
-			new DoubleParameter("maxWidthPerHeight", 10,0,100)
+			new DoubleParameter("maxWidthPerHeight", 10,0,100),
+			new ParameterGroup("markcolors", 
+				new ColorParameterGroup("colorok", ColorType.HSV, 
+					new DoubleParameter("h", 60, 0, 180),
+					new DoubleParameter("s", 255, 0, 255), 
+					new DoubleParameter("v", 255, 0, 255)
+				),
+				new ColorParameterGroup("colornotok", ColorType.HSV, 
+					new DoubleParameter("h", 0, 0, 180),
+					new DoubleParameter("s", 255, 0, 255), 
+					new DoubleParameter("v", 255, 0, 255)
+				)
+			)
 		);
 	}
 
@@ -61,7 +76,10 @@ public class RatioChecker extends MultiMatEditFunction{
 			
 			boolean inBounce=heightPerWidth>=getDoubleVal("maxHeightPerWith") && 
 					widthPerHeight>=getDoubleVal("maxWidthPerHeight");
-			Scalar c=inBounce?new Scalar(0,255,0):new Scalar(0,0,255);
+			
+			Scalar cOk=((ColorParameterGroup)getAllParameters().get("markcolors_colorok")).getColorOpencv();
+			Scalar cNotOk=((ColorParameterGroup)getAllParameters().get("markcolors_colornotok")).getColorOpencv();
+			Scalar c=inBounce?cOk:cNotOk;
 			drawRect(pic,c,3,rect);
 			Point center=new Point(rect.x+rect.width/2, rect.y+rect.height/2);
 			Imgproc.putText(pic, Math.round(width)+" - "+ Math.round(height), center, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 0));
