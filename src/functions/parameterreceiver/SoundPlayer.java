@@ -18,6 +18,7 @@ import database.ImageHandler;
 import diagramming.components.ParameterReceiverPanel;
 import functions.RepresentationIcon;
 import main.ParameterReceiver;
+import parameters.BooleanParameter;
 import parameters.FileParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
@@ -48,26 +49,26 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	}
 
 	@Override
-	public void onParameterReceived(Map<String, ParameterObject> parameters) {
-		for(String paramname :parameters.keySet()) {
-			if(paramname.equals("playsound")) {
-				if(!alreadyPlaying) {
-					Object lock=new Object();
-					alreadyPlaying=true;
-					
-					playSound(getFileVal("soundfile"),lock);
-					
-					new Thread(()-> {
-						try {
-							System.out.println("WAITING...");
-							synchronized(lock) {
-								lock.wait();
-							}
-						} catch (InterruptedException e) {
+	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
+		Boolean b=getFirstFittingParameter(parameters, BooleanParameter.class).getValue();
+		
+		if(b!=null && b) {
+			if(!alreadyPlaying) {
+				Object lock=new Object();
+				alreadyPlaying=true;
+				
+				playSound(getFileVal("soundfile"),lock);
+				
+				new Thread(()-> {
+					try {
+						System.out.println("WAITING...");
+						synchronized(lock) {
+							lock.wait();
 						}
-						alreadyPlaying=false;
-					}).start();
-				}
+					} catch (InterruptedException e) {
+					}
+					alreadyPlaying=false;
+				}).start();
 			}
 		}
 	}

@@ -29,7 +29,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 	private EditableDoubleLabel lblVal;
 	private EditableDoubleLabel lblMax;
 	private EditableLabel lblTitle;
-	private Function<Void,Void> onSetValue;
+	private Function<String,Void> onSetValue;
 	private ParameterNumberSliderPanel instance=this;
 	private Type type=Type.DECIMAL;
 	
@@ -64,8 +64,9 @@ public class ParameterNumberSliderPanel extends JPanel {
 			super.setValue(val);
 			lblVal.setText(getNrString(val));
 			
-			if(instance.getValue().intValue()!=val)
+			if(instance.getValue().intValue()!=val) {
 				instance.setValue(val);
+			}
 		}
 		
 		public void paint(Graphics g) {
@@ -96,7 +97,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 			lblTitle.setForeground(c);
 	}
 	
-	public void declareOnSetValue(Function<Void,Void> onSetValue) {
+	public void declareOnSetValue(Function<String,Void> onSetValue) {
 		this.onSetValue=onSetValue;
 	}
 	
@@ -195,16 +196,26 @@ public class ParameterNumberSliderPanel extends JPanel {
 			e.printStackTrace();
 		}
 		if(withParameter) {
-			parameter.setValue(val);
+			if(parameter instanceof DoubleParameter) {
+				parameter.setValue(val.doubleValue());
+			}else {
+				parameter.setValue(val);
+			}
 			
 			if(onSetValue!=null) {
-				onSetValue.apply(null);
+				onSetValue.apply(parameter.getName());
 			}
 		}
 		if(type == Type.BINARY) {
 			lblVal.setText(getNrString(getValue().intValue()));
 		}else {
-			lblVal.setText(getValue()+"");
+			String text="-";
+			if(val instanceof Double) {
+				text=String.format("%,.2f", getValue().doubleValue());
+			}else {
+				text=String.format("%,.0f", getValue().doubleValue());
+			}
+			lblVal.setText(text);
 		}
 	}
 	

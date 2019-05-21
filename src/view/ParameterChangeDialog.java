@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -8,6 +10,9 @@ import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
+
+import database.ImageHandler;
+import functions.RepresentationIcon;
 
 public class ParameterChangeDialog extends JDialog {
 
@@ -24,6 +29,35 @@ public class ParameterChangeDialog extends JDialog {
 	 * Create the frame.
 	 */
 	public ParameterChangeDialog(ParameterizedObject parameterizedObject) {
+		this.setTitle(parameterizedObject.getClass().getSimpleName()+" - Parameter");
+		
+		if(parameterizedObject instanceof RepresentationIcon) {
+			((RepresentationIcon) parameterizedObject).getRepresentationImage((img)->{
+				System.out.println("TEST");
+				if(img!=null) {
+					setIconImage(img);
+				}else {
+					ImageHandler.getImage("res/EVLogo.jpg", (img2)->{
+						EventQueue.invokeLater(()->{
+							if(img2!=null)
+								setIconImage(img2);
+						});
+						return null;
+					});
+				}
+				return null;					
+			});
+		}else {
+			System.out.println("DZIUWKDJ");
+			ImageHandler.getImage("res/EVLogo.jpg", (img2)->{
+				EventQueue.invokeLater(()->{
+					if(img2!=null)
+						setIconImage(img2);
+				});
+				return null;
+			});
+		}
+		
 		this.parameterizedObject=parameterizedObject;
 		initialize();
 	}
@@ -49,7 +83,7 @@ public class ParameterChangeDialog extends JDialog {
 	private void initParamChangers() {
 		for(ParameterObject param:parameterizedObject.getAllParameters().values()) {
 			if(param.getParamGroup()==null) {
-				pnl_paramChange.add(param.getComponent());
+				pnl_paramChange.add(param.getComponent(parameterizedObject));
 			}
 		}
 	}

@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import view.MultiLayeredPanel;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -35,7 +37,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JLayeredPane;
 
-public class Diagram extends JLayeredPane {
+public class Diagram extends MultiLayeredPanel {
 	private static final long serialVersionUID = 1819079186185325112L;
 	private List<DiagramItem> diagramItems = Collections.synchronizedList(new ArrayList<>());
 	private transient DiagramDragListener dragListener;
@@ -112,7 +114,6 @@ public class Diagram extends JLayeredPane {
 		addMouseListener(dragListener);
 		addMouseMotionListener(dragListener);
 		addMouseListener(new ThisMouseListener());
-		addComponentListener(new ResizeListener());
 		
 		controlListener=new ControlListener();
 		controlListener.install(this);
@@ -126,6 +127,8 @@ public class Diagram extends JLayeredPane {
 		pnlConnections.setOpaque(false);
 		pnlConnections.setLayout(null);
 		this.add(pnlConnections);
+		
+		addLayers(pnlDiagramItems,pnlConnections);
 		
 		setLayer(pnlDiagramItems,2);
 		setLayer(pnlConnections,1);
@@ -242,25 +245,6 @@ public class Diagram extends JLayeredPane {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
-		}
-	}
-	
-	private class ResizeListener extends ComponentAdapter {
-		@Override
-		public void componentResized(ComponentEvent arg0) {
-			resizeThings();
-		}
-		
-		private void resizeThings() {
-			int x=0;
-			int y=0;
-			pnlConnections.setBounds(x,y, getWidth(), getHeight());
-			pnlDiagramItems.setBounds(x,y, getWidth(), getHeight());
-			
-			EventQueue.invokeLater(()->{
-				revalidate();
-				repaint();
-			});
 		}
 	}
 	

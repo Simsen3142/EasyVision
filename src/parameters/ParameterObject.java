@@ -46,5 +46,7 @@ public abstract class ParameterObject implements Serializable{
 		return ((paramGroup!=null)?paramGroup.getFullName()+"_":"")+name;
 	}
 	
-	public abstract JComponent getComponent();
+	public abstract JComponent getComponent(ParameterizedObject po);
+	
+	
 }

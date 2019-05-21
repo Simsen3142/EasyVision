@@ -41,7 +41,7 @@ public class ParameterNoneditablePanel extends JPanel {
 		lblTitle = new EditableLabel(parameter.getName());
 		add(lblTitle, "cell 0 0,growx,aligny center");
 		
-		lblValue = new EditableLabel(parameter.getValue().toString());
+		lblValue = new EditableLabel(parameter.getValue()+"");
 		lblValue.setEditable(false);
 		add(lblValue, "cell 1 0,grow");
 

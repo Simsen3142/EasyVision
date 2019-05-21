@@ -69,7 +69,8 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 				new BooleanParameter("change", false),
 				new IntegerParameter("width", 200, 50, 5000),
 				new IntegerParameter("height", 180, 50, 5000)
-			)
+			),
+			new BooleanParameter("color", true)
 		);
 		this.resource=resource;
 		initStreamThread();
@@ -104,6 +105,14 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 //		}else {
 //			return getVideoStreamer(this);
 //		}
+	}
+	
+	@Override
+	protected void sendMat(Mat mat) {
+		if(!getBoolVal("color")) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+		}
+		super.sendMat(mat);
 	}
 	
 	@Override

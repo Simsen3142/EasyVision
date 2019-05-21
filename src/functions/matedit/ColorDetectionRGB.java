@@ -54,4 +54,5 @@ public class ColorDetectionRGB extends MatEditFunction {
 		Core.inRange(matOut, min, max, matOut);
 		return matOut;
 	}
+	
 }

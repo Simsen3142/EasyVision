@@ -11,11 +11,11 @@ public class IntegerParameter extends NumberParameter<Integer> {
 	 */
 	private static final long serialVersionUID = -3015981151052692898L;
 
-	public IntegerParameter(String name, int value) {
+	public IntegerParameter(String name, Integer value) {
 		super(name, value);
 	}
 	
-	public IntegerParameter(String name, int value, boolean editable) {
+	public IntegerParameter(String name, Integer value, boolean editable) {
 		super(name, value, editable);
 	}
 	

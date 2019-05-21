@@ -71,7 +71,7 @@ public class ParameterizedObject implements Serializable {
 	public void sendParameters() {
 		for(ParameterReceiver rcvr:paramReceivers) {
 			if(rcvr!=null)
-				rcvr.onParameterReceived(allParameters);
+				rcvr.onParameterReceived(allParameters,this);
 		}
 	}
 	
@@ -114,6 +114,47 @@ public class ParameterizedObject implements Serializable {
 //	public Set<ParameterGroup> getParametesrGroups(){
 //		return paramGroups;
 //	}
+	
+	public <T extends ParameterObject> List<T> getParameterWhichExtend(Class<T> c){
+		return getParameterWhichExtend(c,getAllParameters().values());
+	}
+	
+	public static <T extends ParameterObject> List<T> getParameterWhichExtend(Class<T> c, Collection<? extends ParameterObject> params) {
+		List<T> ret=new ArrayList<>();
+		for(ParameterObject param:params) {
+			if(c.isAssignableFrom(param.getClass())) {
+				ret.add((T)param);
+			}
+		}
+		
+		return ret;
+	}
+	
+	public static <R extends Parameter<?>> R getFirstFittingParameter(Map<String, ParameterObject> parameters, Class<R> clss) {
+		return getFirstFittingParameter(parameters,clss,"output");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <R extends Parameter<?>> R getFirstFittingParameter(Map<String, ParameterObject> parameters, Class<R> clss, String expectedName) {
+		ParameterObject param=parameters.get(expectedName);
+		if(param!=null && clss.isAssignableFrom(param.getClass())) {
+			return (R)param;
+		} else {
+			List<Parameter<?>> params=(List<Parameter<?>>) getParameterWhichExtend(clss, parameters.values());
+			for(ParameterObject p:params) {
+				if(!((Parameter<?>) p).isEditable()) {
+					return (R) p;
+				}
+			}
+			
+			for(ParameterObject p:params) {
+				return (R) p;
+			}
+		}
+		
+		return null;
+	}
+
 	
 	public <T extends ParameterReceiver> List<T> getParameterReceiverWhichExtend(Class<T> c) {
 		List<T> ret=new ArrayList<>();

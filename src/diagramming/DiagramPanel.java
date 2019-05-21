@@ -31,6 +31,7 @@ import diagramming.components.MatEditFunctionDiagramPanel;
 import diagramming.components.MatReceiverNSenderPanel;
 import diagramming.components.MultiMatEditFunctionDiagramPanel;
 import diagramming.components.ParameterReceiverPanel;
+import diagramming.components.ParameterRepresentationPanel;
 import diagramming.components.StreamerPanel;
 import diagramming.view.JListHeader;
 import functions.Startable;
@@ -38,6 +39,7 @@ import functions.UniqueFunction;
 import functions.matedit.MatEditFunction;
 import functions.matedit.Switch;
 import functions.matedit.multi.MultiMatEditFunction;
+import functions.parameterreceiver.ParameterRepresenter;
 import functions.parameterreceiver.RobotControl;
 import functions.streamer.MatStreamer;
 import main.MainFrame;
@@ -47,6 +49,7 @@ import main.MatSender;
 import main.ParameterReceiver;
 import net.miginfocom.swing.MigLayout;
 import parameters.ParameterizedObject;
+import view.ParameterReceivingPanel;
 
 import javax.swing.JList;
 import javax.swing.JButton;
@@ -68,6 +71,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.MatteBorder;
 
 public class DiagramPanel extends JPanel {
+	
+	private int distYPerRow=30;
 
 	/**
 	 * 
@@ -728,8 +733,12 @@ public class DiagramPanel extends JPanel {
 	private DiagramItem addParamReceiverDiagramItem(Point pos, ParameterReceiver receiver) {
 		DiagramItem item;
 		JComponent panel;
-
-		panel = new ParameterReceiverPanel(receiver, receiver.getClass().getSimpleName());// new
+		
+		if(receiver instanceof ParameterRepresenter<?>) {
+			panel = new ParameterRepresentationPanel((ParameterRepresenter<?>)receiver, receiver.getClass().getSimpleName());
+		}else {
+			panel = new ParameterReceiverPanel(receiver, receiver.getClass().getSimpleName());
+		}																					// new
 																							// MatReceiverNSenderPanel(receiver,"Name")
 																							// {};
 
@@ -976,7 +985,7 @@ public class DiagramPanel extends JPanel {
 		Map<Object, DiagramItem> functions=new HashMap<>(); // List for functions, to check, if function has been added before
 
 		for (Serializable sender : senders) { // iterating over all serializables
-			posY = handleDiagramCreationTree(posX, posY, sender, posY, null, functions) + 30; 
+			posY = handleDiagramCreationTree(posX, posY, sender, posY, null, functions) + distYPerRow; 
 		}
 		
 		
@@ -1043,13 +1052,17 @@ public class DiagramPanel extends JPanel {
 				item = addMatSenderDiagramItem(p, sender);
 			}
 		} else if (paramReceiver != null) {
-			if(paramReceiver instanceof UniqueFunction) {
-				if(!functions.keySet().contains(paramReceiver)) {
+			if(!(paramReceiver instanceof ParameterReceivingPanel)) {
+				if(paramReceiver instanceof UniqueFunction) {
+					if(!functions.keySet().contains(paramReceiver)) {
+						item = addParamReceiverDiagramItem(p, paramReceiver);
+						functions.put(sender, item);
+					}
+				}else {
 					item = addParamReceiverDiagramItem(p, paramReceiver);
-					functions.put(sender, item);
 				}
 			}else {
-				item = addParamReceiverDiagramItem(p, paramReceiver);
+				return highestY-distYPerRow;
 			}
 		}
 		
@@ -1097,11 +1110,21 @@ public class DiagramPanel extends JPanel {
 		}
 
 		if(rcvrs!=null) {
+			List<ParameterReceiver> receiversToRemove = new ArrayList<>();
 			for (ParameterReceiver receiver : rcvrs) {
-				int y = handleDiagramCreationTree(posX + (int)itemSize.getWidth() + 30, posY + (i * (30 + (int)itemSize.getHeight())),
-				(ParameterReceiver) receiver, highestY, item, functions);
-				highestY = y > highestY ? y : highestY;
-				i++;
+				if (!(receiver instanceof ParameterReceivingPanel)) {
+					int y = handleDiagramCreationTree(posX + (int)itemSize.getWidth() + 30, posY + (i * (30 + (int)itemSize.getHeight())),
+					(ParameterReceiver) receiver, highestY, item, functions);
+					highestY = y > highestY ? y : highestY;
+					i++;
+				}else {
+					receiversToRemove.add(receiver);
+				}
+			}
+			if(sender!=null)
+				sender.getParamReceivers().removeAll(receiversToRemove);
+			if(paramReceiver!=null && paramReceiver instanceof ParameterizedObject) {
+				((ParameterizedObject)paramReceiver).getParamReceivers().removeAll(receiversToRemove);
 			}
 		}
 		

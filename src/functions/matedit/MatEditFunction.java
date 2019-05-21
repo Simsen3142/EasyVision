@@ -80,8 +80,7 @@ public abstract class MatEditFunction extends MatSender implements MatReceiver, 
 	public void getRepresentationImage(Function<Image, Void> onReceive) {
 		new Thread(()-> {
 			Image img=getRepresentationImage();
-			if(img!=null)
-				onReceive.apply(img);
+			onReceive.apply(img);
 		}).start();
 	}
 }

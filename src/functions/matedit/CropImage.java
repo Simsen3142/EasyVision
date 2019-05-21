@@ -6,7 +6,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import database.ImageHandler;
+import parameters.DoubleParameter;
 import parameters.IntegerParameter;
+import parameters.group.RectangleParameterGroup;
 
 public class CropImage extends MatEditFunction{
 	private static volatile Image img;
@@ -16,23 +18,22 @@ public class CropImage extends MatEditFunction{
 	
 	public CropImage() {
 		super(
-			new IntegerParameter("xL", 0,0,10000),
-			new IntegerParameter("yU", 0,0,10000),
-			new IntegerParameter("xR", 10,0,10000),
-			new IntegerParameter("yD", 10,0,10000)
+			new RectangleParameterGroup("rect", 
+				new DoubleParameter("x", 0,0,100),
+				new DoubleParameter("y", 0,0,100),
+				new DoubleParameter("width", 100,0,100),
+				new DoubleParameter("height", 100 ,0,100)
+			)
 		);
 	}
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		int xL=getIntVal("xL");
-		int xR=getIntVal("xR");
-		int yD=getIntVal("yD");
-		int yU=getIntVal("yU");
+		getMats().put("input",matIn.clone());
 		
 		int height=matIn.height();
 		int width=matIn.width();
-		Rect rect=new Rect(xL, yU, width-xL-xR, height-yD-yU);
+		Rect rect=((RectangleParameterGroup)getAllParameters().get("rect")).getRect(width, height);
 		return new Mat(matIn, rect);
 	}
 	

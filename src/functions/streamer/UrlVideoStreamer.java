@@ -19,6 +19,7 @@ public class UrlVideoStreamer extends VideoStreamer {
 	
 	public UrlVideoStreamer(String url) {
 		super(url);
+		discardOldFrames=true;
 		this.addParameters(new StringParameter("url",url));
 	}
 	

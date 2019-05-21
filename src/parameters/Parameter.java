@@ -57,7 +57,16 @@ public abstract class Parameter<type> extends ParameterObject{
 		this.value=value;
 		if(onChange!=null) {
 			onChange.apply(value);
-			System.out.println("ONCHANGE");
+		}
+	}
+	
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue2(Object value) {
+		try {
+			setValue((type) value);
+		}catch (ClassCastException e) {
 		}
 	}
 	
@@ -84,7 +93,7 @@ public abstract class Parameter<type> extends ParameterObject{
 	}
 	
 	@Override
-	public final JComponent getComponent() {
+	public final JComponent getComponent(ParameterizedObject po) {
 		if(editable) {
 			return getEditComponent();
 		}else {

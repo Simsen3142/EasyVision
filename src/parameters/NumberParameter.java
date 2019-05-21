@@ -58,7 +58,9 @@ public abstract class NumberParameter<type extends Number> extends Parameter<typ
 	
 	@Override
 	public void setValue(Number value) {
-		if(value!=this.value) {
+		if(value==null) {
+			super.setValue(null);
+		} else if(value!=this.value) {
 			if(minValue!=null && maxValue!=null) {
 				if(value.doubleValue()>=maxValue.doubleValue()) {
 					value=maxValue;

@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.EventQueue;
 import java.util.Map;
 
 import org.opencv.core.Mat;
@@ -26,6 +27,13 @@ public class MatEditFunctionMatsPanel extends MatPanel  implements MatMapReceive
 			registerFrameForFPSCalculation();
 			fps=getFps();
 		}
-		updateMat(mats.get(matName));
+		setMat(mats.get(matName));
+		EventQueue.invokeLater(()->{
+			try {
+				getParent().revalidate();
+				getParent().repaint();
+			}catch (Exception e) {
+			}
+		});
 	}
 }

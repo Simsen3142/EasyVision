@@ -1,11 +1,14 @@
 package view;
 
+import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 import org.opencv.core.*;
+
+import database.ImageHandler;
 import main.MatReceiver;
 import main.MatSender;
 

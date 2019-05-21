@@ -37,6 +37,7 @@ public class InnerContourCounter extends MultiMatEditFunction {
 
 	@Override
 	protected Mat apply(Map<Integer, Mat> matsIn) {
+		System.out.println(allParameters);
 		Mat pic = matsIn.get(0).clone();
 		Mat contourPic = matsIn.get(1).clone();
 

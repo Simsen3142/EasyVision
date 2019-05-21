@@ -2,10 +2,14 @@ package diagramming.components;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import database.ImageHandler;
+import functions.RepresentationIcon;
 import listener.ListenerHandler;
 import main.MatSender;
 import view.MatReceiverPanel;
@@ -113,6 +117,34 @@ public abstract class MatReceiverNSenderPanel extends FunctionPanel<MatSender> {
 				function.removeMatReceiver(panel);
 				return null;
 			});
+			
+			frame.setTitle(function.getClass().getSimpleName()+" - Picture");
+			
+			if(function instanceof RepresentationIcon) {
+				((RepresentationIcon) function).getRepresentationImage((img)->{
+					if(img!=null) {
+						frame.setIconImage(img);
+					}else {
+						ImageHandler.getImage("res/EVLogo.jpg", (img2)->{
+							EventQueue.invokeLater(()->{
+								if(img2!=null)
+									frame.setIconImage(img2);
+							});
+							return null;
+						});
+					}
+					return null;					
+				});
+			}else {
+				ImageHandler.getImage("res/EVLogo.jpg", (img2)->{
+					EventQueue.invokeLater(()->{
+						if(img2!=null)
+							frame.setIconImage(img2);
+					});
+					return null;
+				});
+			}
+			
 			frame.setVisible(true);
 		}
 	}

@@ -1,9 +1,13 @@
 package parameters.group;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import javax.swing.JComponent;
 
 import parameters.ParameterObject;
+import parameters.ParameterizedObject;
 import parameters.components.ParameterGroupPanel;
 
 public class ParameterGroup extends ParameterObject{
@@ -27,12 +31,20 @@ public class ParameterGroup extends ParameterObject{
 		this.parameters = parameters;
 	}
 	
+	protected void addParameters(ParameterObject...parameters) {
+		addParameters(Arrays.asList(parameters));
+	}
+	
+	protected void addParameters(Collection<ParameterObject> parameters) {
+		for(ParameterObject param:parameters) {
+			param.setParamGroup(this);
+			this.parameters.add(param);
+		}
+	}
+	
 	public ParameterGroup(String name, ParameterObject...parameters) {
 		this.name=name;
-		for(ParameterObject parameter:parameters) {
-			parameter.setParamGroup(this);
-			this.parameters.add(parameter);
-		}
+		addParameters(parameters);
 	}
 
 	@Override
@@ -61,7 +73,7 @@ public class ParameterGroup extends ParameterObject{
 	}
 
 	@Override
-	public JComponent getComponent() {
-		return new ParameterGroupPanel(this);
+	public JComponent getComponent(ParameterizedObject po) {
+		return new ParameterGroupPanel(this, po);
 	}
 }

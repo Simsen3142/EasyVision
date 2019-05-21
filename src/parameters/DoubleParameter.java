@@ -22,7 +22,12 @@ public class DoubleParameter extends NumberParameter<Double> {
 	public DoubleParameter(String name, double value, double min, double max) {
 		super(name, value,min,max);
 	}
-
+	
+	@Override
+	public Double getValue() {
+		return value.doubleValue();
+	}
+	
 	@Override
 	public JComponent getEditComponent() {
 		return new ParameterNumberSliderPanel(this);

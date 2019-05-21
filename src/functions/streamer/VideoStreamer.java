@@ -22,6 +22,7 @@ public abstract class VideoStreamer extends MatStreamer {
 	private static final long serialVersionUID = -691043732851439207L;
 	private transient VideoCapture camera;
 	private transient Mat mat;
+	protected boolean discardOldFrames=false;
 	
 	/**
 	 * @return the camera
@@ -84,10 +85,6 @@ public abstract class VideoStreamer extends MatStreamer {
 			public void run() {
 				mat = new Mat();
 				
-//				if(getBoolVal("size_change")) {
-//					camera.set(3, getIntVal("size_width"));
-//					camera.set(4, getIntVal("size_height"));
-//				}
 				if(camera==null) {
 					initCamera();
 				}
@@ -96,6 +93,11 @@ public abstract class VideoStreamer extends MatStreamer {
 				} else {
 					while (!getStreamThread().isInterrupted()) {
 						try {
+							if(discardOldFrames) {
+								for(int i=0;i<1;i++) {
+									camera.grab();
+								}
+							}
 							if (camera.read(mat)) {
 								IntegerParameter widthParam=(IntegerParameter) getParameter("size_width");
 								IntegerParameter heightParam=(IntegerParameter) getParameter("size_height");

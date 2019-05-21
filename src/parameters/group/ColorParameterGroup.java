@@ -8,6 +8,7 @@ import org.opencv.core.Scalar;
 
 import parameters.IntegerParameter;
 import parameters.NumberParameter;
+import parameters.ParameterizedObject;
 import parameters.components.ColorParameterGroupPanel;
 
 public class ColorParameterGroup extends ParameterGroup {
@@ -26,19 +27,19 @@ public class ColorParameterGroup extends ParameterGroup {
 		super(name);
 		switch(type) {
 			case RGB:
-				this.getParameters().add(new IntegerParameter("r", 100,0,255));
-				this.getParameters().add(new IntegerParameter("g", 100,0,255));
-				this.getParameters().add(new IntegerParameter("b", 100,0,255));
+				addParameters(new IntegerParameter("r", 100,0,255),
+						new IntegerParameter("g", 100,0,255),
+						new IntegerParameter("b", 100,0,255));
 				break;
 			case BGR:
-				this.getParameters().add(new IntegerParameter("b", 100,0,255));
-				this.getParameters().add(new IntegerParameter("g", 100,0,255));
-				this.getParameters().add(new IntegerParameter("r", 100,0,255));
+				addParameters(new IntegerParameter("b", 100,0,255),
+						new IntegerParameter("g", 100,0,255),
+						new IntegerParameter("r", 100,0,255));
 				break;
 			case HSV:
-				this.getParameters().add(new IntegerParameter("h", 100,0,180));
-				this.getParameters().add(new IntegerParameter("s", 100,0,255));
-				this.getParameters().add(new IntegerParameter("v", 100,0,255));
+				addParameters(new IntegerParameter("h", 100,0,180),
+						new IntegerParameter("s", 100,0,255),
+						new IntegerParameter("v", 100,0,255));
 				break;
 		}
 		
@@ -99,7 +100,7 @@ public class ColorParameterGroup extends ParameterGroup {
 	}
 	
 	@Override
-	public JComponent getComponent() {
+	public JComponent getComponent(ParameterizedObject po) {
 		return new ColorParameterGroupPanel(this);
 	}
 }

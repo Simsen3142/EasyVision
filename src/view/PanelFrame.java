@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ public class PanelFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private Container contentPane;
 	private Function<Void, Void> onWindowClosing;
 
 	public PanelFrame(JPanel pnl, String title) {
@@ -25,7 +26,7 @@ public class PanelFrame extends JFrame {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public PanelFrame(JPanel pnl) {
+	public PanelFrame(Container pnl) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = pnl;

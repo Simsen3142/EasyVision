@@ -17,6 +17,7 @@ import org.opencv.imgproc.Imgproc;
 
 import functions.parameterreceiver.SoundPlayer;
 import main.ParameterReceiver;
+import parameters.BooleanParameter;
 import parameters.DoubleParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
@@ -51,7 +52,8 @@ public class RatioChecker extends MultiMatEditFunction{
 					new DoubleParameter("s", 255, 0, 255), 
 					new DoubleParameter("v", 255, 0, 255)
 				)
-			)
+			),
+			new BooleanParameter("allOk", true,false)
 		);
 	}
 
@@ -92,10 +94,12 @@ public class RatioChecker extends MultiMatEditFunction{
 				for(SoundPlayer soundPlayer:getParameterReceiverWhichExtend(SoundPlayer.class)) {
 					Map<String, ParameterObject> paramO=new HashMap<String, ParameterObject>();
 					paramO.put("playsound", null);
-					soundPlayer.onParameterReceived(paramO);
+					soundPlayer.onParameterReceived(paramO,this);
 				}
 			}
 		}
+		
+		((BooleanParameter)getParameter("allOk")).setValue(contourNotok.size()<1);
 		
 //		Imgproc.drawContours(pic, contourOk, -1, new Scalar(0,255,0),3);
 //		Imgproc.drawContours(pic, contourNotok, -1, new Scalar(0,0,255),3);

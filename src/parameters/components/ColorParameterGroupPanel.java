@@ -46,7 +46,7 @@ public class ColorParameterGroupPanel extends JPanel implements IParameterGroupP
 
 	@Override
 	public void addChildren() {
-		Function<Void, Void> changeColorfnctn=
+		Function<String, Void> changeColorfnctn=
 				(x)->{
 					Color c=cParamGroup.getColor();
 					setBackground(c);

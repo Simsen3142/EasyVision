@@ -4,9 +4,12 @@ import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -35,13 +38,15 @@ public class HandGestureDetection extends MatEditFunction {
 
 	@Override
 	protected Mat apply(Mat matIn) {
-		if(mpeace==null) {
-			mpeace=getContourFromPic("peace");
-			mfist=getContourFromPic("fist");
-			mstop=getContourFromPic("stop");
-		}
+		
 		
 		Mat mat=matIn.clone();
+
+		if(mpeace==null) {
+			mpeace=getContourFromPic("peace",mat);
+			mfist=getContourFromPic("fist",mat);
+			mstop=getContourFromPic("stop",mat);
+		}
 
 		ArrayList<MatOfPoint> contours = new ArrayList<>();
 		Imgproc.findContours(mat, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -87,20 +92,31 @@ public class HandGestureDetection extends MatEditFunction {
 		return mat;
 	}
 	
-	private MatOfPoint getContourFromPic(String fileparamname) {
+	private MatOfPoint getContourFromPic(String fileparamname, Mat mat) {
 		ArrayList<MatOfPoint> contours = new ArrayList<>();
 		Mat m=Imgcodecs.imread(getFileVal(fileparamname).getAbsolutePath());
 		
-		Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2GRAY);
 		
-		m.convertTo(m, CvType.CV_8U);
-		new PanelFrame(new MatPanel(m)).setVisible(true);
+		ChangeResolution.apply(m, mat.cols(), mat.rows());
+		System.out.println(mat.channels()+"sdad");
+		Imgproc.cvtColor(m, m, Imgproc.COLOR_BGR2GRAY);
+		
+		Core.inRange(m, new Scalar(200), new Scalar(255), m);
+
+		
+		
+//		System.out.println(m.channels());
+//		new PanelFrame(new MatPanel(m)).setVisible(true);
 
 		Imgproc.findContours(m, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-		
 		System.out.println(contours.size()+"###############################");
 		System.out.println(contours.get(0).cols());
 		System.out.println(contours.get(0).rows());
+//		
+//		Imgproc.drawContours(mat, contours, 0, new Scalar(100,100,100));
+//		Imgproc.line(mat, new Point(10,10), new Point(500,500), new Scalar(100,100,100),20);
+		
+		new PanelFrame(new MatPanel(m)).setVisible(true);
 		
 		return contours.get(0);
 	}

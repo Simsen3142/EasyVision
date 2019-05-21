@@ -151,8 +151,8 @@ public abstract class MultiMatEditFunction extends MatSender implements MatRecei
 	public void getRepresentationImage(Function<Image, Void> onReceive) {
 		new Thread(()-> {
 			Image img=getRepresentationImage();
-			if(img!=null)
-				onReceive.apply(img);
+//			if(img!=null)
+			onReceive.apply(img);
 		}).start();
 	}
 }

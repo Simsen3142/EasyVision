@@ -92,7 +92,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 	}
 	
 	@Override
-	public void onParameterReceived(Map<String, ParameterObject> parameters) {
+	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
 		if(state==null)
 			state=ControlState.LN_DEFAULT;
 		//DATA FROM LINEDETECTION############################################################################################
