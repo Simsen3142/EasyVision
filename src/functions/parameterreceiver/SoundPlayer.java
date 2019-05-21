@@ -45,7 +45,7 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	}
 	
 	public SoundPlayer() {
-		super(new FileParameter("soundfile", new File("sounds/alarm1.wav")));
+		super(new FileParameter("soundfile", new File("res/sounds/alarm1.wav")));
 	}
 
 	@Override
