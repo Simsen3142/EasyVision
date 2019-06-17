@@ -1,5 +1,6 @@
 package functions.matedit.multi;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
 import functions.parameterreceiver.SoundPlayer;
 import main.ParameterReceiver;
 import parameters.BooleanParameter;
@@ -57,6 +59,9 @@ public class RatioChecker extends MultiMatEditFunction{
 		);
 	}
 
+	public RatioChecker(Boolean empty) {
+	}
+	
 	@Override
 	protected Mat apply(Map<Integer, Mat> matsIn) {
 		Mat pic=matsIn.get(0).clone();
@@ -90,12 +95,6 @@ public class RatioChecker extends MultiMatEditFunction{
 				contourOk.add(contour);
 			}else {
 				contourNotok.add(contour);
-				
-				for(SoundPlayer soundPlayer:getParameterReceiverWhichExtend(SoundPlayer.class)) {
-					Map<String, ParameterObject> paramO=new HashMap<String, ParameterObject>();
-					paramO.put("playsound", null);
-					soundPlayer.onParameterReceived(paramO,this);
-				}
 			}
 		}
 		
@@ -128,5 +127,9 @@ public class RatioChecker extends MultiMatEditFunction{
 			Imgproc.line(matIn, point[j], point[(j + 1) % 4], color, thickness);
 		}
 	}
-
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/ratio.png");
+	}
 }

@@ -58,7 +58,6 @@ public class NumberInBounceChecker extends ParameterRepresenter<BooleanParameter
 			boolean inBounce=c>=getIntVal("mincount") && c <= getIntVal("maxcount");
 			getParameter("output").setValue2(inBounce);
 			
-			System.out.println(inBounce);
 			sendParameters();
 		}catch (Exception e) {
 			e.printStackTrace();

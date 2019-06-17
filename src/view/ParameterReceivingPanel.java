@@ -68,7 +68,6 @@ public class ParameterReceivingPanel extends JPanel implements ParameterReceiver
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
 		ParameterObject param=ParameterizedObject.getFirstFittingParameter(parameters, Parameter.class,paramFullName);
-		System.out.println(parameters);
 		if(param instanceof Parameter<?>) {
 			lblParamname.setText(param.getName());
 			lblParamvalue.setText(((Parameter<?>) param).getValue()+"");

@@ -14,6 +14,10 @@ import parameters.ParameterizedObject;
 
 public abstract class MultiParameterReceiver<T extends Parameter<?>> extends ParameterRepresenter<T> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2733750345086591173L;
 	private int id=System.identityHashCode(this);
 	private transient Map<ParameterizedObject,Object[]> paramObjects;
 	private transient boolean loading=false;
@@ -33,10 +37,12 @@ public abstract class MultiParameterReceiver<T extends Parameter<?>> extends Par
 		return id;
 	}
 	
-	public MultiParameterReceiver() {
-		super();
+	public MultiParameterReceiver(ParameterObject...parameterObjects) {
+		super(parameterObjects);
 		Parameter<?> param=getParameter("paramname");
-		param.setValue2("output");
+		if(param!=null) {
+			param.setValue2("output");
+		}
 	}
 	
 	
@@ -57,28 +63,28 @@ public abstract class MultiParameterReceiver<T extends Parameter<?>> extends Par
 		}
 		
 		{
-			ParameterObject po=parameters.get("output");
+//			ParameterObject po=parameters.get("output");
 			
-			Parameter<?> p = null;
-			if(po == null || po instanceof Parameter<?>) {
-				p=(Parameter<?>)po;
-				if(p==null) {
-					p=getFirstFittingParameter(parameters,BooleanParameter.class,"-");
-					if(p==null) {
-						p=getFirstFittingParameter(parameters,Parameter.class);
-					}
-				}
-			}
+//			Parameter<?> p = null;
+//			if(po == null || po instanceof Parameter<?>) {
+//				p=(Parameter<?>)po;
+//				if(p==null) {
+//					p=getFirstFittingParameter(parameters,BooleanParameter.class,"-");
+//					if(p==null) {
+//						p=getFirstFittingParameter(parameters,Parameter.class);
+//					}
+//				}
+//			}
+//			
+//			System.out.println("\t"+sender);
+//			System.out.println("\t"+p);
 			
-			System.out.println("\t"+sender);
-			System.out.println("\t"+p);
 			
-			
-			if(p != null) {
-				paramObjects.put(sender, new Object[] {p,time});
-			}else {
-				return;
-			}
+//			if(p != null) {
+			paramObjects.put(sender, new Object[] {parameters,time});
+//			}else {
+//				return;
+//			}
 		}
 		
 		if(loadingStarted+time2load<=time) {
@@ -110,9 +116,9 @@ public abstract class MultiParameterReceiver<T extends Parameter<?>> extends Par
 			objectsToReceiveFrom.remove(sender);
 			
 			if(objectsToReceiveFrom.isEmpty()) {
-				List<Parameter<?>> paramVals=new ArrayList<>();
+				List<Map<String, ParameterObject>> paramVals=new ArrayList<>();
 				for(Object[] os:paramObjects.values()) {
-					paramVals.add((Parameter<?>) os[0]);
+					paramVals.add((Map<String, ParameterObject>) os[0]);
 				}
 				
 				setParameterValue(onParametersReceived(paramVals).getValue());
@@ -121,7 +127,7 @@ public abstract class MultiParameterReceiver<T extends Parameter<?>> extends Par
 		}
 	}
 	
-	public abstract T onParametersReceived(List<Parameter<?>> parameters);
+	public abstract T onParametersReceived(List<Map<String, ParameterObject>> parameters);
 	
 
 }

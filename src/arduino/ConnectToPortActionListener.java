@@ -3,26 +3,30 @@ package arduino;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JOptionPane;
+
 import arduino.serial.TwoWaySerialComm;
+import connections.ConnectionHandler;
 import gnu.io.CommPortIdentifier;
 
-public class ConnectToPortActionListener implements ActionListener {
-	private CommPortIdentifier id;
+public class ConnectToPortActionListener<T> implements ActionListener {
+	private ConnectionHandler<T> conHandler;
+	private T id;
 
-	public ConnectToPortActionListener(CommPortIdentifier id) {
+	public ConnectToPortActionListener(T id,ConnectionHandler<T> conHandler) {
 		this.id = id;
+		this.conHandler=conHandler;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		TwoWaySerialComm serialComm=ArduinoHandler.getInstance().getSerialComm();
 		try {
-			if (serialComm.isConnected()) {
-				serialComm.disconnect();
+			if (conHandler.isConnected()) {
+				conHandler.disconnect();
 			}
-			serialComm.connect(id);
-			serialComm.startReader();
-			serialComm.addOnReceive(ArduinoHandler.getInstance().getOnReceive());
+			if(!conHandler.connectTo(id)) {
+				JOptionPane.showMessageDialog(null, "Connection was not successful", "Error", JOptionPane.ERROR_MESSAGE);
+			};
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

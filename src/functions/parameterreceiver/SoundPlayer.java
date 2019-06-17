@@ -51,7 +51,6 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
 		Boolean b=getFirstFittingParameter(parameters, BooleanParameter.class).getValue();
-		
 		if(b!=null && b) {
 			if(!alreadyPlaying) {
 				Object lock=new Object();
@@ -87,7 +86,6 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 						
 						@Override
 						public void update(LineEvent event) {
-							System.out.println("XI: "+event.getType().equals(Type.STOP));
 							if(event.getType().equals(Type.STOP)) {
 								synchronized(lock) {
 									lock.notifyAll();

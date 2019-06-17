@@ -1,10 +1,12 @@
 package functions.matedit;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Mat;
 
+import database.ImageHandler;
 import main.MatReceiver;
 import parameters.BinaryIntParameter;
 import parameters.components.ParameterNumberSliderPanel;
@@ -32,6 +34,9 @@ public class Switch extends MatEditFunction {
 	 */
 	public static void setInstance(Switch instance) {
 		Switch.instance = instance;
+	}
+	
+	public Switch(Boolean empty) {
 	}
 
 	public Switch() {
@@ -84,6 +89,10 @@ public class Switch extends MatEditFunction {
 				i++;
 			}
 		}
-		
+	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/verzweigung.png");
 	}
 }

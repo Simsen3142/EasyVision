@@ -58,7 +58,6 @@ public class SerialReadingThread extends Thread {
 		
 		private void handleLine(String line) {
 			invokeOnReceives(line);
-			System.out.println(onReceives.size());
 		}
 
 		public void addOnReceive(Function<String,Void> onReceive) {

@@ -1,5 +1,6 @@
 package functions.matedit.multi;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import database.ImageHandler;
 import parameters.DoubleParameter;
 import parameters.IntegerParameter;
 import parameters.group.ColorParameterGroup;
@@ -24,6 +26,9 @@ public class MarkOverlay extends MultiMatEditFunction {
 				),
 				new IntegerParameter("size", 1,-1,20)
 		);
+	}
+	
+	public MarkOverlay(Boolean empty) {
 	}
 	
 	@Override
@@ -51,4 +56,8 @@ public class MarkOverlay extends MultiMatEditFunction {
 		return basic;
 	}
 
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/markieren.png");
+	}
 }

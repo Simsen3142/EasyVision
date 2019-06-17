@@ -25,4 +25,9 @@ public class Rotate extends MatEditFunction {
 		Core.flip(matOut, matOut, 1);
 		return matOut;
 	}
+	
+	@Override
+	public Image getRepresentationImage() {
+		return ImageHandler.getImage("res/icons/drehen.png");
+	}
 }

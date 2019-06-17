@@ -20,11 +20,19 @@ import javax.jws.soap.SOAPBinding;
 
 public class TwoWaySerialComm {
 	private SerialPort port;
+	private CommPortIdentifier connected;
 	private SerialReadingThread reader;
 	private SerialWriter writer;
 	private int baudRate=250000;
 	private List<Function<String,Void>> onReceives;
 	
+	/**
+	 * @return the connected
+	 */
+	public CommPortIdentifier getConnected() {
+		return connected;
+	}
+
 	/**
 	 * @return the baudRate
 	 */
@@ -90,6 +98,7 @@ public class TwoWaySerialComm {
 
 			if (commPort instanceof SerialPort) {
 				SerialPort serialPort = (SerialPort) commPort;
+				connected=portIdentifier;
 				setPort(serialPort);
 				serialPort.setSerialPortParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 						SerialPort.PARITY_NONE);
@@ -134,6 +143,7 @@ public class TwoWaySerialComm {
 			port.close();
 			port=null;
 		}
+		connected=null;
 	}
 
 	public boolean isConnected() {

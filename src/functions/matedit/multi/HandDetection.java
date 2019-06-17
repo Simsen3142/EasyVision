@@ -17,10 +17,14 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import database.ImageHandler;
+import parameters.IntegerParameter;
 
 public class HandDetection extends MultiMatEditFunction {
 
-	private static volatile Image img;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6696357203665363720L;
 	
 	public HandDetection(Boolean empty) {
 		
@@ -28,7 +32,7 @@ public class HandDetection extends MultiMatEditFunction {
 	
 
 	public HandDetection() {
-		
+		super(new IntegerParameter("output", 1,false));
 	}
 
 	@Override
@@ -144,7 +148,7 @@ public class HandDetection extends MultiMatEditFunction {
 		String text= fingerCount + " finger(s) detected";
 		Imgproc.putText(pic, text, new Point(15, 15), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
 
-		
+		((IntegerParameter)getParameter("output")).setValue(fingerCount);
 		
 		
 		return pic;

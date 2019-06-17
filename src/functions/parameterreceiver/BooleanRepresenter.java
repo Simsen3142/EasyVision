@@ -39,7 +39,6 @@ public class BooleanRepresenter extends ParameterRepresenter<BooleanParameter> {
 		if(param != null) {
 			((BooleanParameter)getParameter("output")).setValue(param.getValue());
 		}else {
-			System.out.println(getAllParameters());
 			((BooleanParameter)getParameter("output")).setValue(null);
 		}
 		sendParameters();

@@ -33,7 +33,6 @@ public class ParameterChangeDialog extends JDialog {
 		
 		if(parameterizedObject instanceof RepresentationIcon) {
 			((RepresentationIcon) parameterizedObject).getRepresentationImage((img)->{
-				System.out.println("TEST");
 				if(img!=null) {
 					setIconImage(img);
 				}else {
@@ -48,7 +47,6 @@ public class ParameterChangeDialog extends JDialog {
 				return null;					
 			});
 		}else {
-			System.out.println("DZIUWKDJ");
 			ImageHandler.getImage("res/EVLogo.jpg", (img2)->{
 				EventQueue.invokeLater(()->{
 					if(img2!=null)

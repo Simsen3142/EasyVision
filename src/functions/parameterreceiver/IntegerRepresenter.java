@@ -38,8 +38,6 @@ public class IntegerRepresenter extends ParameterRepresenter<IntegerParameter> {
 		if(param != null) {
 			((IntegerParameter)getParameter("output")).setValue(param.getValue());
 		}else {
-			System.out.println(getAllParameters());
-			System.out.println(((IntegerParameter)getParameter("output")));
 			((IntegerParameter)getParameter("output")).setValue(null);
 		}
 		sendParameters();

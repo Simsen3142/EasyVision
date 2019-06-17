@@ -75,7 +75,6 @@ public class RectangleParameterGroupPanel extends JPanel implements IParameterGr
 					}
 					double[] r=rParamGroup.getRect();
 
-					System.out.println("INDEX IS "+index+" ##############################");
 					switch(index) {
 						case 0: //x
 							if(r[0]+r[2]>1) {

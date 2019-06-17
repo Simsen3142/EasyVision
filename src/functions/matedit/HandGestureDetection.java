@@ -60,9 +60,9 @@ public class HandGestureDetection extends MatEditFunction {
 		
 		double vals[]=new double[3];
 		
-		vals[0]=Imgproc.matchShapes(mpeace,mstop,Imgproc.CV_CONTOURS_MATCH_I1,0);
-		vals[1]=Imgproc.matchShapes(contour,mfist,Imgproc.CV_CONTOURS_MATCH_I2,0);
-		vals[2]=Imgproc.matchShapes(contour,mstop,Imgproc.CV_CONTOURS_MATCH_I3,0);
+		vals[0]=Imgproc.matchShapes(contour,mpeace,Imgproc.CV_CONTOURS_MATCH_I1,0);
+		vals[1]=Imgproc.matchShapes(contour,mfist,Imgproc.CV_CONTOURS_MATCH_I1,0);
+		vals[2]=Imgproc.matchShapes(contour,mstop,Imgproc.CV_CONTOURS_MATCH_I1,0);
 		
 		double lowest=100000;
 		int index=0;
@@ -98,7 +98,6 @@ public class HandGestureDetection extends MatEditFunction {
 		
 		
 		ChangeResolution.apply(m, mat.cols(), mat.rows());
-		System.out.println(mat.channels()+"sdad");
 		Imgproc.cvtColor(m, m, Imgproc.COLOR_BGR2GRAY);
 		
 		Core.inRange(m, new Scalar(200), new Scalar(255), m);
@@ -109,9 +108,6 @@ public class HandGestureDetection extends MatEditFunction {
 //		new PanelFrame(new MatPanel(m)).setVisible(true);
 
 		Imgproc.findContours(m, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-		System.out.println(contours.size()+"###############################");
-		System.out.println(contours.get(0).cols());
-		System.out.println(contours.get(0).rows());
 //		
 //		Imgproc.drawContours(mat, contours, 0, new Scalar(100,100,100));
 //		Imgproc.line(mat, new Point(10,10), new Point(500,500), new Scalar(100,100,100),20);

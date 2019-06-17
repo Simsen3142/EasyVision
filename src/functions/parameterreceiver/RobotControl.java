@@ -259,21 +259,17 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 						break;
 					}case LN_TURN_L:{
 						long time=turnByDegree(-45,true);
-						System.out.println("#####################################"+time);
 						doSleep(time+100);
 						state=ControlState.LN_DEFAULT;
 						setSpeed(100, 100);
 						doSleep(1000);
-						System.out.println("#####################################"+1000);
 						break;
 					}case LN_TURN_R:{
 						long time=turnByDegree(45,true);
 						doSleep(time+100);
-						System.out.println("#####################################"+time);
 						state=ControlState.LN_DEFAULT;
 						setSpeed(100, 100);
 						doSleep(1000);
-						System.out.println("#####################################"+1000);
 						break;
 					}
 //					}case RESC_SEARCH:{
@@ -348,7 +344,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 	}
 	
 	private void writeSerial(JSONMessage msg) {
-		String text=JSONMessage.fromWifMessageToJSON(msg);
+		String text=JSONMessage.fromMessageToJSON(msg);
 		writeSerial(text);
 	}
 	
@@ -430,11 +426,11 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 	private class OnReceiveFunction implements Function<String, Void> {
 		@Override
 		public Void apply(String t) {
-			JSONMessage msg=JSONMessage.fromJSONtoWifiMessage(t, JSONMessage.class);
+			JSONMessage msg=JSONMessage.fromJSONtoMessage(t, JSONMessage.class);
 			if(msg.getType()>=10&&msg.getType()<20) {
 				switch(msg.getType()) {
 					case 14:{
-						MotorStepsDoneMessage mmsg=(MotorStepsDoneMessage)JSONMessage.fromJSONtoWifiMessage(t, MotorStepsDoneMessage.class);
+						MotorStepsDoneMessage mmsg=(MotorStepsDoneMessage)JSONMessage.fromJSONtoMessage(t, MotorStepsDoneMessage.class);
 						if(mmsg.isDone()) {
 							switch(state) {
 								case LN_OBSTACLE_TURN1:{
@@ -496,7 +492,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 			else if(msg.getType()>=30&&msg.getType()<39) { 
 				switch(msg.getType()) {
 					case 31:{
-						UltraSonicResponse usmsg=(UltraSonicResponse)JSONMessage.fromJSONtoWifiMessage(t, UltraSonicResponse.class);
+						UltraSonicResponse usmsg=(UltraSonicResponse)JSONMessage.fromJSONtoMessage(t, UltraSonicResponse.class);
 						double distance=usmsg.getDistance();
 						
 						if(distance<getDoubleVal("ultrasonic_distance4obstacleCM")) {
@@ -526,7 +522,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 			new Thread(()->{
 				System.out.println(state.name());
 				doSleep(movefct.apply(null)+100);
-				onReceiveFunction.apply(JSONMessage.fromWifMessageToJSON(new MotorStepsDoneMessage(true))); //NO INTENTION 4 KEEPING THIS THAT BAD
+				onReceiveFunction.apply(JSONMessage.fromMessageToJSON(new MotorStepsDoneMessage(true))); //NO INTENTION 4 KEEPING THIS THAT BAD
 //				writeSerial(new MotorMessage.MotorStepsDoneMessage(true)); TODO: Uberlegen, ob mit Arduino kommuniziert werden soll, oder auf Zeit vertraut wird
 			}).start();
 		}

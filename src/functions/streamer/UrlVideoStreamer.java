@@ -3,7 +3,6 @@ package functions.streamer;
 import java.awt.Image;
 
 import database.ImageHandler;
-import parameters.IntegerParameter;
 import parameters.StringParameter;
 
 public class UrlVideoStreamer extends VideoStreamer {

@@ -20,11 +20,11 @@ public class JSONMessage {
 //    }
 
 
-    public static String fromWifMessageToJSON(JSONMessage wifimessage){
+    public static String fromMessageToJSON(JSONMessage wifimessage){
         return JSONParser.toJSON(wifimessage);
     }
 
-    public static JSONMessage fromJSONtoWifiMessage(String json, Type type){
+    public static JSONMessage fromJSONtoMessage(String json, Type type){
         Gson gson = new Gson();
         JSONMessage msg = gson.fromJson(json, type);
         return msg;
