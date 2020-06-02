@@ -9,7 +9,9 @@ import java.util.function.Function;
 import javax.swing.JPanel;
 
 import components.EditableLabel;
+import main.MatReceiver;
 import main.MatSender;
+import main.ParameterReceiver;
 import net.miginfocom.swing.MigLayout;
 import parameters.NumberParameter;
 import parameters.ParameterizedObject;
@@ -19,26 +21,31 @@ import view.MatReceiverPanel;
 
 import javax.swing.border.LineBorder;
 
+import org.opencv.core.Mat;
+
 public class RectangleParameterGroupPanel extends JPanel implements IParameterGroupPanel{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5918594102245381920L;
-	private List<ParameterNumberSliderPanel> parameterNumberSliderPanel_values=new ArrayList<>();
+	private List<ParameterNumberSliderPanel> slpnlvals=new ArrayList<>();
 	private RectangleParameterGroup rParamGroup;
-	private ParameterizedObject po;
 	private EditableLabel label;
 	private RectSelectionPanel rectPanel;
+	private MatReceiver matRcvr;
 	
 	/**
 	 * Create the panel.
 	 */
-	public RectangleParameterGroupPanel(RectangleParameterGroup rParamGroup, ParameterizedObject po) {
+	public RectangleParameterGroupPanel(RectangleParameterGroup rParamGroup) {
 		this.rParamGroup=rParamGroup;
-		this.po=po;
 		
 		setBorder(new LineBorder(new Color(0, 0, 0)));
 		initialize();
+	}
+	
+	public MatReceiver getMatRcvr() {
+		return matRcvr;
 	}
 
 	private void initialize() {
@@ -46,15 +53,25 @@ public class RectangleParameterGroupPanel extends JPanel implements IParameterGr
 		
 		label = new EditableLabel(rParamGroup.getName());
 		add(label, "cell 0 0 2 1,alignx center");
-		
-		JPanel pnl=null;
-		if(po instanceof MatSender) {
-			pnl=new MatEditFunctionMatsPanel((MatSender) po,"input");
-		}
+		JPanel pnl=(JPanel) (matRcvr=new MatReceiverPanel() {
+			private static final long serialVersionUID = -6585307938572848224L;
+
+			@Override
+			public void updateMat(Mat mat) {
+				super.updateMat(mat);
+				EventQueue.invokeLater(()->{
+					rectPanel.revalidate();
+					rectPanel.repaint();
+				});
+			}
+		});
 		rectPanel=new RectSelectionPanel(pnl);
 		rectPanel.setOnRectChanged((rect)->{
 			for(int i=0;i<rect.length;i++) {
-				parameterNumberSliderPanel_values.get(i).setValue(rect[i]*100, true);
+				ParameterNumberSliderPanel slpnl=slpnlvals.get(i);
+				double distance=slpnl.getMax().doubleValue()-slpnl.getMin().doubleValue();
+				double val=slpnl.getMin().doubleValue()+distance*(rect[i]);
+				slpnl.setValue(val, true);
 			}
 			return null;
 		});
@@ -78,22 +95,36 @@ public class RectangleParameterGroupPanel extends JPanel implements IParameterGr
 					switch(index) {
 						case 0: //x
 							if(r[0]+r[2]>1) {
-								parameterNumberSliderPanel_values.get(2).setValue(100*(1-r[0]), true);
+								ParameterNumberSliderPanel pnl=slpnlvals.get(2);
+								double distance=pnl.getMax().doubleValue()-pnl.getMin().doubleValue();
+								double val=pnl.getMin().doubleValue()+distance*(1-r[0]);
+								System.out.println(1-r[0]+" IST DER WERT");
+								System.out.println(val+" IST DER WERT");
+								pnl.setValue(val, true);
 							}
 							break;
 						case 1: //y
 							if(r[1]+r[3]>1) {
-								parameterNumberSliderPanel_values.get(3).setValue(100*(1-r[1]), true);
+								ParameterNumberSliderPanel pnl=slpnlvals.get(3);
+								double distance=pnl.getMax().doubleValue()-pnl.getMin().doubleValue();
+								double val=pnl.getMin().doubleValue()+distance*(1-r[1]);
+								pnl.setValue(val, true);
 							}
 							break;
 						case 2: //width
 							if(r[0]+r[2]>1) {
-								parameterNumberSliderPanel_values.get(0).setValue(100*(1-r[2]), true);
+								ParameterNumberSliderPanel pnl=slpnlvals.get(0);
+								double distance=pnl.getMax().doubleValue()-pnl.getMin().doubleValue();
+								double val=pnl.getMin().doubleValue()+distance*(1-r[2]);
+								pnl.setValue(val, true);
 							}
 							break;
 						case 3: //height
 							if(r[1]+r[3]>1) {
-								parameterNumberSliderPanel_values.get(1).setValue(100*(1-r[3]), true);
+								ParameterNumberSliderPanel pnl=slpnlvals.get(1);
+								double distance=pnl.getMax().doubleValue()-pnl.getMin().doubleValue();
+								double val=pnl.getMin().doubleValue()+distance*(1-r[3]);
+								pnl.setValue(val, true);
 							}
 							break;
 					}
@@ -113,7 +144,7 @@ public class RectangleParameterGroupPanel extends JPanel implements IParameterGr
 			ParameterNumberSliderPanel paramSldrpnl = new ParameterNumberSliderPanel((NumberParameter<?>) rParamGroup.getParameters().get(i));
 			add(paramSldrpnl, "cell "+i%2+" "+(2+i/2));
 			paramSldrpnl.declareOnSetValue(changeRectFunction);
-			parameterNumberSliderPanel_values.add(paramSldrpnl);
+			slpnlvals.add(paramSldrpnl);
 		}
 		
 		changeRectFunction.apply(null);		

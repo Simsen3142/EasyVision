@@ -29,11 +29,12 @@ public class CropImage extends MatEditFunction{
 	
 	@Override
 	protected Mat apply(Mat matIn) {
-		getMats().put("input",matIn.clone());
+		RectangleParameterGroup rectGr=((RectangleParameterGroup)getAllParameters().get("rect"));
+		rectGr.getMatReceiver().onReceive(matIn, this);
 		
 		int height=matIn.height();
 		int width=matIn.width();
-		Rect rect=((RectangleParameterGroup)getAllParameters().get("rect")).getRect(width, height);
+		Rect rect=rectGr.getRect(width, height);
 		return new Mat(matIn, rect);
 	}
 	

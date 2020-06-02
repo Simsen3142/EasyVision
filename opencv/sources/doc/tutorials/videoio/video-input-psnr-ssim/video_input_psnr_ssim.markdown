@@ -20,8 +20,8 @@ As a test case where to show off these using OpenCV I've created a small program
 video files and performs a similarity check between them. This is something you could use to check
 just how well a new video compressing algorithms works. Let there be a reference (original) video
 like [this small Megamind clip
-](https://github.com/opencv/opencv/tree/master/samples/data/Megamind.avi) and [a compressed
-version of it ](https://github.com/opencv/opencv/tree/master/samples/data/Megamind_bugy.avi).
+](https://github.com/opencv/opencv/tree/3.4/samples/data/Megamind.avi) and [a compressed
+version of it ](https://github.com/opencv/opencv/tree/3.4/samples/data/Megamind_bugy.avi).
 You may also find the source code and these video file in the
 `samples/data` folder of the OpenCV source library.
 
@@ -77,7 +77,7 @@ by the @ref cv::VideoCapture::read or the overloaded \>\> operator:
 @code{.cpp}
 Mat frameReference, frameUnderTest;
 captRefrnc >> frameReference;
-captUndTst.open(frameUnderTest);
+captUndTst.read(frameUnderTest);
 @endcode
 The upper read operations will leave empty the *Mat* objects if no frame could be acquired (either
 cause the video stream was closed or you got to the end of the video file). We can check this with a

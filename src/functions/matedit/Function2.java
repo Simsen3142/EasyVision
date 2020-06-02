@@ -5,6 +5,7 @@ import java.awt.Image;
 import org.opencv.core.Mat;
 
 import database.ImageHandler;
+import parameters.group.ConnectionParameterGroup;
 
 public class Function2 extends MatEditFunction {
 
@@ -16,7 +17,7 @@ public class Function2 extends MatEditFunction {
 
 	public Function2(Boolean empty) {}
 	
-	public Function2() {super();}
+	public Function2() {super(new ConnectionParameterGroup("group"));}
 
 	@Override
 	protected Mat apply(Mat matIn) {

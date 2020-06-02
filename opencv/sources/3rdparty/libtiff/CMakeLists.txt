@@ -244,7 +244,7 @@ mark_as_advanced(HAVE_IEEEFP)
 
 # Large file support
 if(UNIX OR MINGW)
-  if(ANDROID AND (ANDROID_NATIVE_API_LEVEL LESS 21) AND (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES Clang))
+  if(ANDROID AND (ANDROID_NATIVE_API_LEVEL LESS 21) AND CV_GCC)
     # Android NDK build problem: 'mmap' issue with GCC and API<21
   else()
     # This might not catch every possibility catered for by
@@ -294,6 +294,9 @@ set(PIXARLOG_SUPPORT FALSE)
 set(JPEG_SUPPORT FALSE)
 if(HAVE_JPEG)
   set(JPEG_SUPPORT TRUE)
+  if(TARGET ${JPEG_LIBRARY} AND DEFINED ${JPEG_LIBRARY}_BINARY_DIR)
+    include_directories("${${JPEG_LIBRARY}_BINARY_DIR}")
+  endif()
   include_directories(${JPEG_INCLUDE_DIR})
 endif()
 
@@ -411,10 +414,11 @@ set(lib_srcs
     tif_tile.c
     tif_version.c
     tif_warning.c
+    tif_webp.c
     tif_write.c
     tif_zip.c
+    tif_zstd.c
     tif_stream.cxx
-	snprintf.c
     t4.h
     tif_dir.h
     tif_fax3.h
@@ -429,6 +433,10 @@ set(lib_srcs
     "${CMAKE_CURRENT_BINARY_DIR}/tiffconf.h"
     )
 
+if(WIN32 AND NOT HAVE_SNPRINTF)
+  list(APPEND lib_srcs snprintf.c libport.h)
+endif()
+
 if(WIN32 AND NOT WINRT)
   list(APPEND lib_srcs tif_win32.c)
 else()
@@ -438,9 +446,10 @@ endif()
 ocv_warnings_disable(CMAKE_C_FLAGS -Wno-unused-but-set-variable -Wmissing-prototypes -Wmissing-declarations -Wundef -Wunused -Wsign-compare
                                    -Wcast-align -Wshadow -Wno-maybe-uninitialized -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
                                    -Wmisleading-indentation
+                                   -Wimplicit-fallthrough
 )
 ocv_warnings_disable(CMAKE_C_FLAGS -Wunused-parameter) # clang
-ocv_warnings_disable(CMAKE_CXX_FLAGS -Wmissing-declarations -Wunused-parameter
+ocv_warnings_disable(CMAKE_CXX_FLAGS -Wmissing-declarations -Wunused-parameter -Wmissing-prototypes
     -Wundef  # tiffiop.h: #if __clang_major__ >= 4
 )
 ocv_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4100 /wd4127 /wd4311 /wd4701 /wd4706) # vs2005
@@ -470,3 +479,5 @@ endif()
 if(NOT BUILD_SHARED_LIBS)
   ocv_install_target(${TIFF_LIBRARY} EXPORT OpenCVModules ARCHIVE DESTINATION ${OPENCV_3P_LIB_INSTALL_PATH} COMPONENT dev)
 endif()
+
+ocv_install_3rdparty_licenses(libtiff COPYRIGHT)

@@ -174,6 +174,7 @@ class CvVideoWriter_AVFoundation : public CvVideoWriter{
                 int is_color=1);
         ~CvVideoWriter_AVFoundation();
         bool writeFrame(const IplImage* image);
+        int getCaptureDomain() const CV_OVERRIDE { return cv::CAP_AVFOUNDATION; }
     private:
         IplImage* argbimage;
 
@@ -1190,7 +1191,7 @@ CvVideoWriter_AVFoundation::CvVideoWriter_AVFoundation(const char* filename, int
     NSError *error = nil;
 
 
-    // Make sure the file does not already exist. Necessary to overwirte??
+    // Make sure the file does not already exist. Necessary to overwrite??
     /*
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path]){
@@ -1232,7 +1233,7 @@ CvVideoWriter_AVFoundation::CvVideoWriter_AVFoundation(const char* filename, int
 
     if(mMovieWriter.status == AVAssetWriterStatusFailed){
         NSLog(@"%@", [mMovieWriter.error localizedDescription]);
-        // TODO: error handling, cleanup. Throw execption?
+        // TODO: error handling, cleanup. Throw exception?
         // return;
     }
 

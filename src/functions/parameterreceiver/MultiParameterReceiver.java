@@ -11,6 +11,7 @@ import parameters.BooleanParameter;
 import parameters.Parameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
+import parameters.ParameterizedObject;
 
 public abstract class MultiParameterReceiver<T extends Parameter<?>> extends ParameterRepresenter<T> {
 	
@@ -39,7 +40,7 @@ public abstract class MultiParameterReceiver<T extends Parameter<?>> extends Par
 	
 	public MultiParameterReceiver(ParameterObject...parameterObjects) {
 		super(parameterObjects);
-		Parameter<?> param=getParameter("paramname");
+		Parameter<?> param=(Parameter<?>) getParameter("paramname");
 		if(param!=null) {
 			param.setValue2("output");
 		}

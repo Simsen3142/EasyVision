@@ -38,8 +38,8 @@
 //
 //M*/
 
-#ifndef OPENCV_ML_HPP
-#define OPENCV_ML_HPP
+#ifndef OPENCV_OLD_ML_HPP
+#define OPENCV_OLD_ML_HPP
 
 #ifdef __cplusplus
 #  include "opencv2/core.hpp"
@@ -88,7 +88,7 @@ struct CvVectors
 #if 0
 /* A structure, representing the lattice range of statmodel parameters.
    It is used for optimizing statmodel parameters by cross-validation method.
-   The lattice is logarithmic, so <step> must be greater then 1. */
+   The lattice is logarithmic, so <step> must be greater than 1. */
 typedef struct CvParamLattice
 {
     double min_val;
@@ -158,7 +158,7 @@ protected:
 /* The structure, representing the grid range of statmodel parameters.
    It is used for optimizing statmodel accuracy by varying model parameters,
    the accuracy estimate being computed by cross-validation.
-   The grid is logarithmic, so <step> must be greater then 1. */
+   The grid is logarithmic, so <step> must be greater than 1. */
 
 class CvMLData;
 
@@ -2037,6 +2037,6 @@ template<> void DefaultDeleter<CvDTreeSplit>::operator ()(CvDTreeSplit* obj) con
 }
 
 #endif // __cplusplus
-#endif // OPENCV_ML_HPP
+#endif // OPENCV_OLD_ML_HPP
 
 /* End of file. */

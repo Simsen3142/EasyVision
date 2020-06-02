@@ -120,11 +120,11 @@ static bool openvx_LUT(Mat src, Mat dst, Mat _lut)
         lut.copyFrom(_lut);
         ivx::IVX_CHECK_STATUS(vxuTableLookup(ctx, ia, lut, ib));
     }
-    catch (ivx::RuntimeError & e)
+    catch (const ivx::RuntimeError& e)
     {
         VX_DbgThrow(e.what());
     }
-    catch (ivx::WrapperError & e)
+    catch (const ivx::WrapperError& e)
     {
         VX_DbgThrow(e.what());
     }
@@ -271,7 +271,7 @@ private:
 
 static bool ipp_lut(Mat &src, Mat &lut, Mat &dst)
 {
-    CV_INSTRUMENT_REGION_IPP()
+    CV_INSTRUMENT_REGION_IPP();
 
     int lutcn = lut.channels();
 
@@ -328,7 +328,7 @@ public:
         *ok = (func != NULL);
     }
 
-    void operator()( const cv::Range& range ) const
+    void operator()( const cv::Range& range ) const CV_OVERRIDE
     {
         CV_DbgAssert(*ok);
 
@@ -342,7 +342,7 @@ public:
         int lutcn = lut_.channels();
 
         const Mat* arrays[] = {&src, &dst, 0};
-        uchar* ptrs[2];
+        uchar* ptrs[2] = {};
         NAryMatIterator it(arrays, ptrs);
         int len = (int)it.size;
 
@@ -358,7 +358,7 @@ private:
 
 void cv::LUT( InputArray _src, InputArray _lut, OutputArray _dst )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     int cn = _src.channels(), depth = _src.depth();
     int lutcn = _lut.channels();
@@ -408,7 +408,7 @@ void cv::LUT( InputArray _src, InputArray _lut, OutputArray _dst )
     CV_Assert( func != 0 );
 
     const Mat* arrays[] = {&src, &dst, 0};
-    uchar* ptrs[2];
+    uchar* ptrs[2] = {};
     NAryMatIterator it(arrays, ptrs);
     int len = (int)it.size;
 

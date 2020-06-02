@@ -22,7 +22,6 @@ import main.ParameterReceiver;
 import parameters.BooleanParameter;
 import parameters.DoubleParameter;
 import parameters.ParameterObject;
-import parameters.ParameterizedObject;
 import parameters.group.ColorParameterGroup;
 import parameters.group.ParameterGroup;
 import parameters.group.ColorParameterGroup.ColorType;

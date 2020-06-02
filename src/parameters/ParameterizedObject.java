@@ -16,7 +16,7 @@ import main.ParameterReceiver;
 import parameters.group.ParameterGroup;
 import view.ParameterChangeDialog;
 
-public class ParameterizedObject implements Serializable {
+public class ParameterizedObject implements Serializable{
 	/**
 	 * 
 	 */
@@ -79,6 +79,10 @@ public class ParameterizedObject implements Serializable {
 		return parameters.get(paramFullName);
 	}
 	
+	public ParameterObject getParameter2(String paramFullName) {
+		return allParameters.get(paramFullName);
+	}
+	
 	public double getDoubleVal(String paramName) {
 		return ((NumberParameter<?>)(getParameter(paramName))).getValue().doubleValue();
 	}
@@ -96,12 +100,17 @@ public class ParameterizedObject implements Serializable {
 	}
 	
 	public boolean getBoolVal(String paramName) {
-		return ((BooleanParameter)(getParameter(paramName))).getValue();
+		BooleanParameter p=(BooleanParameter)(getParameter(paramName));
+		if(p==null)
+			return false;
+		return p.getValue();
 	}
 	
 	public Enum<?> getEnumVal(String paramName) {
 		return ((EnumParameter)(getParameter(paramName))).getValue();
 	}
+	
+	
 	
 	public Map<String,ParameterObject> getAllParameters(){
 		return allParameters;
@@ -156,7 +165,7 @@ public class ParameterizedObject implements Serializable {
 	}
 
 	
-	public <T extends ParameterReceiver> List<T> getParameterReceiverWhichExtend(Class<T> c) {
+	public <T> List<T> getParameterReceiverWhichExtend(Class<T> c) {
 		List<T> ret=new ArrayList<>();
 		for(ParameterReceiver paramRec:getParamReceivers()) {
 			if(c.isAssignableFrom(paramRec.getClass())) {

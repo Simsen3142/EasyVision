@@ -39,8 +39,7 @@ public class ParameterNumberSliderPanel extends JPanel {
 		 */
 		private static final long serialVersionUID = -310439884404868136L;
 		private Function<Graphics, Graphics> paint;
-
-
+		
 		public LabeledSlider() {
 			super();
 			setOpaque(false);
@@ -62,9 +61,11 @@ public class ParameterNumberSliderPanel extends JPanel {
 		@Override
 		public void setValue(int val) {
 			super.setValue(val);
+			System.out.println(getNrString(val)+"SETZ DES DOCJ");
 			lblVal.setText(getNrString(val));
 			
 			if(instance.getValue().intValue()!=val) {
+				System.out.println("NEIN");
 				instance.setValue(val);
 			}
 		}
@@ -175,7 +176,16 @@ public class ParameterNumberSliderPanel extends JPanel {
 		slider.setMaximum(parameter.getMaxValue().intValue());
 		add(slider, "cell 0 1 3 1,growx");
 		
-		this.setValue(parameter.getValue(),false);
+		if(parameter instanceof DoubleParameter) {
+			if(((DoubleParameter) parameter).isPercent()) {
+				slider.setMaximum(parameter.getMaxValue().intValue()*100);
+				this.setValue(parameter.getValue().doubleValue()*100,false);
+				System.out.println("SIASk");
+			}else {
+				this.setValue(parameter.getValue().doubleValue(),false);
+			}
+		}else
+			this.setValue(parameter.getValue(),false);
 	}
 	
 	
@@ -185,6 +195,14 @@ public class ParameterNumberSliderPanel extends JPanel {
 	
 	private void setValue(Number val) {
 		setValue(val,true);
+	}
+	
+	public Number getMin() {
+		return parameter.getMinValue();
+	}
+	
+	public Number getMax() {
+		return parameter.getMaxValue();
 	}
 	
 	public void setValue(Number val, boolean withParameter) {
@@ -197,7 +215,11 @@ public class ParameterNumberSliderPanel extends JPanel {
 		}
 		if(withParameter) {
 			if(parameter instanceof DoubleParameter) {
-				parameter.setValue(val.doubleValue());
+				if(((DoubleParameter) parameter).isPercent()) {
+					parameter.setValue(val.doubleValue()/100.0);
+				}else {
+					parameter.setValue(val.doubleValue());
+				}
 			}else {
 				parameter.setValue(val);
 			}
@@ -215,11 +237,18 @@ public class ParameterNumberSliderPanel extends JPanel {
 			}else {
 				text=String.format("%,.0f", getValue().doubleValue());
 			}
+			System.out.println("TEXT = "+text);
 			lblVal.setText(text);
 		}
 	}
 	
 	public Number getValue() {
+		if(parameter instanceof DoubleParameter) {
+			if(((DoubleParameter) parameter).isPercent()) {
+				return parameter.getValue().doubleValue()*100;
+			}
+			return parameter.getValue().doubleValue();
+		}
 		return parameter.getValue();
 	}
 	

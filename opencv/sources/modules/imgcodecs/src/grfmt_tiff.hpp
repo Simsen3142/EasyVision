@@ -90,26 +90,24 @@ enum TiffFieldType
 
 
 // libtiff based TIFF codec
-class TiffDecoder : public BaseImageDecoder
+class TiffDecoder CV_FINAL : public BaseImageDecoder
 {
 public:
     TiffDecoder();
-    virtual ~TiffDecoder();
+    virtual ~TiffDecoder() CV_OVERRIDE;
 
-    bool  readHeader();
-    bool  readData( Mat& img );
+    bool  readHeader() CV_OVERRIDE;
+    bool  readData( Mat& img ) CV_OVERRIDE;
     void  close();
-    bool  nextPage();
+    bool  nextPage() CV_OVERRIDE;
 
-    size_t signatureLength() const;
-    bool checkSignature( const String& signature ) const;
-    ImageDecoder newDecoder() const;
+    size_t signatureLength() const CV_OVERRIDE;
+    bool checkSignature( const String& signature ) const CV_OVERRIDE;
+    ImageDecoder newDecoder() const CV_OVERRIDE;
 
 protected:
-    void* m_tif;
+    cv::Ptr<void> m_tif;
     int normalizeChannelsNumber(int channels) const;
-    bool readData_32FC3(Mat& img);
-    bool readData_32FC1(Mat& img);
     bool m_hdr;
     size_t m_buf_pos;
 
@@ -119,19 +117,19 @@ private:
 };
 
 // ... and writer
-class TiffEncoder : public BaseImageEncoder
+class TiffEncoder CV_FINAL : public BaseImageEncoder
 {
 public:
     TiffEncoder();
-    virtual ~TiffEncoder();
+    virtual ~TiffEncoder() CV_OVERRIDE;
 
-    bool isFormatSupported( int depth ) const;
+    bool isFormatSupported( int depth ) const CV_OVERRIDE;
 
-    bool  write( const Mat& img, const std::vector<int>& params );
+    bool  write( const Mat& img, const std::vector<int>& params ) CV_OVERRIDE;
 
-    bool writemulti(const std::vector<Mat>& img_vec, const std::vector<int>& params);
+    bool writemulti(const std::vector<Mat>& img_vec, const std::vector<int>& params) CV_OVERRIDE;
 
-    ImageEncoder newEncoder() const;
+    ImageEncoder newEncoder() const CV_OVERRIDE;
 
 protected:
     void  writeTag( WLByteStream& strm, TiffTag tag,
@@ -139,8 +137,7 @@ protected:
                     int count, int value );
 
     bool writeLibTiff( const std::vector<Mat>& img_vec, const std::vector<int>& params );
-    bool write_32FC3( const Mat& img );
-    bool write_32FC1( const Mat& img );
+    bool write_32FC3_SGILOG(const Mat& img, void* tif);
 
 private:
     TiffEncoder(const TiffEncoder &); // copy disabled

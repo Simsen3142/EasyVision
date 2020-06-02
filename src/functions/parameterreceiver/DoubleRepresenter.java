@@ -38,6 +38,7 @@ public class DoubleRepresenter extends ParameterRepresenter<DoubleParameter> {
 		DoubleParameter param=getFirstFittingParameter(parameters, DoubleParameter.class, getStringVal("paramname"));
 		if(param != null) {
 			((DoubleParameter)getParameter("output")).setValue(param.getValue());
+			((StringParameter)getParameter("outputName")).setValue(param.getFullName());
 		}else {
 			((DoubleParameter)getParameter("output")).setValue(null);
 		}

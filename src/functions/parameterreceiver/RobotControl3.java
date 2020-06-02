@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import arduino.messages.JSONMessage;
-import arduino.messages.MotorMessage;
-import bluetooth.BluetoothHandler;
+import communication.bluetooth.BluetoothHandler;
+import communication.messages.JSONMessage;
+import communication.messages.MotorMessage;
 import database.ImageHandler;
 import functions.RepresentationIcon;
 import functions.Startable;

@@ -51,7 +51,7 @@ static char* icvYMLSkipSpaces( CvFileStorage* fs, char* ptr, int min_indent, int
                     CV_PARSE_ERROR( "Too long string or a last string w/o newline" );
             }
 
-            fs->lineno++;
+            fs->lineno++;  // FIXIT doesn't really work with long lines. It must be counted via '\n' or '\r' symbols, not the number of icvGets() calls.
         }
         else
             CV_PARSE_ERROR( *ptr == '\t' ? "Tabs are prohibited in YAML!" : "Invalid character" );
@@ -130,17 +130,11 @@ static char* icvYMLParseBase64(CvFileStorage* fs, char* ptr, int indent, CvFileN
         parser.flush();
     }
 
-    /* save as CvSeq */
-    int elem_size = ::icvCalcStructSize(dt.c_str(), 0);
-    if (total_byte_size % elem_size != 0)
-        CV_PARSE_ERROR("Byte size not match elememt size");
-    int elem_cnt = total_byte_size / elem_size;
-
     node->tag = CV_NODE_NONE;
     int struct_flags = CV_NODE_FLOW | CV_NODE_SEQ;
     /* after icvFSCreateCollection, node->tag == struct_flags */
     icvFSCreateCollection(fs, struct_flags, node);
-    base64::make_seq(binary_buffer.data(), elem_cnt, dt.c_str(), *node->data.seq);
+    base64::make_seq(fs, binary_buffer.data(), total_byte_size, dt.c_str(), *node->data.seq);
 
     if (fs->dummy_eof) {
         /* end of file */
@@ -331,6 +325,7 @@ force_int:
             CV_PARSE_ERROR( "Invalid numeric value (inconsistent explicit type specification?)" );
 
         ptr = endptr;
+        CV_PERSISTENCE_CHECK_END_OF_BUFFER_BUG();
     }
     else if( c == '\'' || c == '\"' ) // an explicit string
     {

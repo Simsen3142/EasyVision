@@ -13,8 +13,6 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 
-import com.google.common.reflect.Parameter;
-
 import database.ImageHandler;
 import diagramming.components.ParameterReceiverPanel;
 import functions.RepresentationIcon;
@@ -22,6 +20,8 @@ import main.ParameterReceiver;
 import parameters.BooleanParameter;
 import parameters.FileParameter;
 import parameters.IntegerParameter;
+import parameters.NumberParameter;
+import parameters.Parameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
@@ -52,11 +52,11 @@ public class NumberInBounceChecker extends ParameterRepresenter<BooleanParameter
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
 		try {
-			IntegerParameter countp=getFirstFittingParameter(parameters, IntegerParameter.class);
-			int c=countp.getValue();
+			NumberParameter<?> countp=getFirstFittingParameter(parameters, NumberParameter.class);
+			double c=countp.getValue().doubleValue();
 			
 			boolean inBounce=c>=getIntVal("mincount") && c <= getIntVal("maxcount");
-			getParameter("output").setValue2(inBounce);
+			((Parameter<?>)getParameter("output")).setValue2(inBounce);
 			
 			sendParameters();
 		}catch (Exception e) {

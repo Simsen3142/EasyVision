@@ -85,6 +85,7 @@ public class ParameterFileChoosePanel extends JPanel {
 					setValue(file);
 					if(onSetValue!=null)
 						onSetValue.apply(null);
+					System.out.println(file);
 				}else if(getValue()==null) {
 					onNoFileChosen.apply(instance);
 				}

@@ -31,20 +31,40 @@ public class ParameterGroup extends ParameterObject{
 		this.parameters = parameters;
 	}
 	
-	protected void addParameters(ParameterObject...parameters) {
+	public void addParameters(ParameterObject...parameters) {
 		addParameters(Arrays.asList(parameters));
 	}
 	
-	protected void addParameters(Collection<ParameterObject> parameters) {
+	public void addParameters(Collection<ParameterObject> parameters) {
 		for(ParameterObject param:parameters) {
-			param.setParamGroup(this);
 			this.parameters.add(param);
+			param.setParamGroup(this);
 		}
+	}
+	
+	public void removeParameters(ParameterObject...parameters) {
+		removeParameters(Arrays.asList(parameters));
+	}
+	
+	public void removeParameters(Collection<ParameterObject> parameters) {
+		for(ParameterObject param:parameters) {
+			boolean b=this.parameters.remove(param);
+			param.setParamGroup(null);
+		}
+	}
+	
+	public ParameterObject getParameterByName(String name) {
+		for(ParameterObject pObject:parameters) {
+			if(pObject.getName().equals(name))
+				return pObject;
+		}
+		return null;
 	}
 	
 	public ParameterGroup(String name, ParameterObject...parameters) {
 		this.name=name;
-		addParameters(parameters);
+		if(parameters!=null)
+			addParameters(parameters);
 	}
 
 	@Override

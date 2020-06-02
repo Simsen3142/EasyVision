@@ -16,8 +16,6 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.omg.Messaging.SyncScopeHelper;
-
 public class PictureEdit {
 	
 	public static ImageIcon changeNotTransparentToColor(ImageIcon ic, Color newC){

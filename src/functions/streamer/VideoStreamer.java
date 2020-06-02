@@ -120,10 +120,13 @@ public abstract class VideoStreamer extends MatStreamer {
 									}
 								}
 								System.gc();
+								Thread.sleep(10);
 							}else {
 								System.out.println("Camera not available");
 								break;
 							}
+						}catch (InterruptedException e) {
+							break;
 						}catch (Exception e) {
 							e.printStackTrace();
 						}

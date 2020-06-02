@@ -9,7 +9,6 @@ import org.opencv.core.Mat;
 
 import functions.UniqueFunction;
 import functions.matedit.MatEditFunction;
-import functions.matedit.multi.MultiMatEditFunction;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
@@ -153,4 +152,5 @@ public class MatSender extends ParameterizedObject implements UniqueFunction {
 	public int getId() {
 		return id;
 	}
+
 }

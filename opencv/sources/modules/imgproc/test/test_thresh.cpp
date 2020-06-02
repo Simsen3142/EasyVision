@@ -420,4 +420,27 @@ void CV_ThreshTest::prepare_to_validation( int /*test_case_idx*/ )
 
 TEST(Imgproc_Threshold, accuracy) { CV_ThreshTest test; test.safe_run(); }
 
+BIGDATA_TEST(Imgproc_Threshold, huge)
+{
+    Mat m(65000, 40000, CV_8U);
+    ASSERT_FALSE(m.isContinuous());
+
+    uint64 i, n = (uint64)m.rows*m.cols;
+    for( i = 0; i < n; i++ )
+        m.data[i] = (uchar)(i & 255);
+
+    cv::threshold(m, m, 127, 255, cv::THRESH_BINARY);
+    int nz = cv::countNonZero(m);  // FIXIT 'int' is not enough here (overflow is possible with other inputs)
+    ASSERT_EQ((uint64)nz, n / 2);
+}
+
+TEST(Imgproc_Threshold, regression_THRESH_TOZERO_IPP_16085)
+{
+    Size sz(16, 16);
+    Mat input(sz, CV_32F, Scalar::all(2));
+    Mat result;
+    cv::threshold(input, result, 2.0, 0.0, THRESH_TOZERO);
+    EXPECT_EQ(0, cv::norm(result, NORM_INF));
+}
+
 }} // namespace

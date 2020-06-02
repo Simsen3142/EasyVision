@@ -67,8 +67,19 @@ public abstract class NumberParameter<type extends Number> extends Parameter<typ
 				}else if(value.doubleValue()<=minValue.doubleValue()) {
 					value=minValue;
 				}
+			}else {
+				if(value.doubleValue()>=Double.MAX_VALUE) {
+					value=Double.MAX_VALUE;
+				}else if(value.doubleValue()<=Double.MIN_VALUE) {
+					value=Double.MIN_VALUE;
+				}
+			}
+			if(this instanceof DoubleParameter) {
+				value=value.doubleValue();
 			}
 			super.setValue((type)value);
 		}
 	}
+	
+	
 }

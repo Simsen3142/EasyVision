@@ -11,6 +11,8 @@ import javax.swing.BoxLayout;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.util.List;
+
 import javax.swing.border.EmptyBorder;
 
 public class ParameterGroupPanel extends JPanel implements IParameterGroupPanel {
@@ -40,7 +42,7 @@ public class ParameterGroupPanel extends JPanel implements IParameterGroupPanel 
 	
 	@Override
 	public void addChildren() {
-		for(ParameterObject paramObject:parameterGroup.getParameters()) {
+		for(ParameterObject paramObject:(List<ParameterObject>)parameterGroup.getParameters().clone()) {
 			this.add(paramObject.getComponent(po));
 		}
 	}

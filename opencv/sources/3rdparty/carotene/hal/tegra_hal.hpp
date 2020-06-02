@@ -1127,6 +1127,7 @@ inline int TEGRA_FILTERINIT(cvhalFilter2D **context, uchar *kernel_data, size_t 
         {
             std::memcpy(ctx->kernel_data + kernel_width * j, kernel_data + kernel_step * j, kernel_width * sizeof(int16_t));
         }
+        break;
     default:
         delete[] ctx->kernel_data;
         delete ctx;
@@ -1243,6 +1244,7 @@ inline int TEGRA_SEPFILTERINIT(cvhalFilter2D **context, int src_type, int dst_ty
         ctx->kernely_data[0]=((int16_t*)kernely_data)[0];
         ctx->kernely_data[1]=((int16_t*)kernely_data)[1];
         ctx->kernely_data[2]=((int16_t*)kernely_data)[2];
+        break;
     default:
         delete ctx;
         return CV_HAL_ERROR_NOT_IMPLEMENTED;
@@ -1531,7 +1533,7 @@ class TegraCvtColor_##name##_Invoker : public cv::ParallelLoopBody \
 public: \
     TegraCvtColor_##name##_Invoker(const uchar * src_data_, size_t src_step_, uchar * dst_data_, size_t dst_step_, int width_, int height_) : \
         cv::ParallelLoopBody(), src_data(src_data_), src_step(src_step_), dst_data(dst_data_), dst_step(dst_step_), width(width_), height(height_) {} \
-    virtual void operator()(const cv::Range& range) const \
+    virtual void operator()(const cv::Range& range) const CV_OVERRIDE \
     { \
         CAROTENE_NS::func(CAROTENE_NS::Size2D(width, range.end-range.start), __VA_ARGS__); \
     } \

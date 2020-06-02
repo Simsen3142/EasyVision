@@ -10,6 +10,11 @@ public class DoubleParameter extends NumberParameter<Double> {
 	 * 
 	 */
 	private static final long serialVersionUID = 2144654837832041278L;
+	private boolean isPercent=false;
+	
+	public boolean isPercent() {
+		return isPercent;
+	}
 
 	public DoubleParameter(String name, double value) {
 		super(name, value);
@@ -23,9 +28,20 @@ public class DoubleParameter extends NumberParameter<Double> {
 		super(name, value,min,max);
 	}
 	
+	public DoubleParameter(String name, double value, double min, double max, boolean isPercent) {
+		super(name, value,min,max);
+		this.isPercent=isPercent;
+	}
+	
 	@Override
 	public Double getValue() {
-		return value.doubleValue();
+		try {
+			return value.doubleValue();
+		}catch (ClassCastException e) {
+			if(isPercent)
+				return value.doubleValue()/100;
+			return value.doubleValue();
+		}
 	}
 	
 	@Override

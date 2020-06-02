@@ -218,6 +218,93 @@ TEST(Videoio_Video, ffmpeg_image) { CV_FFmpegReadImageTest test; test.safe_run()
 
 #if defined(HAVE_FFMPEG)
 
+typedef tuple<VideoCaptureAPIs, string, string, string, string, string> videoio_container_params_t;
+typedef testing::TestWithParam< videoio_container_params_t > videoio_container;
+
+TEST_P(videoio_container, read)
+{
+    const VideoCaptureAPIs api = get<0>(GetParam());
+
+    //if (!videoio_registry::hasBackend(api))
+    //    throw SkipTestException("Backend was not found");
+
+    const string path = get<1>(GetParam());
+    const string ext = get<2>(GetParam());
+    const string ext_raw = get<3>(GetParam());
+    const string codec = get<4>(GetParam());
+    const string pixelFormat = get<5>(GetParam());
+    const string fileName = path + "." + ext;
+    const string fileNameOut = tempfile(cv::format("test_container_stream.%s", ext_raw.c_str()).c_str());
+
+    // Write encoded video read using VideoContainer to tmp file
+    size_t totalBytes = 0;
+    {
+        VideoCapture container(findDataFile(fileName), api);
+        if (!container.isOpened())
+            throw SkipTestException("Video stream is not supported");
+        if (!container.set(CAP_PROP_FORMAT, -1))  // turn off video decoder (extract stream)
+            throw SkipTestException("Fetching of RAW video streams is not supported");
+        ASSERT_EQ(-1.f, container.get(CAP_PROP_FORMAT));  // check
+        EXPECT_EQ(codec, fourccToString((int)container.get(CAP_PROP_FOURCC)));
+        EXPECT_EQ(pixelFormat, fourccToString((int)container.get(CAP_PROP_CODEC_PIXEL_FORMAT)));
+
+        std::ofstream file(fileNameOut.c_str(), ios::out | ios::trunc | std::ios::binary);
+        Mat raw_data;
+        while (true)
+        {
+            container >> raw_data;
+            size_t size = raw_data.total();
+            if (raw_data.empty())
+                break;
+            ASSERT_EQ(CV_8UC1, raw_data.type());
+            ASSERT_LE(raw_data.dims, 2);
+            ASSERT_EQ(raw_data.rows, 1);
+            ASSERT_EQ((size_t)raw_data.cols, raw_data.total());
+            ASSERT_TRUE(raw_data.isContinuous());
+            totalBytes += size;
+            file.write(reinterpret_cast<char*>(raw_data.data), size);
+            ASSERT_FALSE(file.fail());
+        }
+        ASSERT_GE(totalBytes, (size_t)65536) << "Encoded stream is too small";
+    }
+
+    std::cout << "Checking extracted video stream: " << fileNameOut << " (size: " << totalBytes << " bytes)" << std::endl;
+
+    // Check decoded frames read from original media are equal to frames decoded from tmp file
+    {
+        VideoCapture capReference(findDataFile(fileName), api);
+        ASSERT_TRUE(capReference.isOpened());
+        VideoCapture capActual(fileNameOut.c_str(), api);
+        ASSERT_TRUE(capActual.isOpened());
+        Mat reference, actual;
+        int nframes = 0, n_err = 0;
+        while (capReference.read(reference) && n_err < 3)
+        {
+            nframes++;
+            ASSERT_TRUE(capActual.read(actual)) << nframes;
+            EXPECT_EQ(0, cvtest::norm(actual, reference, NORM_INF)) << "frame=" << nframes << " err=" << ++n_err;
+        }
+        ASSERT_GT(nframes, 0);
+    }
+
+    ASSERT_EQ(0, remove(fileNameOut.c_str()));
+}
+
+const videoio_container_params_t videoio_container_params[] =
+{
+    videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h264", "h264", "h264", "I420"),
+    videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h265", "h265", "hevc", "I420"),
+    videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "mjpg.avi", "mjpg", "MJPG", "I420"),
+    //videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h264.mkv", "mkv.h264", "h264", "I420"),
+    //videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h265.mkv", "mkv.h265", "hevc", "I420"),
+    //videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h264.mp4", "mp4.avc1", "avc1", "I420"),
+    //videoio_container_params_t(CAP_FFMPEG, "video/big_buck_bunny", "h265.mp4", "mp4.hev1", "hev1", "I420"),
+};
+
+INSTANTIATE_TEST_CASE_P(/**/, videoio_container, testing::ValuesIn(videoio_container_params));
+
+//==========================================================================
+
 //////////////////////////////// Parallel VideoWriters and VideoCaptures ////////////////////////////////////
 
 class CreateVideoWriterInvoker :
@@ -227,12 +314,12 @@ public:
     const static Size FrameSize;
     static std::string TmpDirectory;
 
-    CreateVideoWriterInvoker(std::vector<VideoWriter*>& _writers, std::vector<std::string>& _files) :
-        ParallelLoopBody(), writers(&_writers), files(&_files)
+    CreateVideoWriterInvoker(std::vector< cv::Ptr<VideoWriter> >& _writers, std::vector<std::string>& _files) :
+        writers(_writers), files(_files)
     {
     }
 
-    virtual void operator() (const Range& range) const
+    virtual void operator() (const Range& range) const CV_OVERRIDE
     {
         for (int i = range.start; i != range.end; ++i)
         {
@@ -240,16 +327,16 @@ public:
             stream << i << ".avi";
             std::string fileName = tempfile(stream.str().c_str());
 
-            files->operator[](i) = fileName;
-            writers->operator[](i) = new VideoWriter(fileName, CAP_FFMPEG, VideoWriter::fourcc('X','V','I','D'), 25.0f, FrameSize);
+            files[i] = fileName;
+            writers[i] = makePtr<VideoWriter>(fileName, CAP_FFMPEG, VideoWriter::fourcc('X','V','I','D'), 25.0f, FrameSize);
 
-            CV_Assert(writers->operator[](i)->isOpened());
+            CV_Assert(writers[i]->isOpened());
         }
     }
 
 private:
-    std::vector<VideoWriter*>* writers;
-    std::vector<std::string>* files;
+    std::vector< cv::Ptr<VideoWriter> >& writers;
+    std::vector<std::string>& files;
 };
 
 std::string CreateVideoWriterInvoker::TmpDirectory;
@@ -264,7 +351,7 @@ public:
     static const Scalar ObjectColor;
     static const Point Center;
 
-    WriteVideo_Invoker(const std::vector<VideoWriter*>& _writers) :
+    WriteVideo_Invoker(const std::vector< cv::Ptr<VideoWriter> >& _writers) :
         ParallelLoopBody(), writers(&_writers)
     {
     }
@@ -278,7 +365,7 @@ public:
         circle(frame, Center, i + 2, ObjectColor, 2, CV_AA);
     }
 
-    virtual void operator() (const Range& range) const
+    virtual void operator() (const Range& range) const CV_OVERRIDE
     {
         for (int j = range.start; j < range.end; ++j)
         {
@@ -304,7 +391,7 @@ protected:
     }
 
 private:
-    const std::vector<VideoWriter*>* writers;
+    const std::vector< cv::Ptr<VideoWriter> >* writers;
 };
 
 const Scalar WriteVideo_Invoker::ObjectColor(Scalar::all(0));
@@ -315,21 +402,21 @@ class CreateVideoCaptureInvoker :
     public ParallelLoopBody
 {
 public:
-    CreateVideoCaptureInvoker(std::vector<VideoCapture*>& _readers, const std::vector<std::string>& _files) :
+    CreateVideoCaptureInvoker(std::vector< cv::Ptr<VideoCapture> >& _readers, const std::vector<std::string>& _files) :
         ParallelLoopBody(), readers(&_readers), files(&_files)
     {
     }
 
-    virtual void operator() (const Range& range) const
+    virtual void operator() (const Range& range) const CV_OVERRIDE
     {
         for (int i = range.start; i != range.end; ++i)
         {
-            readers->operator[](i) = new VideoCapture(files->operator[](i), CAP_FFMPEG);
+            readers->operator[](i) = makePtr<VideoCapture>(files->operator[](i), CAP_FFMPEG);
             CV_Assert(readers->operator[](i)->isOpened());
         }
     }
 private:
-    std::vector<VideoCapture*>* readers;
+    std::vector< cv::Ptr<VideoCapture> >* readers;
     const std::vector<std::string>* files;
 };
 
@@ -337,16 +424,16 @@ class ReadImageAndTest :
     public ParallelLoopBody
 {
 public:
-    ReadImageAndTest(const std::vector<VideoCapture*>& _readers, cvtest::TS* _ts) :
+    ReadImageAndTest(const std::vector< cv::Ptr<VideoCapture> >& _readers, cvtest::TS* _ts) :
         ParallelLoopBody(), readers(&_readers), ts(_ts)
     {
     }
 
-    virtual void operator() (const Range& range) const
+    virtual void operator() (const Range& range) const CV_OVERRIDE
     {
         for (int j = range.start; j < range.end; ++j)
         {
-            VideoCapture* capture = readers->operator[](j);
+            VideoCapture* capture = readers->operator[](j).get();
             CV_Assert(capture != NULL);
             CV_Assert(capture->isOpened());
 
@@ -357,6 +444,8 @@ public:
 
             for (unsigned int i = 0; i < frameCount && next; ++i)
             {
+                SCOPED_TRACE(cv::format("frame=%d/%d", (int)i, (int)frameCount));
+
                 Mat actual;
                 (*capture) >> actual;
 
@@ -392,7 +481,7 @@ public:
     static bool next;
 
 private:
-    const std::vector<VideoCapture*>* readers;
+    const std::vector< cv::Ptr<VideoCapture> >* readers;
     cvtest::TS* ts;
 };
 
@@ -404,7 +493,7 @@ TEST(Videoio_Video_parallel_writers_and_readers, accuracy)
     cvtest::TS* ts = cvtest::TS::ptr();
 
     // creating VideoWriters
-    std::vector<VideoWriter*> writers(threadsCount);
+    std::vector< cv::Ptr<VideoWriter> > writers(threadsCount);
     Range range(0, threadsCount);
     std::vector<std::string> files(threadsCount);
     CreateVideoWriterInvoker invoker1(writers, files);
@@ -414,11 +503,9 @@ TEST(Videoio_Video_parallel_writers_and_readers, accuracy)
     parallel_for_(range, WriteVideo_Invoker(writers));
 
     // deleting the writers
-    for (std::vector<VideoWriter*>::iterator i = writers.begin(), end = writers.end(); i != end; ++i)
-        delete *i;
     writers.clear();
 
-    std::vector<VideoCapture*> readers(threadsCount);
+    std::vector<cv::Ptr<VideoCapture> > readers(threadsCount);
     CreateVideoCaptureInvoker invoker2(readers, files);
     parallel_for_(range, invoker2);
 
@@ -435,8 +522,7 @@ TEST(Videoio_Video_parallel_writers_and_readers, accuracy)
     }
 
     // delete the readers
-    for (std::vector<VideoCapture *>::iterator i = readers.begin(), end = readers.end(); i != end; ++i)
-        delete *i;
+    readers.clear();
 }
 
 #endif

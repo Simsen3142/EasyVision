@@ -5,7 +5,7 @@
 # - https://wiki.debian.org/Hardening
 # - https://wiki.gentoo.org/wiki/Hardened/Toolchain
 # - https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks
-
+# - https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/BufferOverflows.html
 
 set(OPENCV_LINKER_DEFENSES_FLAGS_COMMON "")
 
@@ -44,7 +44,13 @@ if(MSVC)
   if(NOT X86_64)
     set(OPENCV_LINKER_DEFENSES_FLAGS_COMMON "${OPENCV_LINKER_DEFENSES_FLAGS_COMMON} /safeseh")
   endif()
-elseif(CMAKE_COMPILER_IS_GNUCXX)
+elseif(CV_CLANG)
+  ocv_add_defense_compiler_flag("-fstack-protector-strong")
+  ocv_add_defense_compiler_flag_release("-D_FORTIFY_SOURCE=2")
+  if (NOT APPLE)
+    set(OPENCV_LINKER_DEFENSES_FLAGS_COMMON "${OPENCV_LINKER_DEFENSES_FLAGS_COMMON} -z noexecstack -z relro -z now" )
+  endif()
+elseif(CV_GCC)
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
     ocv_add_defense_compiler_flag("-fstack-protector")
   else()
@@ -71,7 +77,7 @@ else()
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CV_GCC OR CV_CLANG)
     if(NOT CMAKE_CXX_FLAGS MATCHES "-fPIC")
       ocv_add_defense_compiler_flag("-fPIC")
     endif()
@@ -82,7 +88,7 @@ set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OPENCV_LINKER_DEF
 set( CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OPENCV_LINKER_DEFENSES_FLAGS_COMMON}" )
 set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OPENCV_LINKER_DEFENSES_FLAGS_COMMON}" )
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CV_GCC OR CV_CLANG)
   foreach(flags
           CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_DEBUG
           CMAKE_C_FLAGS CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_DEBUG)

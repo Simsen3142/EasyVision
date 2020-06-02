@@ -43,6 +43,7 @@
 
 #include "precomp.hpp"
 #include <opencv2/core/utils/configuration.private.hpp>
+#include <opencv2/core/hal/hal.hpp>
 
 ////////////////////////////////////////// kmeans ////////////////////////////////////////////
 
@@ -65,7 +66,7 @@ public:
         tdist2(tdist2_), data(data_), dist(dist_), ci(ci_)
     { }
 
-    void operator()( const cv::Range& range ) const
+    void operator()( const cv::Range& range ) const CV_OVERRIDE
     {
         CV_TRACE_FUNCTION();
         const int begin = range.start;
@@ -74,7 +75,7 @@ public:
 
         for (int i = begin; i<end; i++)
         {
-            tdist2[i] = std::min(normL2Sqr(data.ptr<float>(i), data.ptr<float>(ci), dims), dist[i]);
+            tdist2[i] = std::min(hal::normL2Sqr_(data.ptr<float>(i), data.ptr<float>(ci), dims), dist[i]);
         }
     }
 
@@ -106,7 +107,7 @@ static void generateCentersPP(const Mat& data, Mat& _out_centers,
 
     for (int i = 0; i < N; i++)
     {
-        dist[i] = normL2Sqr(data.ptr<float>(i), data.ptr<float>(centers[0]), dims);
+        dist[i] = hal::normL2Sqr_(data.ptr<float>(i), data.ptr<float>(centers[0]), dims);
         sum0 += dist[i];
     }
 
@@ -128,7 +129,7 @@ static void generateCentersPP(const Mat& data, Mat& _out_centers,
 
             parallel_for_(Range(0, N),
                           KMeansPPDistanceComputer(tdist2, data, dist, ci),
-                          divUp(dims * N, CV_KMEANS_PARALLEL_GRANULARITY));
+                          (double)divUp((size_t)(dims * N), CV_KMEANS_PARALLEL_GRANULARITY));
             double s = 0;
             for (int i = 0; i < N; i++)
             {
@@ -142,6 +143,8 @@ static void generateCentersPP(const Mat& data, Mat& _out_centers,
                 std::swap(tdist, tdist2);
             }
         }
+        if (bestCenter < 0)
+            CV_Error(Error::StsNoConv, "kmeans: can't update cluster center (check input for huge or NaN values)");
         centers[k] = bestCenter;
         sum0 = bestSum;
         std::swap(dist, tdist);
@@ -171,7 +174,7 @@ public:
     {
     }
 
-    void operator()( const Range& range ) const
+    void operator()(const Range& range) const CV_OVERRIDE
     {
         CV_TRACE_FUNCTION();
         const int begin = range.start;
@@ -185,7 +188,7 @@ public:
             if (onlyDistance)
             {
                 const float* center = centers.ptr<float>(labels[i]);
-                distances[i] = normL2Sqr(sample, center, dims);
+                distances[i] = hal::normL2Sqr_(sample, center, dims);
                 continue;
             }
             else
@@ -196,7 +199,7 @@ public:
                 for (int k = 0; k < K; k++)
                 {
                     const float* center = centers.ptr<float>(k);
-                    const double dist = normL2Sqr(sample, center, dims);
+                    const double dist = hal::normL2Sqr_(sample, center, dims);
 
                     if (min_dist > dist)
                     {
@@ -227,7 +230,7 @@ double cv::kmeans( InputArray _data, int K,
                    TermCriteria criteria, int attempts,
                    int flags, OutputArray _centers )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
     const int SPP_TRIALS = 3;
     Mat data0 = _data.getMat();
     const bool isrow = data0.rows == 1;
@@ -237,7 +240,7 @@ double cv::kmeans( InputArray _data, int K,
 
     attempts = std::max(attempts, 1);
     CV_Assert( data0.dims <= 2 && type == CV_32F && K > 0 );
-    CV_Assert( N >= K );
+    CV_CheckGE(N, K, "Number of clusters should be more than number of elements");
 
     Mat data(N, dims, CV_32F, data0.ptr(), isrow ? dims * sizeof(float) : static_cast<size_t>(data0.step));
 
@@ -330,7 +333,7 @@ double cv::kmeans( InputArray _data, int K,
                 else
                 {
                     for (int k = 0; k < K; k++)
-                        generateRandomCenter(dims, box, centers.ptr<float>(k), rng);
+                        generateRandomCenter(dims, box.data(), centers.ptr<float>(k), rng);
                 }
             }
             else
@@ -379,7 +382,7 @@ double cv::kmeans( InputArray _data, int K,
                         if (labels[i] != max_k)
                             continue;
                         const float* sample = data.ptr<float>(i);
-                        double dist = normL2Sqr(sample, _base_center, dims);
+                        double dist = hal::normL2Sqr_(sample, _base_center, dims);
 
                         if (max_dist <= dist)
                         {
@@ -429,14 +432,14 @@ double cv::kmeans( InputArray _data, int K,
             if (isLastIter)
             {
                 // don't re-assign labels to avoid creation of empty clusters
-                parallel_for_(Range(0, N), KMeansDistanceComputer<true>(dists, labels, data, centers), divUp(dims * N, CV_KMEANS_PARALLEL_GRANULARITY));
+                parallel_for_(Range(0, N), KMeansDistanceComputer<true>(dists.data(), labels, data, centers), (double)divUp((size_t)(dims * N), CV_KMEANS_PARALLEL_GRANULARITY));
                 compactness = sum(Mat(Size(N, 1), CV_64F, &dists[0]))[0];
                 break;
             }
             else
             {
                 // assign labels
-                parallel_for_(Range(0, N), KMeansDistanceComputer<false>(dists, labels, data, centers), divUp(dims * N * K, CV_KMEANS_PARALLEL_GRANULARITY));
+                parallel_for_(Range(0, N), KMeansDistanceComputer<false>(dists.data(), labels, data, centers), (double)divUp((size_t)(dims * N * K), CV_KMEANS_PARALLEL_GRANULARITY));
             }
         }
 

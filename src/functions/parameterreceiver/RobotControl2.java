@@ -14,7 +14,7 @@ import javax.sound.sampled.LineListener;
 
 import com.google.common.reflect.Parameter;
 
-import bluetooth.BluetoothHandler;
+import communication.bluetooth.BluetoothHandler;
 import database.ImageHandler;
 import diagramming.components.ParameterReceiverPanel;
 import functions.RepresentationIcon;

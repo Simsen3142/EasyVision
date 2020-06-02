@@ -37,6 +37,7 @@ public class IntegerRepresenter extends ParameterRepresenter<IntegerParameter> {
 		IntegerParameter param=getFirstFittingParameter(parameters, IntegerParameter.class, getStringVal("paramname"));
 		if(param != null) {
 			((IntegerParameter)getParameter("output")).setValue(param.getValue());
+			((StringParameter)getParameter("outputName")).setValue(param.getFullName());
 		}else {
 			((IntegerParameter)getParameter("output")).setValue(null);
 		}

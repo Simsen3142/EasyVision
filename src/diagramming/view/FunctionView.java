@@ -1,14 +1,8 @@
 package diagramming.view;
 
-import java.awt.Image;
-import java.lang.reflect.InvocationTargetException;
-
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import database.ImageHandler;
-import functions.RepresentationIcon;
-import parameters.ParameterizedObject;
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -19,6 +13,10 @@ import java.awt.Graphics;
 
 public class FunctionView extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3532617669536005563L;
 	private String text;
 	private ImageIcon icon;
 	private JLabel lblText;

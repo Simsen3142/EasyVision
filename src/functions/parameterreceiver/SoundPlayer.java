@@ -8,22 +8,25 @@ import java.util.function.Function;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 
-import com.google.common.reflect.Parameter;
-
 import database.ImageHandler;
-import diagramming.components.ParameterReceiverPanel;
 import functions.RepresentationIcon;
 import main.ParameterReceiver;
 import parameters.BooleanParameter;
+import parameters.DoubleParameter;
 import parameters.FileParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
 public class SoundPlayer extends ParameterizedObject implements ParameterReceiver, RepresentationIcon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -121142849026468236L;
 	private int id=System.identityHashCode(this);
 	
 	private transient volatile boolean alreadyPlaying=false;
@@ -45,22 +48,28 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 	}
 	
 	public SoundPlayer() {
-		super(new FileParameter("soundfile", new File("res/sounds/alarm1.wav")));
+		super(
+			new DoubleParameter("volume", 0.5, 0, 1, true),
+			new FileParameter("soundfile", new File("res/sounds/alarm1.wav"))
+		);
 	}
 
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
-		Boolean b=getFirstFittingParameter(parameters, BooleanParameter.class).getValue();
-		if(b!=null && b) {
+		DoubleParameter d=getFirstFittingParameter(parameters, DoubleParameter.class);
+		if(d!=null) {
+			((DoubleParameter)getParameter("volume")).setValue(d.getValue());
+		}
+		BooleanParameter b=getFirstFittingParameter(parameters, BooleanParameter.class);
+		if(b!=null && b.getValue()) {
 			if(!alreadyPlaying) {
 				Object lock=new Object();
 				alreadyPlaying=true;
 				
-				playSound(getFileVal("soundfile"),lock);
+				playSound(getFileVal("soundfile"),lock,getDoubleVal("volume"));
 				
 				new Thread(()-> {
 					try {
-						System.out.println("WAITING...");
 						synchronized(lock) {
 							lock.wait();
 						}
@@ -72,7 +81,7 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 		}
 	}
 	
-	public static synchronized void playSound(File file, Object lock) {
+	public static synchronized void playSound(File file, Object lock, double volume) {
 		new Thread(new Runnable() { // the wrapper thread is unnecessary, unless it blocks on the Clip finishing,
 									// see comments
 			public void run() {
@@ -81,6 +90,7 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 					AudioInputStream inputStream = AudioSystem
 							.getAudioInputStream(file.getAbsoluteFile());
 					clip.open(inputStream);
+					setVolume(volume,clip);
 					clip.start();
 					clip.addLineListener(new LineListener() {
 						
@@ -137,5 +147,12 @@ public class SoundPlayer extends ParameterizedObject implements ParameterReceive
 			Image img=getRepresentationImage();
 			onReceive.apply(img);
 		}).start();
+	}
+	
+	public static void setVolume(double d, Clip clip) {
+	    if (d < 0f || d > 1f)
+	        throw new IllegalArgumentException("Volume not valid: " + d);
+	    FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
+	    gainControl.setValue(20f * (float) Math.log10(d));
 	}
 }

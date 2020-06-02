@@ -7,5 +7,5 @@ import parameters.ParameterObject;
 import parameters.ParameterizedObject;
 
 public interface ParameterReceiver extends UniqueFunction {
-	public void onParameterReceived(Map<String,ParameterObject> parameters, ParameterizedObject sender);
+	public void onParameterReceived(Map<String,ParameterObject> parameters, ParameterizedObject parameterizedObjectNonSerializable);
 }

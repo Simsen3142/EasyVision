@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -23,12 +24,15 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 	private transient boolean saving=false;
 	private transient Mat m;
 	private static volatile Image img;
+	private static SimpleDateFormat sdfDate;
+
 	
 	public PhotoSaver(Boolean empty) {
 	}
 	
 	public PhotoSaver() {
 		super(new FileParameter("file", null),
+				new BooleanParameter("feedback", true),
 				new BooleanParameter("addtimestamp", false));
 	}
 	
@@ -43,6 +47,9 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 	@Override
 	public void start() {
 		saving=true;
+		if(sdfDate==null) {
+			sdfDate=new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss,SSS");
+		}
 		try {
 			File f=getFileVal("file");
 			if(f==null) {
@@ -65,15 +72,12 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 					
 					String before=s.substring(0, s.indexOf("."));
 					String after=s.substring(s.indexOf("."), s.length());
-					String tstmp=new Timestamp(System.currentTimeMillis()).toString();
-					tstmp=tstmp.substring(0,tstmp.indexOf("."));
-					tstmp=tstmp.replace(":", "-");
-					tstmp=tstmp.replace(" ", "_");
+					String tstmp=sdfDate.format(System.currentTimeMillis());
 					
 					s=before+" - "+tstmp+after;
 				}
 				
-				if(new File(s).exists()) {
+				if(new File(s).exists() && getBoolVal("feedback")) {
 					Object options[]= {"yes","no"};
 					int option=JOptionPane.showOptionDialog(null, "Do you want to override the file?", "File already exists", JOptionPane.YES_NO_OPTION, 
 							JOptionPane.INFORMATION_MESSAGE, null, options, JOptionPane.NO_OPTION);
@@ -84,7 +88,9 @@ public class PhotoSaver extends MatEditFunction implements Startable {
 					}
 				}else {
 					Imgcodecs.imwrite(s, m);
-					JOptionPane.showMessageDialog(null, "Photo saved", "Completed", JOptionPane.INFORMATION_MESSAGE);
+					if(getBoolVal("feedback")) {
+						JOptionPane.showMessageDialog(null, "Photo saved", "Completed", JOptionPane.INFORMATION_MESSAGE);
+					}
 				}
 			}
 		}catch (Exception e) {

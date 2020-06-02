@@ -44,21 +44,23 @@ public class ParameterStringPanel extends JPanel {
 		add(lblTitle, "cell 0 0,growx,aligny center");
 		
 		lblValue = new EditableLabel(parameter.getValue());
-		lblValue.setEditable(true,
-			(txts)->{
-				String newText=txts[0];
-				
-				int max=parameter.getMaxLength();
-				int min=parameter.getMinLength();
-				boolean limitMax=max>0;
-				boolean limitMin=min>=0;
-				if((newText.length()<=max || !limitMax) && (newText.length()>=min || !limitMin)) {
-					setValue(newText);
-					return newText;
-				} else
-					return txts[1];
-			}
-		);
+		if(parameter.isEditable()) {
+			lblValue.setEditable(true,
+				(txts)->{
+					String newText=txts[0];
+					
+					int max=parameter.getMaxLength();
+					int min=parameter.getMinLength();
+					boolean limitMax=max>0;
+					boolean limitMin=min>=0;
+					if((newText.length()<=max || !limitMax) && (newText.length()>=min || !limitMin)) {
+						setValue(newText);
+						return newText;
+					} else
+						return txts[1];
+				}
+			);
+		}
 		add(lblValue, "cell 1 0,grow");
 
 	}

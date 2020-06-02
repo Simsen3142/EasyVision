@@ -59,7 +59,8 @@ public class ContourCenterDetection extends MatEditFunction {
 			}
 		}
 		//crop
-		Rect cropRect=((RectangleParameterGroup)getAllParameters().get("rect")).getRect(width, height);
+		RectangleParameterGroup rectGr=((RectangleParameterGroup)getAllParameters().get("rect"));
+		Rect cropRect=rectGr.getRect(width, height);
 		if(bestRect!=null) {
 			Point p=new Point(bestRect.x+bestRect.width/2,bestRect.y+bestRect.height/2);
 			if(p.x<cropRect.x) {
@@ -88,7 +89,7 @@ public class ContourCenterDetection extends MatEditFunction {
 			DoubleParameter outY=(DoubleParameter) getParameter("outputY");
 			outY.setValue(constrain(outdy,-1,1));
 			Imgproc.line(matOut, new Point(0,p.y), new Point(width,p.y), new Scalar(200),5);
-			getMats().put("input",matOut.clone());
+			rectGr.getMatReceiver().onReceive(matOut.clone(), this);
 		}
 		matOut= new Mat(matOut, cropRect);
 		

@@ -112,6 +112,7 @@ public class RectSelectionPanel extends MultiLayeredPanel {
 	 */
 	public RectSelectionPanel(JPanel pnlBackgrnd) {
 		this.pnlBack=pnlBackgrnd;
+		
 		RectDragListener listener=new RectDragListener();
 		rect=new double[] {0,0,1,1};
 		rectPanel=new JPanel() {
@@ -154,7 +155,7 @@ public class RectSelectionPanel extends MultiLayeredPanel {
 		rectPanel.addMouseMotionListener(listener);
 		rectPanel.setBorder(new LineBorder(Color.BLACK));
 		this.addLayers(rectPanel);
-		this.add(rectPanel);
+		this.add(rectPanel,0);
 		
 		initialize();
 	}
@@ -162,11 +163,13 @@ public class RectSelectionPanel extends MultiLayeredPanel {
 	protected void initialize() {
 //		this.setLayout(new BorderLayout());
 		if(pnlBack!=null) {
-			this.add(pnlBack);
+			this.add(pnlBack,1);
 			this.addLayers(pnlBack);
 		}
-		
 		rectPanel.setOpaque(false);
+		
+		setLayer(pnlBack,1);
+		setLayer(rectPanel,2);
 	}
 	
 	private int[][] getInterestingPoints(){

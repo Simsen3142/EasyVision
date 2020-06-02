@@ -2,6 +2,7 @@ package functions.streamer;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.Serializable;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -30,6 +31,8 @@ public class PictureStreamer extends MatStreamer {
 	public PictureStreamer() {
 		this(new File("res/EVLogo.jpg"));
 	}
+	
+	
 	public PictureStreamer(File file) {
 		super(file.getAbsolutePath());
 		this.addParameters(new FileParameter("file", file),
@@ -78,7 +81,6 @@ public class PictureStreamer extends MatStreamer {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-							
 							System.gc();
 						}else {
 							if(getBoolVal("endless_endless")) {

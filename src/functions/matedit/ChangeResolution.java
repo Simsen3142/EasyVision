@@ -10,6 +10,7 @@ import org.opencv.imgproc.Imgproc;
 
 import database.ImageHandler;
 import parameters.IntegerParameter;
+import parameters.group.ConnectionParameterGroup;
 import parameters.group.ParameterGroup;
 
 public class ChangeResolution extends MatEditFunction {

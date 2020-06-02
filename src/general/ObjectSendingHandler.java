@@ -1,5 +1,9 @@
 package general;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,5 +18,11 @@ public class ObjectSendingHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void writeToClipboard(String text) {
+		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection data=new StringSelection(text);
+		c.setContents(data, null);
 	}
 }

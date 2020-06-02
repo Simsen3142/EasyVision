@@ -18,6 +18,7 @@ import functions.Startable;
 import main.MatSender;
 import parameters.BooleanParameter;
 import parameters.IntegerParameter;
+import parameters.ParameterObject;
 import parameters.group.ParameterGroup;
 
 public abstract class MatStreamer extends MatSender implements RepresentationIcon, Startable {
@@ -76,6 +77,11 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 		initStreamThread();
 	}
 	
+	protected MatStreamer(ParameterObject...parameters) {
+		super(parameters);
+		initStreamThread();
+	}
+	
 	public MatStreamer(String resource) {
 		this((Object)resource);
 	}
@@ -110,7 +116,8 @@ public abstract class MatStreamer extends MatSender implements RepresentationIco
 	@Override
 	protected void sendMat(Mat mat) {
 		if(!getBoolVal("color")) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+			if(mat.channels()>1)
+				Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
 		}
 		super.sendMat(mat);
 	}

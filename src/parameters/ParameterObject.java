@@ -47,6 +47,29 @@ public abstract class ParameterObject implements Serializable{
 	}
 	
 	public abstract JComponent getComponent(ParameterizedObject po);
-	
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getFullName() == null) ? 0 : getFullName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ParameterObject other = (ParameterObject) obj;
+		if (getFullName() == null) {
+			if (other.getFullName() != null)
+				return false;
+		} else if (!getFullName().equals(other.getFullName()))
+			return false;
+		return true;
+	}
 }

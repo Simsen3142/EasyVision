@@ -10,6 +10,8 @@ import org.opencv.imgproc.Imgproc;
 
 import database.ImageHandler;
 import parameters.BooleanParameter;
+import parameters.DoubleParameter;
+import parameters.IntegerParameter;
 
 public class EdgeDetection extends MatEditFunction {
 	/**
@@ -19,7 +21,12 @@ public class EdgeDetection extends MatEditFunction {
 	private static volatile Image img;
 
 	public EdgeDetection() {
-		super(new BooleanParameter("withcolor", true));
+		super(
+			new DoubleParameter("threshold1", 150,0,5000),
+			new DoubleParameter("threshold2", 200,0,5000),
+			new IntegerParameter("apertureSize", 3,3,7),
+			new BooleanParameter("withcolor", true)
+		);
 	}
 	
 	public EdgeDetection(Boolean empty) {}
@@ -32,7 +39,7 @@ public class EdgeDetection extends MatEditFunction {
     	if(grayImage.channels()>1)
     		Imgproc.cvtColor(grayImage, grayImage, Imgproc.COLOR_BGR2GRAY);
     	Imgproc.blur(grayImage, detectedEdges, new Size(3, 3));
-        Imgproc.Canny(detectedEdges, detectedEdges, 150, 200,3, true);
+        Imgproc.Canny(detectedEdges, detectedEdges, getDoubleVal("threshold1"), getDoubleVal("threshold2"),getIntVal("apertureSize"), true);
         
         if(getBoolVal("withcolor")) {
 	        Mat dest = new Mat();

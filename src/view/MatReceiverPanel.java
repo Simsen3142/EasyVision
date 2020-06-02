@@ -4,6 +4,10 @@ import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 import org.opencv.core.*;
@@ -24,10 +28,17 @@ public class MatReceiverPanel extends MatPanel implements MatReceiver {
 	 * @wbp.parser.constructor
 	 */
 	public MatReceiverPanel(MatSender sender) {
+		setSender(sender);
+	}
+	
+	public MatReceiverPanel() {
+	}
+	
+	public void setSender(MatSender sender) {
 		this.sender = sender;
 		sender.addMatReceiver(this);
 	}
-	
+
 	public MatReceiverPanel(BufferedImage img) {
 		image = img;
 	}
@@ -44,5 +55,4 @@ public class MatReceiverPanel extends MatPanel implements MatReceiver {
 	public void stop() {
 		sender.removeMatReceiver(this);
 	}
-	
 }

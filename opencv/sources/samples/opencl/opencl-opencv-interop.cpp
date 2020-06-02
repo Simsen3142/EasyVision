@@ -14,9 +14,12 @@
 #include <iomanip>
 #include <stdexcept>
 
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #define CL_USE_DEPRECATED_OPENCL_2_0_APIS // eliminate build warning
 
 #ifdef __APPLE__
+#define CL_SILENCE_DEPRECATION
 #include <OpenCL/cl.h>
 #else
 #include <CL/cl.h>
@@ -674,7 +677,7 @@ int App::initVideoSource()
             throw std::runtime_error(std::string("specify video source"));
     }
 
-    catch (std::exception e)
+    catch (const std::exception e)
     {
         cerr << "ERROR: " << e.what() << std::endl;
         return -1;
@@ -700,7 +703,7 @@ int App::process_frame_with_open_cl(cv::Mat& frame, bool use_buffer, cl_mem* mem
     if (0 == mem || 0 == m_img_src)
     {
         // allocate/delete cl memory objects every frame for the simplicity.
-        // in real applicaton more efficient pipeline can be built.
+        // in real application more efficient pipeline can be built.
 
         if (use_buffer)
         {

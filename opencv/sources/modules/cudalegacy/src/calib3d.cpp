@@ -160,7 +160,7 @@ namespace
                   num_points(num_points_), subset_size(subset_size_), rot_matrices(rot_matrices_),
                   transl_vectors(transl_vectors_) {}
 
-        void operator()(const Range& range) const
+        void operator()(const Range& range) const CV_OVERRIDE
         {
             // Input data for generation of the current hypothesis
             std::vector<int> subset_indices(subset_size);
@@ -181,7 +181,7 @@ namespace
                    image_subset(0, i) = image->at<Point2f>(subset_indices[i]);
                 }
 
-                solvePnP(object_subset, image_subset, *camera_mat, *dist_coef, rot_vec, transl_vec);
+                solvePnP(object_subset, image_subset, *camera_mat, *dist_coef, rot_vec, transl_vec, false, SOLVEPNP_EPNP);
 
                 // Remember translation vector
                 Mat transl_vec_ = transl_vectors.colRange(iter * 3, (iter + 1) * 3);
@@ -213,7 +213,7 @@ void cv::cuda::solvePnPRansac(const Mat& object, const Mat& image, const Mat& ca
                              int num_iters, float max_dist, int min_inlier_count,
                              std::vector<int>* inliers)
 {
-    (void)min_inlier_count;
+    CV_UNUSED(min_inlier_count);
     CV_Assert(object.rows == 1 && object.cols > 0 && object.type() == CV_32FC3);
     CV_Assert(image.rows == 1 && image.cols > 0 && image.type() == CV_32FC2);
     CV_Assert(object.cols == image.cols);

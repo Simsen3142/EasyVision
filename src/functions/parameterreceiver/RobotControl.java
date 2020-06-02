@@ -5,13 +5,13 @@ import java.awt.image.RescaleOp;
 import java.util.Map;
 import java.util.function.Function;
 
-import arduino.ArduinoHandler;
-import arduino.messages.ArmMessage;
-import arduino.messages.JSONMessage;
-import arduino.messages.MotorMessage;
-import arduino.messages.MotorMessage.MotorStepsDoneMessage;
-import arduino.messages.UltraSonicMessage;
-import arduino.messages.UltraSonicMessage.UltraSonicResponse;
+import communication.messages.ArmMessage;
+import communication.messages.JSONMessage;
+import communication.messages.MotorMessage;
+import communication.messages.UltraSonicMessage;
+import communication.messages.MotorMessage.MotorStepsDoneMessage;
+import communication.messages.UltraSonicMessage.UltraSonicResponse;
+import communication.serial.SerialHandler;
 import database.ImageHandler;
 import functions.RepresentationIcon;
 import functions.Startable;
@@ -39,7 +39,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 	 */
 	private static final long serialVersionUID = 7935195310384504522L;
 	private static volatile Image img;
-	private transient ArduinoHandler arduinoHandler;
+	private transient SerialHandler serialHandler;
 	private transient long lastTimeSent=0;
 	private transient long lastTimeCheckUltraSonic=0;
 	private transient ControlThread cThread;
@@ -242,7 +242,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 				state=ControlState.LN_DEFAULT;
 			}
 			
-			if(arduinoHandler.getSerialComm().isConnected() || !DOUSESERIAL) {
+			if(serialHandler.isConnected() || !DOUSESERIAL) {
 				switch(state) {
 					case LN_DEFAULT:{
 						if(now-lastTimeSent>getIntVal("send_timetillsend")) {
@@ -338,7 +338,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 		
 		DOUSESERIAL=getBoolVal("useserial");
 		if(DOUSESERIAL)
-			arduinoHandler.getSerialComm().getWriter().doWrite(s);
+			serialHandler.sendMessageToAll(s);
 		else
 			System.out.println("SENDING: "+s);
 	}
@@ -523,7 +523,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 				System.out.println(state.name());
 				doSleep(movefct.apply(null)+100);
 				onReceiveFunction.apply(JSONMessage.fromMessageToJSON(new MotorStepsDoneMessage(true))); //NO INTENTION 4 KEEPING THIS THAT BAD
-//				writeSerial(new MotorMessage.MotorStepsDoneMessage(true)); TODO: Uberlegen, ob mit Arduino kommuniziert werden soll, oder auf Zeit vertraut wird
+//				writeSerial(new MotorMessage.MotorStepsDoneMessage(true)); TODO: Uberlegen, ob mit Comm kommuniziert werden soll, oder auf Zeit vertraut wird
 			}).start();
 		}
 		
@@ -541,8 +541,8 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 	public void start() {
 		
 		state=ControlState.LN_DEFAULT;
-		if(arduinoHandler==null) {
-			arduinoHandler=ArduinoHandler.getInstance();
+		if(serialHandler==null) {
+			serialHandler=SerialHandler.getInstance();
 		}
 		
 		if(cThread==null || !cThread.isAlive()) {
@@ -551,7 +551,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 			
 			if(onReceiveFunction==null)
 				onReceiveFunction=new OnReceiveFunction();
-			arduinoHandler.getSerialComm().addOnReceive(onReceiveFunction);
+//			serialHandler.getSerialComm().addOnReceive(onReceiveFunction);
 		}
 		
 		sendStart();
@@ -563,7 +563,7 @@ public class RobotControl extends ParameterizedObject implements ParameterReceiv
 
 		if(cThread!=null && cThread.isAlive()) {
 			cThread.interrupt();
-			arduinoHandler.getSerialComm().removeOnReceive(onReceiveFunction);
+//			serialHandler.getSerialComm().removeOnReceive(onReceiveFunction);
 		}
 	}
 

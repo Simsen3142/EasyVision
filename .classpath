@@ -3,20 +3,15 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="EasyVision/arduino"/>
+			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="videoextraction/" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencv">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="EasyVision/opencv/build/java"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry excluding="videoextraction/|arduino/serial/RpLidarDeviceInfo.java|arduino/serial/RpLidarHeath.java|arduino/serial/RpLidarListener.java|arduino/serial/RpLidarLowLevelDriver.java|arduino/serial/RpLidarMeasurement.java|arduino/serial/Scan.java|arduino/serial/ScanDistance.java|communication/serial/serial_old/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
 	<classpathentry kind="lib" path="lib/annotations-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/guava-27.0.1-jre.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.24.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/reflections-0.9.10.jar"/>
-	<classpathentry kind="lib" path="opencv/build/java/opencv-341.jar"/>
 	<classpathentry kind="lib" path="lib/RXTXcomm.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="EasyVision/arduino"/>
@@ -25,5 +20,43 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/bluecove-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/commons-beanutils-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/fontbox-2.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/ghost4j-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/itext-2.1.7.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jai-imageio-core-1.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jbig2-imageio-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jboss-logging-3.1.4.GA.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jboss-vfs-3.2.15.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jcl-over-slf4j-1.7.30.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jna-5.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/jul-to-slf4j-1.7.30.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/lept4j-1.13.0.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/log4j-over-slf4j-1.7.30.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/logback-classic-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/logback-core-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/pdfbox-2.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/pdfbox-debugger-2.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/pdfbox-tools-2.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/tess4j-4.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/Tess4j/xmlgraphics-commons-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/jSerialComm-2.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/commons-lang3-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-linux-arm.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-linux-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-linux-x86.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-osx-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-osx-x86.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/libusb4java-1.2.0-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/usb4java-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/usb-api-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/usb4java/usb4java-javax-1.2.0.jar"/>
+	<classpathentry kind="lib" path="opencv/build/java/opencv-349.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

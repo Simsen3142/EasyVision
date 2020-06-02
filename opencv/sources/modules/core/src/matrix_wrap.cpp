@@ -110,14 +110,12 @@ Mat _InputArray::getMat_(int i) const
     {
         CV_Assert( i < 0 );
         CV_Error(cv::Error::StsNotImplemented, "You should explicitly call mapHost/unmapHost methods for ogl::Buffer object");
-        return Mat();
     }
 
     if( k == CUDA_GPU_MAT )
     {
         CV_Assert( i < 0 );
         CV_Error(cv::Error::StsNotImplemented, "You should explicitly call download method for cuda::GpuMat object");
-        return Mat();
     }
 
     if( k == CUDA_HOST_MEM )
@@ -130,7 +128,6 @@ Mat _InputArray::getMat_(int i) const
     }
 
     CV_Error(Error::StsNotImplemented, "Unknown/unsupported array type");
-    return Mat();
 }
 
 UMat _InputArray::getUMat(int i) const
@@ -354,14 +351,12 @@ cuda::GpuMat _InputArray::getGpuMat() const
     if (k == OPENGL_BUFFER)
     {
         CV_Error(cv::Error::StsNotImplemented, "You should explicitly call mapDevice/unmapDevice methods for ogl::Buffer object");
-        return cuda::GpuMat();
     }
 
     if (k == NONE)
         return cuda::GpuMat();
 
     CV_Error(cv::Error::StsNotImplemented, "getGpuMat is available only for cuda::GpuMat and cuda::HostMem");
-    return cuda::GpuMat();
 }
 void _InputArray::getGpuMatVector(std::vector<cuda::GpuMat>& gpumv) const
 {
@@ -516,7 +511,6 @@ Size _InputArray::size(int i) const
     }
 
     CV_Error(Error::StsNotImplemented, "Unknown/unsupported array type");
-    return Size();
 }
 
 int _InputArray::sizend(int* arrsz, int i) const
@@ -716,7 +710,6 @@ int _InputArray::dims(int i) const
     }
 
     CV_Error(Error::StsNotImplemented, "Unknown/unsupported array type");
-    return 0;
 }
 
 size_t _InputArray::total(int i) const
@@ -845,7 +838,6 @@ int _InputArray::type(int i) const
         return ((const cuda::HostMem*)obj)->type();
 
     CV_Error(Error::StsNotImplemented, "Unknown/unsupported array type");
-    return 0;
 }
 
 int _InputArray::depth(int i) const
@@ -928,7 +920,6 @@ bool _InputArray::empty() const
         return ((const cuda::HostMem*)obj)->empty();
 
     CV_Error(Error::StsNotImplemented, "Unknown/unsupported array type");
-    return true;
 }
 
 bool _InputArray::isContinuous(int i) const
@@ -948,7 +939,7 @@ bool _InputArray::isContinuous(int i) const
     if( k == STD_VECTOR_MAT )
     {
         const std::vector<Mat>& vv = *(const std::vector<Mat>*)obj;
-        CV_Assert((size_t)i < vv.size());
+        CV_Assert(i >= 0 && (size_t)i < vv.size());
         return vv[i].isContinuous();
     }
 
@@ -962,7 +953,7 @@ bool _InputArray::isContinuous(int i) const
     if( k == STD_VECTOR_UMAT )
     {
         const std::vector<UMat>& vv = *(const std::vector<UMat>*)obj;
-        CV_Assert((size_t)i < vv.size());
+        CV_Assert(i >= 0 && (size_t)i < vv.size());
         return vv[i].isContinuous();
     }
 
@@ -970,7 +961,6 @@ bool _InputArray::isContinuous(int i) const
       return i < 0 ? ((const cuda::GpuMat*)obj)->isContinuous() : true;
 
     CV_Error(CV_StsNotImplemented, "Unknown/unsupported array type");
-    return false;
 }
 
 bool _InputArray::isSubmatrix(int i) const
@@ -1009,7 +999,6 @@ bool _InputArray::isSubmatrix(int i) const
     }
 
     CV_Error(CV_StsNotImplemented, "");
-    return false;
 }
 
 size_t _InputArray::offset(int i) const
@@ -1074,7 +1063,6 @@ size_t _InputArray::offset(int i) const
     }
 
     CV_Error(Error::StsNotImplemented, "");
-    return 0;
 }
 
 size_t _InputArray::step(int i) const
@@ -1135,7 +1123,6 @@ size_t _InputArray::step(int i) const
     }
 
     CV_Error(Error::StsNotImplemented, "");
-    return 0;
 }
 
 void _InputArray::copyTo(const _OutputArray& arr) const
@@ -1159,6 +1146,10 @@ void _InputArray::copyTo(const _OutputArray& arr) const
     }
     else if( k == UMAT )
         ((UMat*)obj)->copyTo(arr);
+#ifdef HAVE_CUDA
+    else if (k == CUDA_GPU_MAT)
+        ((cuda::GpuMat*)obj)->copyTo(arr);
+#endif
     else
         CV_Error(Error::StsNotImplemented, "");
 }
@@ -1176,6 +1167,10 @@ void _InputArray::copyTo(const _OutputArray& arr, const _InputArray & mask) cons
     }
     else if( k == UMAT )
         ((UMat*)obj)->copyTo(arr, mask);
+#ifdef HAVE_CUDA
+    else if (k == CUDA_GPU_MAT)
+        ((cuda::GpuMat*)obj)->copyTo(arr, mask);
+#endif
     else
         CV_Error(Error::StsNotImplemented, "");
 }
@@ -1292,17 +1287,12 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
     {
         CV_Assert( i < 0 );
         Mat& m = *(Mat*)obj;
-        if( allowTransposed )
+        if (allowTransposed && !m.empty() &&
+            d == 2 && m.dims == 2 &&
+            m.type() == mtype && m.rows == sizes[1] && m.cols == sizes[0] &&
+            m.isContinuous())
         {
-            if( !m.isContinuous() )
-            {
-                CV_Assert(!fixedType() && !fixedSize());
-                m.release();
-            }
-
-            if( d == 2 && m.dims == 2 && m.data &&
-                m.type() == mtype && m.rows == sizes[1] && m.cols == sizes[0] )
-                return;
+            return;
         }
 
         if(fixedType())
@@ -1310,13 +1300,13 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
             if(CV_MAT_CN(mtype) == m.channels() && ((1 << CV_MAT_TYPE(flags)) & fixedDepthMask) != 0 )
                 mtype = m.type();
             else
-                CV_Assert(CV_MAT_TYPE(mtype) == m.type());
+                CV_CheckTypeEQ(m.type(), CV_MAT_TYPE(mtype), "");
         }
         if(fixedSize())
         {
-            CV_Assert(m.dims == d);
+            CV_CheckEQ(m.dims, d, "");
             for(int j = 0; j < d; ++j)
-                CV_Assert(m.size[j] == sizes[j]);
+                CV_CheckEQ(m.size[j], sizes[j], "");
         }
         m.create(d, sizes, mtype);
         return;
@@ -1326,17 +1316,12 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
     {
         CV_Assert( i < 0 );
         UMat& m = *(UMat*)obj;
-        if( allowTransposed )
+        if (allowTransposed && !m.empty() &&
+            d == 2 && m.dims == 2 &&
+            m.type() == mtype && m.rows == sizes[1] && m.cols == sizes[0] &&
+            m.isContinuous())
         {
-            if( !m.isContinuous() )
-            {
-                CV_Assert(!fixedType() && !fixedSize());
-                m.release();
-            }
-
-            if( d == 2 && m.dims == 2 && !m.empty() &&
-                m.type() == mtype && m.rows == sizes[1] && m.cols == sizes[0] )
-                return;
+            return;
         }
 
         if(fixedType())
@@ -1344,13 +1329,13 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
             if(CV_MAT_CN(mtype) == m.channels() && ((1 << CV_MAT_TYPE(flags)) & fixedDepthMask) != 0 )
                 mtype = m.type();
             else
-                CV_Assert(CV_MAT_TYPE(mtype) == m.type());
+                CV_CheckTypeEQ(m.type(), CV_MAT_TYPE(mtype), "");
         }
         if(fixedSize())
         {
-            CV_Assert(m.dims == d);
+            CV_CheckEQ(m.dims, d, "");
             for(int j = 0; j < d; ++j)
-                CV_Assert(m.size[j] == sizes[j]);
+                CV_CheckEQ(m.size[j], sizes[j], "");
         }
         m.create(d, sizes, mtype);
         return;
@@ -1426,8 +1411,14 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
         case 16:
             ((std::vector<Vec4i>*)v)->resize(len);
             break;
+        case 20:
+            ((std::vector<Vec<int, 5> >*)v)->resize(len);
+            break;
         case 24:
             ((std::vector<Vec6i>*)v)->resize(len);
+            break;
+        case 28:
+            ((std::vector<Vec<int, 7> >*)v)->resize(len);
             break;
         case 32:
             ((std::vector<Vec8i>*)v)->resize(len);
@@ -1435,8 +1426,23 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
         case 36:
             ((std::vector<Vec<int, 9> >*)v)->resize(len);
             break;
+        case 40:
+            ((std::vector<Vec<int, 10> >*)v)->resize(len);
+            break;
+        case 44:
+            ((std::vector<Vec<int, 11> >*)v)->resize(len);
+            break;
         case 48:
             ((std::vector<Vec<int, 12> >*)v)->resize(len);
+            break;
+        case 52:
+            ((std::vector<Vec<int, 13> >*)v)->resize(len);
+            break;
+        case 56:
+            ((std::vector<Vec<int, 14> >*)v)->resize(len);
+            break;
+        case 60:
+            ((std::vector<Vec<int, 15> >*)v)->resize(len);
             break;
         case 64:
             ((std::vector<Vec<int, 16> >*)v)->resize(len);
@@ -1459,7 +1465,6 @@ void _OutputArray::create(int d, const int* sizes, int mtype, int i,
     if( k == NONE )
     {
         CV_Error(CV_StsNullPtr, "create() called for the missing output array" );
-        return;
     }
 
     if( k == STD_VECTOR_MAT )
@@ -1866,6 +1871,76 @@ void _OutputArray::assign(const Mat& m) const
     else if (k == MATX)
     {
         m.copyTo(getMat());
+    }
+    else
+    {
+        CV_Error(Error::StsNotImplemented, "");
+    }
+}
+
+
+void _OutputArray::move(UMat& u) const
+{
+    if (fixedSize())
+    {
+        // TODO Performance warning
+        assign(u);
+        return;
+    }
+    int k = kind();
+    if (k == UMAT)
+    {
+#ifdef CV_CXX11
+        *(UMat*)obj = std::move(u);
+#else
+        *(UMat*)obj = u;
+        u.release();
+#endif
+    }
+    else if (k == MAT)
+    {
+        u.copyTo(*(Mat*)obj); // TODO check u.getMat()
+        u.release();
+    }
+    else if (k == MATX)
+    {
+        u.copyTo(getMat()); // TODO check u.getMat()
+        u.release();
+    }
+    else
+    {
+        CV_Error(Error::StsNotImplemented, "");
+    }
+}
+
+
+void _OutputArray::move(Mat& m) const
+{
+    if (fixedSize())
+    {
+        // TODO Performance warning
+        assign(m);
+        return;
+    }
+    int k = kind();
+    if (k == UMAT)
+    {
+        m.copyTo(*(UMat*)obj); // TODO check m.getUMat()
+        m.release();
+    }
+    else if (k == MAT)
+    {
+#ifdef CV_CXX11
+        *(Mat*)obj = std::move(m);
+#else
+        *(Mat*)obj = m;
+        m.release();
+#endif
+    }
+    else if (k == MATX)
+    {
+        m.copyTo(getMat());
+        m.release();
     }
     else
     {

@@ -44,12 +44,9 @@
 #include "opencv2/ts.hpp"
 #include "opencv2/ts/ts_perf.hpp"
 #include "opencv2/core/utility.hpp"
+#include "opencv2/core/ocl.hpp"
 
 #include "opencv2/dnn.hpp"
 #include "test_common.hpp"
-
-namespace opencv_test {
-using namespace cv::dnn;
-}
 
 #endif

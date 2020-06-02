@@ -55,10 +55,13 @@ public abstract class Parameter<type> extends ParameterObject{
 	 */
 	public void setValue(type value) {
 		this.value=value;
+		onChange(value);
 		if(onChange!=null) {
 			onChange.apply(value);
 		}
 	}
+	
+	public void onChange(type value) {}
 	
 	/**
 	 * @param value the value to set

@@ -8,7 +8,11 @@
 #include <iostream>
 
 using namespace cv;
-using namespace std;
+
+// we're NOT "using namespace std;" here, to avoid collisions between the beta variable and std::beta in c++17
+using std::cin;
+using std::cout;
+using std::endl;
 
 /**
  * @function main
@@ -32,12 +36,12 @@ int main( void )
 
    //![load]
    /// Read images ( both have to be of the same size and type )
-   src1 = imread( "../data/LinuxLogo.jpg" );
-   src2 = imread( "../data/WindowsLogo.jpg" );
+   src1 = imread( samples::findFile("LinuxLogo.jpg") );
+   src2 = imread( samples::findFile("WindowsLogo.jpg") );
    //![load]
 
-   if( src1.empty() ) { cout << "Error loading src1" << endl; return -1; }
-   if( src2.empty() ) { cout << "Error loading src2" << endl; return -1; }
+   if( src1.empty() ) { cout << "Error loading src1" << endl; return EXIT_FAILURE; }
+   if( src2.empty() ) { cout << "Error loading src2" << endl; return EXIT_FAILURE; }
 
    //![blend_images]
    beta = ( 1.0 - alpha );

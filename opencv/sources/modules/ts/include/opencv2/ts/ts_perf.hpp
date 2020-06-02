@@ -3,7 +3,6 @@
 
 #include "opencv2/ts.hpp"
 
-#include "ts_gtest.h"
 #include "ts_ext.hpp"
 
 #include <functional>
@@ -387,7 +386,7 @@ public:
     static enum PERF_STRATEGY getCurrentModulePerformanceStrategy();
     static enum PERF_STRATEGY setModulePerformanceStrategy(enum PERF_STRATEGY strategy);
 
-    class PerfSkipTestException: public cv::Exception
+    class PerfSkipTestException: public cvtest::SkipTestException
     {
     public:
         int dummy; // workaround for MacOSX Xcode 7.3 bug (don't make class "empty")
@@ -397,8 +396,8 @@ public:
 protected:
     virtual void PerfTestBody() = 0;
 
-    virtual void SetUp();
-    virtual void TearDown();
+    virtual void SetUp() CV_OVERRIDE;
+    virtual void TearDown() CV_OVERRIDE;
 
     bool startTimer(); // bool is dummy for conditional loop
     void stopTimer();
@@ -528,7 +527,15 @@ void PrintTo(const Size& sz, ::std::ostream* os);
     { \
        CV__TEST_NAMESPACE_CHECK \
        CV__TRACE_APP_FUNCTION_NAME("PERF_TEST: " name); \
+       try { \
+       ::cvtest::testSetUp(); \
        RunPerfTestBody(); \
+       } \
+       catch (cvtest::details::SkipTestExceptionBase& e) \
+       { \
+          printf("[     SKIP ] %s\n", e.what()); \
+       } \
+       ::cvtest::testTearDown(); \
     }
 
 #define PERF_PROXY_NAMESPACE_NAME_(test_case_name, test_name) \
@@ -547,17 +554,7 @@ void PrintTo(const Size& sz, ::std::ostream* os);
 //     EXPECT_TRUE(foo.StatusIsOK());
 //   }
 #define PERF_TEST(test_case_name, test_name)\
-    namespace PERF_PROXY_NAMESPACE_NAME_(test_case_name, test_name) {\
-     class TestBase {/*compile error for this class means that you are trying to use perf::TestBase as a fixture*/};\
-     class test_case_name : public ::perf::TestBase {\
-      public:\
-       test_case_name() {}\
-      protected:\
-       virtual void PerfTestBody();\
-     };\
-     TEST_F(test_case_name, test_name){ CV__PERF_TEST_BODY_IMPL(#test_case_name "_" #test_name); }\
-    }\
-    void PERF_PROXY_NAMESPACE_NAME_(test_case_name, test_name)::test_case_name::PerfTestBody()
+    TEST_(test_case_name, test_name, ::perf::TestBase, PerfTestBody, CV__PERF_TEST_BODY_IMPL)
 
 // Defines a performance test that uses a test fixture.
 //
@@ -648,15 +645,6 @@ void PrintTo(const Size& sz, ::std::ostream* os);
 #endif
 #endif
 
-#ifdef HAVE_OPENCL
-namespace cvtest { namespace ocl {
-void dumpOpenCLDevice();
-}}
-#define TEST_DUMP_OCL_INFO cvtest::ocl::dumpOpenCLDevice();
-#else
-#define TEST_DUMP_OCL_INFO
-#endif
-
 
 #define CV_PERF_TEST_MAIN_INTERNALS(modulename, impls, ...)	\
     CV_TRACE_FUNCTION(); \
@@ -665,11 +653,10 @@ void dumpOpenCLDevice();
     ::perf::TestBase::Init(std::vector<std::string>(impls, impls + sizeof impls / sizeof *impls), \
                            argc, argv); \
     ::testing::InitGoogleTest(&argc, argv); \
-    cvtest::printVersionInfo(); \
+    ::testing::UnitTest::GetInstance()->listeners().Append(new cvtest::SystemInfoCollector); \
     ::testing::Test::RecordProperty("cv_module_name", #modulename); \
     ::perf::TestBase::RecordRunParameters(); \
     __CV_TEST_EXEC_ARGS(__VA_ARGS__) \
-    TEST_DUMP_OCL_INFO \
     } \
     return RUN_ALL_TESTS();
 

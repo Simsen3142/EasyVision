@@ -5,19 +5,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import arduino.ArduinoHandler;
-import arduino.MnVerbindenMitMouseListener;
-import bluetooth.BluetoothHandler;
+import communication.bluetooth.BluetoothHandler;
+import communication.serial.SerialHandler;
+import communication.view.MnConnectToMouseListener;
 import external.JScrollMenu;
-import functions.streamer.VideoStreamer;
-import gnu.io.CommPortIdentifier;
-import main.MainFrame;
-
 import javax.bluetooth.RemoteDevice;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.KeyStroke;
+
+import com.fazecast.jSerialComm.SerialPort;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
@@ -37,8 +35,8 @@ public class MainMenuBar extends JFrame {
 	private JMenuItem mntmNewFrame;
 	private JScrollMenu scrlmnMateditfunctions;
 	private JScrollMenu scrlmnPanels;
-	private JMenu mnArduino;
 	private JMenu mnSerial;
+	private JMenu mnSerialConnect;
 	private JMenu mnVerbindenMit;
 	private JMenuItem mntmSerialMonitor;
 	private JMenu mnBluetooth;
@@ -118,25 +116,25 @@ public class MainMenuBar extends JFrame {
 		mnView.add(mntmNewFrame);
 		
 		
-		mnArduino = new JMenu("Arduino");
-		mnBar.add(mnArduino);
-		
 		mnSerial = new JMenu("Serial");
-		mnArduino.add(mnSerial);
+		mnBar.add(mnSerial);
+		
+		mnSerialConnect = new JMenu("Verbindung");
+		mnSerial.add(mnSerialConnect);
 		
 		mnVerbindenMit = new JMenu("Verbinden mit...");
-		mnVerbindenMit.addMouseListener(new MnVerbindenMitMouseListener<CommPortIdentifier>(mnVerbindenMit,ArduinoHandler.getInstance()));
-		mnSerial.add(mnVerbindenMit);
+		mnVerbindenMit.addMouseListener(new MnConnectToMouseListener<SerialPort>(mnVerbindenMit,SerialHandler.getInstance()));
+		mnSerialConnect.add(mnVerbindenMit);
 		
 		mntmSerialMonitor = new JMenuItem("Serial monitor");
 		mntmSerialMonitor.addActionListener(new MntmSerialMonitorActionListener());
-		mnArduino.add(mntmSerialMonitor);
+		mnSerial.add(mntmSerialMonitor);
 		
 		mnBluetooth = new JMenu("Bluetooth");
 		mnBar.add(mnBluetooth);
 		
 		mnVerbindenMit2 = new JMenu("Verbinden mit...");
-		mnVerbindenMit2.addMouseListener(new MnVerbindenMitMouseListener<RemoteDevice>(mnVerbindenMit2,BluetoothHandler.getInstance()));
+		mnVerbindenMit2.addMouseListener(new MnConnectToMouseListener<RemoteDevice>(mnVerbindenMit2,BluetoothHandler.getInstance()));
 		mnBluetooth.add(mnVerbindenMit2);
 		
 		this.mnBar=mnBar;
@@ -149,7 +147,7 @@ public class MainMenuBar extends JFrame {
 	
 	private class MntmSerialMonitorActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			ArduinoHandler.getInstance().getSerialMonitor().show();
+			SerialHandler.getInstance().getSerialLogger().getNewSerialMonitor().show();
 		}
 	}
 	

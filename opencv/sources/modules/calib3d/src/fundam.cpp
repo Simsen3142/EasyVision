@@ -59,10 +59,10 @@ namespace cv
  * where \f$\lambda \in \mathbb{R} \f$.
  *
  */
-class HomographyEstimatorCallback : public PointSetRegistrator::Callback
+class HomographyEstimatorCallback CV_FINAL : public PointSetRegistrator::Callback
 {
 public:
-    bool checkSubset( InputArray _ms1, InputArray _ms2, int count ) const
+    bool checkSubset( InputArray _ms1, InputArray _ms2, int count ) const CV_OVERRIDE
     {
         Mat ms1 = _ms1.getMat(), ms2 = _ms2.getMat();
         if( haveCollinearPoints(ms1, count) || haveCollinearPoints(ms2, count) )
@@ -72,7 +72,7 @@ public:
         // are geometrically consistent. We check if every 3 correspondences sets
         // fulfills the constraint.
         //
-        // The usefullness of this constraint is explained in the paper:
+        // The usefulness of this constraint is explained in the paper:
         //
         // "Speeding-up homography estimation in mobile devices"
         // Journal of Real-Time Image Processing. 2013. DOI: 10.1007/s11554-012-0314-1
@@ -113,7 +113,7 @@ public:
      *            2 columns 1 channel
      * @param _model, CV_64FC1, 3x3, normalized, i.e., the last element is 1
      */
-    int runKernel( InputArray _m1, InputArray _m2, OutputArray _model ) const
+    int runKernel( InputArray _m1, InputArray _m2, OutputArray _model ) const CV_OVERRIDE
     {
         Mat m1 = _m1.getMat(), m2 = _m2.getMat();
         int i, count = m1.checkVector(2);
@@ -188,7 +188,7 @@ public:
      * @param _model CV_64FC1, 3x3
      * @param _err, output, CV_32FC1, square of the L2 norm
      */
-    void computeError( InputArray _m1, InputArray _m2, InputArray _model, OutputArray _err ) const
+    void computeError( InputArray _m1, InputArray _m2, InputArray _model, OutputArray _err ) const CV_OVERRIDE
     {
         Mat m1 = _m1.getMat(), m2 = _m2.getMat(), model = _model.getMat();
         int i, count = m1.checkVector(2);
@@ -211,7 +211,7 @@ public:
 };
 
 
-class HomographyRefineCallback : public LMSolver::Callback
+class HomographyRefineCallback CV_FINAL : public LMSolver::Callback
 {
 public:
     HomographyRefineCallback(InputArray _src, InputArray _dst)
@@ -220,7 +220,7 @@ public:
         dst = _dst.getMat();
     }
 
-    bool compute(InputArray _param, OutputArray _err, OutputArray _Jac) const
+    bool compute(InputArray _param, OutputArray _err, OutputArray _Jac) const CV_OVERRIDE
     {
         int i, count = src.checkVector(2);
         Mat param = _param.getMat();
@@ -351,7 +351,7 @@ cv::Mat cv::findHomography( InputArray _points1, InputArray _points2,
                             int method, double ransacReprojThreshold, OutputArray _mask,
                             const int maxIters, const double confidence)
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     const double defaultRANSACReprojThreshold = 3;
     bool result = false;
@@ -700,16 +700,16 @@ static int run8Point( const Mat& _m1, const Mat& _m2, Mat& _fmatrix )
 }
 
 
-class FMEstimatorCallback : public PointSetRegistrator::Callback
+class FMEstimatorCallback CV_FINAL : public PointSetRegistrator::Callback
 {
 public:
-    bool checkSubset( InputArray _ms1, InputArray _ms2, int count ) const
+    bool checkSubset( InputArray _ms1, InputArray _ms2, int count ) const CV_OVERRIDE
     {
         Mat ms1 = _ms1.getMat(), ms2 = _ms2.getMat();
         return !haveCollinearPoints(ms1, count) && !haveCollinearPoints(ms2, count);
     }
 
-    int runKernel( InputArray _m1, InputArray _m2, OutputArray _model ) const
+    int runKernel( InputArray _m1, InputArray _m2, OutputArray _model ) const CV_OVERRIDE
     {
         double f[9*3];
         Mat m1 = _m1.getMat(), m2 = _m2.getMat();
@@ -725,7 +725,7 @@ public:
         return n;
     }
 
-    void computeError( InputArray _m1, InputArray _m2, InputArray _model, OutputArray _err ) const
+    void computeError( InputArray _m1, InputArray _m2, InputArray _model, OutputArray _err ) const CV_OVERRIDE
     {
         Mat __m1 = _m1.getMat(), __m2 = _m2.getMat(), __model = _model.getMat();
         int i, count = __m1.checkVector(2);
@@ -764,7 +764,7 @@ cv::Mat cv::findFundamentalMat( InputArray _points1, InputArray _points2,
                                 int method, double ransacReprojThreshold, double confidence,
                                 OutputArray _mask )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     Mat points1 = _points1.getMat(), points2 = _points2.getMat();
     Mat m1, m2, F;
@@ -836,7 +836,7 @@ cv::Mat cv::findFundamentalMat( InputArray _points1, InputArray _points2,
 void cv::computeCorrespondEpilines( InputArray _points, int whichImage,
                                     InputArray _Fmat, OutputArray _lines )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     double f[9] = {0};
     Mat tempF(3, 3, CV_64F, f);
@@ -909,9 +909,17 @@ void cv::computeCorrespondEpilines( InputArray _points, int whichImage,
     }
 }
 
+static inline double scaleFor(double x){
+    return (std::fabs(x) > std::numeric_limits<float>::epsilon()) ? 1./x : 1.;
+}
+static inline float scaleFor(float x){
+    return (std::fabs(x) > std::numeric_limits<float>::epsilon()) ? 1.f/x : 1.f;
+}
+
+
 void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     Mat src = _src.getMat();
     if( !src.isContinuous() )
@@ -967,7 +975,7 @@ void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
             Point2f* dptr = dst.ptr<Point2f>();
             for( i = 0; i < npoints; i++ )
             {
-                float scale = sptr[i].z != 0.f ? 1.f/sptr[i].z : 1.f;
+                float scale = scaleFor(sptr[i].z);
                 dptr[i] = Point2f(sptr[i].x*scale, sptr[i].y*scale);
             }
         }
@@ -977,7 +985,7 @@ void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
             Point3f* dptr = dst.ptr<Point3f>();
             for( i = 0; i < npoints; i++ )
             {
-                float scale = sptr[i][3] != 0.f ? 1.f/sptr[i][3] : 1.f;
+                float scale = scaleFor(sptr[i][3]);
                 dptr[i] = Point3f(sptr[i][0]*scale, sptr[i][1]*scale, sptr[i][2]*scale);
             }
         }
@@ -990,7 +998,7 @@ void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
             Point2d* dptr = dst.ptr<Point2d>();
             for( i = 0; i < npoints; i++ )
             {
-                double scale = sptr[i].z != 0. ? 1./sptr[i].z : 1.;
+                double scale = scaleFor(sptr[i].z);
                 dptr[i] = Point2d(sptr[i].x*scale, sptr[i].y*scale);
             }
         }
@@ -1000,7 +1008,7 @@ void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
             Point3d* dptr = dst.ptr<Point3d>();
             for( i = 0; i < npoints; i++ )
             {
-                double scale = sptr[i][3] != 0.f ? 1./sptr[i][3] : 1.;
+                double scale = scaleFor(sptr[i][3]);
                 dptr[i] = Point3d(sptr[i][0]*scale, sptr[i][1]*scale, sptr[i][2]*scale);
             }
         }
@@ -1012,7 +1020,7 @@ void cv::convertPointsFromHomogeneous( InputArray _src, OutputArray _dst )
 
 void cv::convertPointsToHomogeneous( InputArray _src, OutputArray _dst )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     Mat src = _src.getMat();
     if( !src.isContinuous() )
@@ -1095,7 +1103,7 @@ void cv::convertPointsToHomogeneous( InputArray _src, OutputArray _dst )
 
 void cv::convertPointsHomogeneous( InputArray _src, OutputArray _dst )
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     int stype = _src.type(), dtype = _dst.type();
     CV_Assert( _dst.fixedType() );
@@ -1108,7 +1116,7 @@ void cv::convertPointsHomogeneous( InputArray _src, OutputArray _dst )
 
 double cv::sampsonDistance(InputArray _pt1, InputArray _pt2, InputArray _F)
 {
-    CV_INSTRUMENT_REGION()
+    CV_INSTRUMENT_REGION();
 
     CV_Assert(_pt1.type() == CV_64F && _pt2.type() == CV_64F && _F.type() == CV_64F);
     CV_DbgAssert(_pt1.rows() == 3 && _F.size() == Size(3, 3) && _pt1.rows() == _pt2.rows());

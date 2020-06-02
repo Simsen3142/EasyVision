@@ -10,28 +10,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIDefaults;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.opencv.core.Core;
 import org.reflections.Reflections;
 
-import arduino.messages.JSONMessage;
-import arduino.messages.MotorMessage;
-import arduino.messages.MotorMessage.MotorStepsDoneMessage;
 import database.ImageHandler;
 import database.OftenUsedObjects;
 import database.Serializing;
 import diagramming.DiagramPanel;
 import functions.matedit.MatEditFunction;
 import functions.matedit.multi.MultiMatEditFunction;
-import functions.streamer.FileVideoStreamer;
 import functions.streamer.MatStreamer;
-import functions.streamer.VideoStreamer;
 import main.menu.MainMenuBar;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -59,55 +51,46 @@ public class MainFrame extends JFrame implements Serializable {
 	private static Set<Class<? extends ParameterReceiver>> parameterReceiverClasses;
 	private static DiagramPanel diagramPanel;
 	private File fileCurrentDiagram;
-	
+
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		System.out.println("STARTUP...");
-		long start=System.currentTimeMillis();
-		long actualStart=start;
-		
+		long start = System.currentTimeMillis();
+		long actualStart = start;
+
 		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			UIManager.getDefaults().put("ScrollPane.ancestorInputMap", new UIDefaults.LazyInputMap(new Object[] {}));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		String bit=System.getProperty("sun.arch.data.model");
-		String folder=bit.equals("64")?"x64/":"x86/";
+		String bit = System.getProperty("sun.arch.data.model");
+		String folder = (bit.equals("64") || SystemUtils.IS_OS_LINUX) ? "x64/" : "x86/";
 		String userdir = System.getProperty("user.dir");
-		String opencvpath = userdir + "/opencv/build/java/"+folder;
-		
-		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
-		
-		System.load(System.getProperty("user.dir") + "/opencv/build/bin/opencv_ffmpeg341"+(bit.equals("64")?"_64":"") +".dll");
-		
-//		System.load(userdir+"\\arduino\\rxtxParallel.dll");
-//		System.load(userdir+"\\arduino\\rxtxSerial.dll");
-		
-		try {
-			System.loadLibrary("rxtxParallel");
-			System.loadLibrary("rxtxSerial");
-		}catch (UnsatisfiedLinkError e) {
-			System.out.println("ERROR:");
-			e.printStackTrace();
+		String opencvpath = userdir + "/opencv/build/java/" + folder;
+
+		if (SystemUtils.IS_OS_WINDOWS) {
+			System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
+		} else if (SystemUtils.IS_OS_LINUX) {
+			System.load(opencvpath + "lib" + Core.NATIVE_LIBRARY_NAME + ".so");
 		}
-		
-		System.out.println("LOADING LIBRARIES: "+(System.currentTimeMillis()-start));
-		start=System.currentTimeMillis();
-		
+
+		System.out.println("LOADING LIBRARIES: " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+
 		initReflectionClasses();
-		
-		System.out.println("REFLECTIONS: "+(System.currentTimeMillis()-start));
-		start=System.currentTimeMillis();
-		
+
+		System.out.println("REFLECTIONS: " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+
 		initPreSetValues();
 
-		System.out.println("INIT MAINFRAME: "+(System.currentTimeMillis()-start));
-		start=System.currentTimeMillis();
-		
+		System.out.println("INIT MAINFRAME: " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+
 //		for (int i = 0; true; i++) {
 //			VideoStreamer videoStreamer = new VideoStreamer(i);
 //			if (videoStreamer.getCamera()!=null && videoStreamer.getCamera().isOpened()) {
@@ -118,33 +101,32 @@ public class MainFrame extends JFrame implements Serializable {
 //			}
 //
 //		}
-		
-		
+
 //        VideoStreamer videoStreamer=new VideoStreamer(0);
 //        streamers.add(videoStreamer);
 //		videoStreamer.addMatReceiver(functions.get(0));
-		
+
 //        FileVideoStreamer videoStreamer_video=new FileVideoStreamer(new File("test/SampleVideo_1280x720_1mb.mp4"));
 //        streamers.add(videoStreamer_video);
 
-		
 		diagramPanel = new DiagramPanel();
-		
-		System.out.println("INIT DIAGRAM: "+(System.currentTimeMillis()-start));
-		start=System.currentTimeMillis();
-		
+
+		System.out.println("INIT DIAGRAM: " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+
 		instance.setContentPanel(diagramPanel);
-		
-		System.out.println("SET CONTENTPANE: "+(System.currentTimeMillis()-start));
-		start=System.currentTimeMillis();
-		
+		instance.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		System.out.println("SET CONTENTPANE: " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+
 		loadValues();
-		
-		System.out.println("LOAD SESSION: "+(System.currentTimeMillis()-start));
+
+		System.out.println("LOAD SESSION: " + (System.currentTimeMillis() - start));
 		System.out.println("===============");
-		System.out.println("STARTUP: "+(System.currentTimeMillis()-actualStart));
+		System.out.println("STARTUP: " + (System.currentTimeMillis() - actualStart));
 	}
-	
+
 	/**
 	 * @return the mainMenuBar
 	 */
@@ -160,7 +142,7 @@ public class MainFrame extends JFrame implements Serializable {
 			initReflectionClasses();
 		return matEditFunctionClasses;
 	}
-	
+
 	/**
 	 * @return the multiMatEditFunctionClasses
 	 */
@@ -169,7 +151,7 @@ public class MainFrame extends JFrame implements Serializable {
 			initReflectionClasses();
 		return multiMatEditFunctionClasses;
 	}
-	
+
 	/**
 	 * @return the matEditFunctionClasses
 	 */
@@ -187,38 +169,38 @@ public class MainFrame extends JFrame implements Serializable {
 			initReflectionClasses();
 		return matStreamerClasses;
 	}
-	
+
 	private static void initReflectionClasses() {
-		ClassComparator comparator=new ClassComparator();
-		
-		matEditFunctionClasses=new TreeSet<>(comparator);
-		multiMatEditFunctionClasses=new TreeSet<>(comparator);
-		parameterReceiverClasses=new TreeSet<>(comparator);
-		matStreamerClasses=new TreeSet<>(comparator);
-		
+		ClassComparator comparator = new ClassComparator();
+
+		matEditFunctionClasses = new TreeSet<>(comparator);
+		multiMatEditFunctionClasses = new TreeSet<>(comparator);
+		parameterReceiverClasses = new TreeSet<>(comparator);
+		matStreamerClasses = new TreeSet<>(comparator);
+
 		Reflections reflections = new Reflections("functions.matedit");
-		reflections.getSubTypesOf(MatEditFunction.class).forEach((clss)->{
-			if(!Modifier.isAbstract(clss.getModifiers())) {
+		reflections.getSubTypesOf(MatEditFunction.class).forEach((clss) -> {
+			if (!Modifier.isAbstract(clss.getModifiers())) {
 				matEditFunctionClasses.add(clss);
 			}
 		});
 
 		reflections = new Reflections("functions.matedit.multi");
-		reflections.getSubTypesOf(MultiMatEditFunction.class).forEach((clss)->{
-			if(!Modifier.isAbstract(clss.getModifiers())) {
+		reflections.getSubTypesOf(MultiMatEditFunction.class).forEach((clss) -> {
+			if (!Modifier.isAbstract(clss.getModifiers())) {
 				multiMatEditFunctionClasses.add(clss);
 			}
 		});
 		reflections = new Reflections("functions.parameterreceiver");
-		reflections.getSubTypesOf(ParameterReceiver.class).forEach((clss)->{
-			if(!Modifier.isAbstract(clss.getModifiers())) {
+		reflections.getSubTypesOf(ParameterReceiver.class).forEach((clss) -> {
+			if (!Modifier.isAbstract(clss.getModifiers())) {
 				parameterReceiverClasses.add(clss);
 			}
 		});
-		
+
 		reflections = new Reflections("functions.streamer");
-		reflections.getSubTypesOf(MatStreamer.class).forEach((clss)->{
-			if(!Modifier.isAbstract(clss.getModifiers())) {
+		reflections.getSubTypesOf(MatStreamer.class).forEach((clss) -> {
+			if (!Modifier.isAbstract(clss.getModifiers())) {
 				matStreamerClasses.add(clss);
 			}
 		});
@@ -232,9 +214,9 @@ public class MainFrame extends JFrame implements Serializable {
 		if (first) {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setTitle("Easy Vision");
-			ImageHandler.getImage("res/EVLogo.jpg", (img)->{
-				EventQueue.invokeLater(()->{
-					if(img!=null)
+			ImageHandler.getImage("res/EVLogo.jpg", (img) -> {
+				EventQueue.invokeLater(() -> {
+					if (img != null)
 						setIconImage(img);
 				});
 				return null;
@@ -245,7 +227,7 @@ public class MainFrame extends JFrame implements Serializable {
 		}
 		setBounds(600, 300, 450, 300);
 
-		mainMenuBar=new MainMenuBar();
+		mainMenuBar = new MainMenuBar();
 		menuBar = mainMenuBar.getJMenuBar();
 		setJMenuBar(menuBar);
 		initDiagramMenuFunctions();
@@ -261,49 +243,47 @@ public class MainFrame extends JFrame implements Serializable {
 
 		setVisible(true);
 	}
-	
+
 	private void initDiagramMenuFunctions() {
-		mainMenuBar.addNewActionListener((e)->{
+		mainMenuBar.addNewActionListener((e) -> {
 			diagramPanel.clear();
-			fileCurrentDiagram=null;
+			fileCurrentDiagram = null;
 		});
-		
-		mainMenuBar.addOpenActionListener((e)->{
-			File f=Serializing.showOpenDialog();
-			fileCurrentDiagram=f;
+
+		mainMenuBar.addOpenActionListener((e) -> {
+			File f = Serializing.showOpenDialog();
+			fileCurrentDiagram = f;
 			diagramPanel.load(f);
 		});
-		
-		mainMenuBar.addOpenLastActionListener((e)->{
-			fileCurrentDiagram=null;
+
+		mainMenuBar.addOpenLastActionListener((e) -> {
+			fileCurrentDiagram = null;
 			try {
 				diagramPanel.load(OftenUsedObjects.SESSION.getFile());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
-		
-		mainMenuBar.addSaveAsActionListener((e)->{
-			File f=Serializing.showSaveDialog();
-			fileCurrentDiagram=f;
+
+		mainMenuBar.addSaveAsActionListener((e) -> {
+			File f = Serializing.showSaveDialog();
+			fileCurrentDiagram = f;
 			diagramPanel.save(f);
 		});
-		
-		mainMenuBar.addSaveActionListener((e)->{
+
+		mainMenuBar.addSaveActionListener((e) -> {
 			File f;
-			f=(fileCurrentDiagram==null)?Serializing.showSaveDialog():fileCurrentDiagram;
+			f = (fileCurrentDiagram == null) ? Serializing.showSaveDialog() : fileCurrentDiagram;
 			diagramPanel.save(f);
 		});
 	}
-	
-	
 
 	public void setContentPanel(JPanel content) {
 		contentPane.remove(mainPanel);
 		mainPanel = content;
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 
-		EventQueue.invokeLater(()->{
+		EventQueue.invokeLater(() -> {
 			contentPane.revalidate();
 			contentPane.repaint();
 		});
@@ -335,17 +315,25 @@ public class MainFrame extends JFrame implements Serializable {
 		@Override
 		public void windowClosing(WindowEvent e) {
 			System.out.println("SAVING...");
+			diagramPanel.getMatSenders().forEach((matSender) -> matSender.stop());
 			saveValues();
-			diagramPanel.getMatSenders().forEach((matSender)->matSender.stop());
+			try {
+				Object lock = diagramPanel.getSaveLock();
+				synchronized (lock) {
+					diagramPanel.getSaveLock().wait(1000);
+				}
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		}
 	}
-	
-	private static class ClassComparator implements Comparator<Class<?>>{
+
+	private static class ClassComparator implements Comparator<Class<?>> {
 		@Override
 		public int compare(Class<?> o1, Class<?> o2) {
 			return o1.getSimpleName().compareTo(o2.getSimpleName());
 		}
-		
+
 	}
 }

@@ -22,22 +22,18 @@ public class BooleanRepresenter extends ParameterRepresenter<BooleanParameter> {
 
 	public BooleanRepresenter(){
 		super();
-		
 	}
-	
-	
 	
 	public Parameter<?> getRepresentationParameter(){
 		return new BooleanParameter("output", false, false);
 	}
-
-
-
+	
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters, ParameterizedObject sender) {
 		BooleanParameter param=getFirstFittingParameter(parameters, BooleanParameter.class, getStringVal("paramname"));
 		if(param != null) {
 			((BooleanParameter)getParameter("output")).setValue(param.getValue());
+			((StringParameter)getParameter("outputname")).setValue(param.getFullName());
 		}else {
 			((BooleanParameter)getParameter("output")).setValue(null);
 		}

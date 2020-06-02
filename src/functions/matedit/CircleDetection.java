@@ -37,15 +37,15 @@ public class CircleDetection extends MatEditFunction {
 	public CircleDetection() {
 		super(
 			new DoubleParameter("dp", 1,0,100),
-			new DoubleParameter("mindist", 85,1,200),
+			new DoubleParameter("mindist", 37,1,200),
 			new DoubleParameter("param1", 110,1,300),
 			new DoubleParameter("param2", 40,1,200),
-			new IntegerParameter("minradius", 30,0,200),
-			new IntegerParameter("maxradius", 0,0,200),
+			new IntegerParameter("minradius", 30,0,1000),
+			new IntegerParameter("maxradius", 200,0,1000),
 			new ParameterGroup("output", 
-				new IntegerParameter("xerror",0,false),
-				new IntegerParameter("yerror",0,false),
-				new IntegerParameter("radius",0,false)
+				new DoubleParameter("xerror",0,false),
+				new DoubleParameter("yerror",0,false),
+				new DoubleParameter("radius",0,false)
 			)
 		);	
 	}
@@ -56,7 +56,7 @@ public class CircleDetection extends MatEditFunction {
 		MatOfRect found = new MatOfRect();
 		double x = 0.0;
 	    double y = 0.0;
-	    int r = 0;
+	    double r = 0;
 		
 		// convert the frame in gray scale
 		Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
@@ -76,17 +76,17 @@ public class CircleDetection extends MatEditFunction {
 			
 			x = data[0];
 			y = data[1];
-			r = (int) data[2];
+			r = data[2];
 
 			Point center = new Point(x, y);
 			// circle center
 			Imgproc.circle(frame, center, 5, new Scalar(0, 255, 0), -1);
 			// circle outline
-			Imgproc.circle(frame, center, r, new Scalar(0, 0, 255), 3);
+			Imgproc.circle(frame, center, (int) r, new Scalar(0, 0, 255), 3);
 			
-			IntegerParameter xError=(IntegerParameter)getParameter("output_xerror");
-			IntegerParameter yError=(IntegerParameter)getParameter("output_yerror");
-			IntegerParameter radius=(IntegerParameter)getParameter("output_radius");
+			DoubleParameter xError=(DoubleParameter)getParameter("output_xerror");
+			DoubleParameter yError=(DoubleParameter)getParameter("output_yerror");
+			DoubleParameter radius=(DoubleParameter)getParameter("output_radius");
 			
 			xError.setValue(x-(frame.width()/2));
 			yError.setValue(y-(frame.height()/2));

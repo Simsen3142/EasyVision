@@ -56,7 +56,7 @@ Theory
     entire pyramid.
 -   The procedure above was useful to downsample an image. What if we want to make it bigger?:
     columns filled with zeros (\f$0 \f$)
-    -   First, upsize the image to twice the original in each dimension, wit the new even rows and
+    -   First, upsize the image to twice the original in each dimension, with the new even rows and
     -   Perform a convolution with the same kernel shown above (multiplied by 4) to approximate the
         values of the "missing pixels"
 -   These two procedures (downsampling and upsampling as explained above) are implemented by the
@@ -72,19 +72,19 @@ This tutorial code's is shown lines below.
 
 @add_toggle_cpp
 You can also download it from
-[here](https://raw.githubusercontent.com/opencv/opencv/master/samples/cpp/tutorial_code/ImgProc/Pyramids/Pyramids.cpp)
+[here](https://raw.githubusercontent.com/opencv/opencv/3.4/samples/cpp/tutorial_code/ImgProc/Pyramids/Pyramids.cpp)
 @include samples/cpp/tutorial_code/ImgProc/Pyramids/Pyramids.cpp
 @end_toggle
 
 @add_toggle_java
 You can also download it from
-[here](https://raw.githubusercontent.com/opencv/opencv/master/samples/java/tutorial_code/ImgProc/Pyramids/Pyramids.java)
+[here](https://raw.githubusercontent.com/opencv/opencv/3.4/samples/java/tutorial_code/ImgProc/Pyramids/Pyramids.java)
 @include samples/java/tutorial_code/ImgProc/Pyramids/Pyramids.java
 @end_toggle
 
 @add_toggle_python
 You can also download it from
-[here](https://raw.githubusercontent.com/opencv/opencv/master/samples/python/tutorial_code/imgProc/Pyramids/pyramids.py)
+[here](https://raw.githubusercontent.com/opencv/opencv/3.4/samples/python/tutorial_code/imgProc/Pyramids/pyramids.py)
 @include samples/python/tutorial_code/imgProc/Pyramids/pyramids.py
 @end_toggle
 
@@ -184,7 +184,7 @@ Otherwise, an error will be shown.
 Results
 -------
 
--   The program calls by default an image [chicky_512.png](https://raw.githubusercontent.com/opencv/opencv/master/samples/data/chicky_512.png)
+-   The program calls by default an image [chicky_512.png](https://raw.githubusercontent.com/opencv/opencv/3.4/samples/data/chicky_512.png)
     that comes in the `samples/data` folder. Notice that this image is \f$512 \times 512\f$,
     hence a downsample won't generate any error (\f$512 = 2^{9}\f$). The original image is shown below:
 

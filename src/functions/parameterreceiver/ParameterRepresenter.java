@@ -22,15 +22,16 @@ public abstract class ParameterRepresenter<T extends Parameter<?>> extends Param
 	public ParameterRepresenter(ParameterObject...parameterObjects) {
 		super(parameterObjects);
 		Parameter<?> param=getRepresentationParameter();
-		param.setName("output");
-		addParameters(param);
+		Parameter<?> paramName=getNameParameter();
+		addParameters(param,paramName);
 	}
 
 	public ParameterRepresenter(){
-		super(new StringParameter("paramname", "-"));
+		super();
 		Parameter<?> param=getRepresentationParameter();
 		param.setName("output");
-		addParameters(param);
+		StringParameter paramName=new StringParameter("paramname", "");
+		addParameters(param,getNameParameter(),paramName);
 	}
 	
 	
@@ -38,7 +39,7 @@ public abstract class ParameterRepresenter<T extends Parameter<?>> extends Param
 	 * @return the parameter
 	 */
 	public T getParameter() {
-		return (T) getParameter("output");
+		return (T) getParameter(getRepresentationParameter().getFullName());
 	}
 	/**
 	 * @param parameter the parameter to set
@@ -78,4 +79,8 @@ public abstract class ParameterRepresenter<T extends Parameter<?>> extends Param
 	}
 	
 	public abstract Parameter<?> getRepresentationParameter();
+	
+	public StringParameter getNameParameter() {
+		return new StringParameter("outputname","",false);
+	}
 }

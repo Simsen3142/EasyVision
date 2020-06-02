@@ -55,7 +55,7 @@ size_t base64_decode_buffer_size(size_t cnt, char  const * src, bool is_end_with
 size_t base64_decode_buffer_size(size_t cnt, uchar const * src, bool is_end_with_zero = true);
 std::string make_base64_header(const char * dt);
 bool read_base64_header(std::vector<char> const & header, std::string & dt);
-void make_seq(void * binary_data, int elem_cnt, const char * dt, CvSeq & seq);
+void make_seq(::CvFileStorage* fs, const uchar* binary_data, size_t elem_cnt, const char * dt, CvSeq & seq);
 void cvWriteRawDataBase64(::CvFileStorage* fs, const void* _data, int len, const char* dt);
 
 class Base64ContextEmitter;
@@ -262,7 +262,7 @@ void icvFSCreateCollection( CvFileStorage* fs, int tag, CvFileNode* collection )
 char* icvFSResizeWriteBuffer( CvFileStorage* fs, char* ptr, int len );
 int icvCalcStructSize( const char* dt, int initial_size );
 int icvCalcElemSize( const char* dt, int initial_size );
-void icvParseError( CvFileStorage* fs, const char* func_name, const char* err_msg, const char* source_file, int source_line );
+void CV_NORETURN icvParseError(const CvFileStorage* fs, const char* func_name, const char* err_msg, const char* source_file, int source_line);
 char* icvEncodeFormat( int elem_type, char* dt );
 int icvDecodeFormat( const char* dt, int* fmt_pairs, int max_len );
 int icvDecodeSimpleFormat( const char* dt );
@@ -320,5 +320,9 @@ void icvJSONWriteInt( CvFileStorage* fs, const char* key, int value );
 void icvJSONWriteReal( CvFileStorage* fs, const char* key, double value );
 void icvJSONWriteString( CvFileStorage* fs, const char* key, const char* str, int quote CV_DEFAULT(0));
 void icvJSONWriteComment( CvFileStorage* fs, const char* comment, int eol_comment );
+
+// Adding icvGets is not enough - we need to merge buffer contents (see #11061)
+#define CV_PERSISTENCE_CHECK_END_OF_BUFFER_BUG() \
+    CV_Assert((ptr[0] != 0 || ptr != fs->buffer_end - 1) && "OpenCV persistence doesn't support very long lines")
 
 #endif // SRC_PERSISTENCE_HPP

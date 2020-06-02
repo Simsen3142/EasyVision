@@ -1,26 +1,13 @@
 package functions.parameterreceiver;
 
 import java.awt.Image;
-import java.io.File;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineEvent.Type;
-import javax.sound.sampled.LineListener;
-
-import com.google.common.reflect.Parameter;
-
-import arduino.ArduinoHandler;
+import communication.serial.SerialHandler;
 import database.ImageHandler;
-import diagramming.components.ParameterReceiverPanel;
 import functions.RepresentationIcon;
 import main.ParameterReceiver;
-import parameters.BooleanParameter;
-import parameters.FileParameter;
 import parameters.IntegerParameter;
 import parameters.ParameterObject;
 import parameters.ParameterizedObject;
@@ -59,9 +46,9 @@ public class HandControl extends ParameterizedObject implements ParameterReceive
 	@Override
 	public void onParameterReceived(Map<String, ParameterObject> parameters,ParameterizedObject sender) {
 		int amt=getFirstFittingParameter(parameters, IntegerParameter.class).getValue();
-		if(		ArduinoHandler.getInstance().isConnected() && amt!=lastamt) {
+		if(		SerialHandler.getInstance().isConnected() && amt!=lastamt) {
 			lastamt=amt;
-			ArduinoHandler.getInstance().sendMessage(amt+"\n");
+			SerialHandler.getInstance().sendMessageToAll(amt+"\n");
 			System.out.println("SENDING: "+amt);
 		}
 	}

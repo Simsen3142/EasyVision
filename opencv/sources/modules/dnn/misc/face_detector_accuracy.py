@@ -17,7 +17,6 @@ parser = argparse.ArgumentParser(
                     'using COCO evaluation tool, http://cocodataset.org/#detections-eval')
 parser.add_argument('--proto', help='Path to .prototxt of Caffe model or .pbtxt of TensorFlow graph')
 parser.add_argument('--model', help='Path to .caffemodel trained in Caffe or .pb from TensorFlow')
-parser.add_argument('--caffe', help='Indicate that tested model is from Caffe. Otherwise model from TensorFlow is expected.', action='store_true')
 parser.add_argument('--cascade', help='Optional path to trained Haar cascade as '
                                       'an additional model for evaluation')
 parser.add_argument('--ann', help='Path to text file with ground truth annotations')
@@ -141,10 +140,7 @@ with open('annotations.json', 'wt') as f:
 ### Obtain detections ##########################################################
 detections = []
 if args.proto and args.model:
-    if args.caffe:
-        net = cv.dnn.readNetFromCaffe(args.proto, args.model)
-    else:
-        net = cv.dnn.readNetFromTensorflow(args.model, args.proto)
+    net = cv.dnn.readNet(args.proto, args.model)
 
     def detect(img, imageId):
         imgWidth = img.shape[1]
@@ -158,8 +154,13 @@ if args.proto and args.model:
             top = int(out[0, 0, i, 4] * img.shape[0])
             right = int(out[0, 0, i, 5] * img.shape[1])
             bottom = int(out[0, 0, i, 6] * img.shape[0])
-            addDetection(detections, imageId, left, top, width=right - left + 1,
-                         height=bottom - top + 1, score=confidence)
+
+            x = max(0, min(left, img.shape[1] - 1))
+            y = max(0, min(top, img.shape[0] - 1))
+            w = max(0, min(right - x + 1, img.shape[1] - x))
+            h = max(0, min(bottom - y + 1, img.shape[0] - y))
+
+            addDetection(detections, imageId, x, y, w, h, score=confidence)
 
 elif args.cascade:
     cascade = cv.CascadeClassifier(args.cascade)

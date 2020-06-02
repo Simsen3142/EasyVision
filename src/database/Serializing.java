@@ -52,6 +52,7 @@ public class Serializing {
 	    // save the object to file
 	    FileOutputStream fos = null;
 	    ObjectOutputStream out = null;
+	    System.out.println(s);
 	    try {
 	    	if(!f.exists())
 	    		createFileWithDirectories(f);

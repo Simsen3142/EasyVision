@@ -86,7 +86,7 @@ def main():
                 frame[y:,x+w:][:SZ, :SZ] = bin_norm[...,np.newaxis]
 
             sample = preprocess_hog([bin_norm])
-            digit = model.predict(sample)[0]
+            digit = model.predict(sample)[1].ravel()
             cv.putText(frame, '%d'%digit, (x, y), cv.FONT_HERSHEY_PLAIN, 1.0, (200, 0, 0), thickness = 1)
 
 
@@ -96,6 +96,10 @@ def main():
         if ch == 27:
             break
 
+    print('Done')
+
+
 if __name__ == '__main__':
+    print(__doc__)
     main()
     cv.destroyAllWindows()

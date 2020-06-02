@@ -157,7 +157,7 @@
 #                          Silently degrades to gnustl_static if not available.
 #        c++_static     -> Use the LLVM libc++ runtime as a static library.
 #                          Implies -frtti -fexceptions.
-#        c++_shared     -> Use the LLVM libc++ runtime as a static library.
+#        c++_shared     -> Use the LLVM libc++ runtime as a shared library.
 #                          Implies -frtti -fno-exceptions.
 #
 #    ANDROID_STL_FORCE_FEATURES=ON - turn rtti and exceptions support based on
@@ -1554,6 +1554,9 @@ if( ANDROID_EXPLICIT_CRT_LINK )
 endif()
 
 # setup output directories
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 1)
+endif()
 set( CMAKE_INSTALL_PREFIX "${ANDROID_TOOLCHAIN_ROOT}/user" CACHE STRING "path for installing" )
 
 if( DEFINED LIBRARY_OUTPUT_PATH_ROOT

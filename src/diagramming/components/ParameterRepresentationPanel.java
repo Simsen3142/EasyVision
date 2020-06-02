@@ -1,6 +1,8 @@
 package diagramming.components;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import functions.parameterreceiver.ParameterRepresenter;
@@ -22,10 +24,10 @@ public class ParameterRepresentationPanel extends FunctionPanel<ParameterReprese
 	 */
 	private static final long serialVersionUID = -4667924427485866328L;
 	private boolean showPicture=false;
-	private static JMenuItem mntmParameter;
-	private static JCheckBoxMenuItem chckbxmntmPic;
-	private ParameterReceivingPanel paramRecPanel;
-	private ParameterRepresentationPanel instance=this;
+	private transient static JMenuItem mntmParameter;
+	private transient static JCheckBoxMenuItem chckbxmntmPic;
+	private transient ParameterReceivingPanel paramRecPanel;
+	private transient ParameterRepresentationPanel instance=this;
 
 
 	/**
@@ -76,23 +78,31 @@ public class ParameterRepresentationPanel extends FunctionPanel<ParameterReprese
 		}
 	}
 	
-	private class ChckbxmntmPicActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			showPicture=chckbxmntmPic.isSelected();
-			if (showPicture) {
+	public void showParameterValue(boolean show) {
+		showPicture=show;
+		EventQueue.invokeLater(()->{
+			if(show) {
 				hideLabel(true);
 				paramRecPanel = new ParameterReceivingPanel(function);
 				ListenerHandler.copyListeners(instance, paramRecPanel);
 				add(paramRecPanel, BorderLayout.CENTER);
 				paramRecPanel.repaint();
-			} else {
-				function.removeParamterReceiver(paramRecPanel);
-				remove(paramRecPanel);
-				ListenerHandler.clearListeners(paramRecPanel);
-				paramRecPanel = null;
+			}else {
+				if(paramRecPanel != null) {
+					function.removeParamterReceiver(paramRecPanel);
+					remove(paramRecPanel);
+					ListenerHandler.clearListeners(paramRecPanel);
+					paramRecPanel = null;
+				}
 				hideLabel(false);
 			}
 			repaint();
+		});
+	}
+	
+	private class ChckbxmntmPicActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			showParameterValue(chckbxmntmPic.isSelected());
 		}
 	}
 }
